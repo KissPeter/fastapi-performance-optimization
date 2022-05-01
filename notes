@@ -1,0 +1,60 @@
+docker build -f Dockerfile -t fastapi_test:latest .
+docker run -p 127.0.0.1:8000:8000 --cpus=2 -it fastapi_test:latest
+
+$ ./run_ab.sh
+Test 1
+Requests per second:    1022.90 [#/sec] (mean)
+Time per request:       97.762 [ms] (mean)
+Test 2
+Requests per second:    1026.24 [#/sec] (mean)
+Time per request:       97.443 [ms] (mean)
+Test 3
+Requests per second:    923.71 [#/sec] (mean)
+Time per request:       108.260 [ms] (mean)
+
+
+
+docker run -p 127.0.0.1:8000:8000 --cpus=2 -e MIDDLEWARE=laod fastapi_test:latest
+
+$ curl -I 127.0.0.1:8000
+HTTP/1.1 404 Not Found
+date: Sun, 01 May 2022 12:29:56 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+x-process-time: 0.0005738735198974609
+
+
+$ ./run_ab.sh
+Test 1
+Requests per second:    686.21 [#/sec] (mean)
+Time per request:       145.728 [ms] (mean)
+Test 2
+Requests per second:    689.44 [#/sec] (mean)
+Time per request:       145.044 [ms] (mean)
+Test 3
+Requests per second:    674.90 [#/sec] (mean)
+Time per request:       148.170 [ms] (mean)
+
+
+docker run -p 127.0.0.1:8000:8000 --cpus=2 -e MIDDLEWARE=laod -e DUMMYMIDDLEWARE=load fastapi_test:latest
+
+$ curl -I 127.0.0.1:8000
+HTTP/1.1 404 Not Found
+date: Sun, 01 May 2022 12:48:19 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+x-process-time: 0.00045299530029296875
+custom: Example
+
+$ ./run_ab.sh
+Test 1
+Requests per second:    481.74 [#/sec] (mean)
+Time per request:       207.580 [ms] (mean)
+Test 2
+Requests per second:    495.27 [#/sec] (mean)
+Time per request:       201.910 [ms] (mean)
+Test 3
+Requests per second:    485.43 [#/sec] (mean)
+Time per request:       206.005 [ms] (mean)
