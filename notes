@@ -58,3 +58,6 @@ Time per request:       201.910 [ms] (mean)
 Test 3
 Requests per second:    485.43 [#/sec] (mean)
 Time per request:       206.005 [ms] (mean)
+
+https://github.com/encode/starlette/issues/1012#issuecomment-673461832
+https://github.com/encode/starlette/issues/919#issuecomment-672908610
