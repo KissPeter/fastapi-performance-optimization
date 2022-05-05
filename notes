@@ -61,3 +61,50 @@ Time per request:       206.005 [ms] (mean)
 
 https://github.com/encode/starlette/issues/1012#issuecomment-673461832
 https://github.com/encode/starlette/issues/919#issuecomment-672908610
+
+docker run -p 127.0.0.1:8000:8000 -e STARLETTEPROCESSTIMEIDDLEWARE=load --cpus=2 -it fastapi_opt
+
+$ curl -I 127.0.0.1:8000
+HTTP/1.1 404 Not Found
+date: Thu, 05 May 2022 13:14:03 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+x-process-time: 0.00010013580322265625
+
+# On i9 CPU - should be re-run
+$ ./run_ab.sh r
+Test 1
+Requests per second:    1497.39 [#/sec] (mean)
+Time per request:       66.783 [ms] (mean)
+Test 2
+Requests per second:    1621.20 [#/sec] (mean)
+Time per request:       61.683 [ms] (mean)
+Test 3
+Requests per second:    1535.12 [#/sec] (mean)
+Time per request:       65.142 [ms] (mean)
+
+
+docker run -p 127.0.0.1:8000:8000 -e STARLETTEPROCESSTIMEIDDLEWARE=load -e STARLETTECUSTOMHEADERMIDDLEWARE=load --cpus=2 -it fastapi_opt
+
+
+$ curl -I 127.0.0.1:8000
+HTTP/1.1 404 Not Found
+date: Thu, 05 May 2022 13:23:31 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+x-process-time: 8.0108642578125e-05
+custom: Example
+
+
+$ ./run_ab.sh
+Test 1
+Requests per second:    1442.14 [#/sec] (mean)
+Time per request:       69.341 [ms] (mean)
+Test 2
+Requests per second:    1592.73 [#/sec] (mean)
+Time per request:       62.785 [ms] (mean)
+Test 3
+Requests per second:    1561.20 [#/sec] (mean)
+Time per request:       64.053 [ms] (mean)

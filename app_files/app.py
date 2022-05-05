@@ -1,10 +1,12 @@
+import os
+import time
 from typing import Optional
 
-from pydantic import BaseModel
-import time
-import os
 from fastapi import FastAPI, Request
+from pydantic import BaseModel
+from starlette.datastructures import MutableHeaders
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
 # from https://fastapi.tiangolo.com/tutorial/body/#import-pydantics-basemodel
@@ -25,8 +27,8 @@ async def create_item(item: Item):
 
 # from https://fastapi.tiangolo.com/tutorial/middleware/
 
-if os.getenv("MIDDLEWARE"):
-    print("Load MIDDLEWARE")
+if os.getenv("PROCESSTIMEMIDDLEWARE"):
+    print("Load PROCESSTIMEMIDDLEWARE")
 
 
     @app.middleware("http")
@@ -39,15 +41,78 @@ if os.getenv("MIDDLEWARE"):
 
 # from https://www.starlette.io/middleware/#basehttpmiddleware
 
-if os.getenv("DUMMYMIDDLEWARE"):
-    print("Load DummyMiddleware")
+if os.getenv("CUSTOMHEADERMIDDLEWARE"):
+    print("Load CUSTOMHEADERMIDDLEWARE")
 
 
-    class DummyMiddleware(BaseHTTPMiddleware):
-
+    class CustomHeaderMiddleware(BaseHTTPMiddleware):
         async def dispatch(self, request, call_next):
             response = await call_next(request)
             response.headers["Custom"] = "Example"
             return response
 
-    app.add_middleware(DummyMiddleware)
+
+    app.add_middleware(CustomHeaderMiddleware)
+
+
+class STARLETTEProcessTimeMiddleware:
+    """Load request ID from headers if present. Generate one otherwise."""
+
+    app: ASGIApp
+
+    def __init__(
+            self,
+            app: ASGIApp,
+    ) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        start_time = time.time()
+
+        async def handle_outgoing_request(message: Message) -> None:
+            if message["type"] == "http.response.start":
+                headers = MutableHeaders(scope=message)
+                headers.append("X-Process-Time", str(time.time() - start_time))
+            await send(message)
+
+        await self.app(scope, receive, handle_outgoing_request)
+
+
+if os.getenv("STARLETTEPROCESSTIMEIDDLEWARE"):
+    print("Load STARLETTEPROCESSTIMEIDDLEWARE")
+
+    app.add_middleware(STARLETTEProcessTimeMiddleware)
+
+
+class STARLETTECustomHeaderMiddleware:
+    """Load request ID from headers if present. Generate one otherwise."""
+
+    app: ASGIApp
+
+    def __init__(
+            self,
+            app: ASGIApp,
+    ) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        async def handle_outgoing_request(message: Message) -> None:
+            if message["type"] == "http.response.start":
+                headers = MutableHeaders(scope=message)
+                headers.append("Custom", "Example")
+            await send(message)
+
+        await self.app(scope, receive, handle_outgoing_request)
+
+
+if os.getenv("STARLETTECUSTOMHEADERMIDDLEWARE"):
+    print("Load STARLETTECUSTOMHEADERMIDDLEWARE")
+
+    app.add_middleware(STARLETTECustomHeaderMiddleware)

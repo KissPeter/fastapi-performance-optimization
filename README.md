@@ -1,8 +1,14 @@
-## Welcome to GitHub Pages
+# FastAPI performance optimisation
 
-You can use the [editor on GitHub](https://github.com/KissPeter/fastapi-middlewares/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+[FastAPI](https://fastapi.tiangolo.com/) is a great, high performance web framework but far from perfect.
+This document is intended to provide some tips and ideas to get the most out of it 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Middleware
+
+FastAPI is based on [Starlette](https://www.starlette.io/) which supports [Middleware](https://fastapi.tiangolo.com/tutorial/middleware/?h=middlew#middleware), a codebase which wraps your application and runs before / after the request processing.
+With this you can resolve various functions ( authentication, session, logging, metric collection, etc) without taking care of these functions in your application.
+Unfortunately the most straightforward implementation has a drawback, it has major impact on the application latency and throughput. 
+
 
 ### Baseline measurement
 
