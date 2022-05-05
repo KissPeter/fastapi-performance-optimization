@@ -72,17 +72,16 @@ content-length: 22
 content-type: application/json
 x-process-time: 0.00010013580322265625
 
-# On i9 CPU - should be re-run
-$ ./run_ab.sh r
+$ ./run_ab.sh
 Test 1
-Requests per second:    1497.39 [#/sec] (mean)
-Time per request:       66.783 [ms] (mean)
+Requests per second:    1078.18 [#/sec] (mean)
+Time per request:       92.749 [ms] (mean)
 Test 2
-Requests per second:    1621.20 [#/sec] (mean)
-Time per request:       61.683 [ms] (mean)
+Requests per second:    1069.59 [#/sec] (mean)
+Time per request:       93.494 [ms] (mean)
 Test 3
-Requests per second:    1535.12 [#/sec] (mean)
-Time per request:       65.142 [ms] (mean)
+Requests per second:    971.28 [#/sec] (mean)
+Time per request:       102.957 [ms] (mean)
 
 
 docker run -p 127.0.0.1:8000:8000 -e STARLETTEPROCESSTIMEIDDLEWARE=load -e STARLETTECUSTOMHEADERMIDDLEWARE=load --cpus=2 -it fastapi_opt
@@ -90,21 +89,22 @@ docker run -p 127.0.0.1:8000:8000 -e STARLETTEPROCESSTIMEIDDLEWARE=load -e STARL
 
 $ curl -I 127.0.0.1:8000
 HTTP/1.1 404 Not Found
-date: Thu, 05 May 2022 13:23:31 GMT
+date: Thu, 05 May 2022 18:44:08 GMT
 server: uvicorn
 content-length: 22
 content-type: application/json
-x-process-time: 8.0108642578125e-05
+x-process-time: 0.0002040863037109375
 custom: Example
-
 
 $ ./run_ab.sh
 Test 1
-Requests per second:    1442.14 [#/sec] (mean)
-Time per request:       69.341 [ms] (mean)
+Requests per second:    878.93 [#/sec] (mean)
+Time per request:       113.774 [ms] (mean)
 Test 2
-Requests per second:    1592.73 [#/sec] (mean)
-Time per request:       62.785 [ms] (mean)
+Requests per second:    941.79 [#/sec] (mean)
+Time per request:       106.180 [ms] (mean)
 Test 3
-Requests per second:    1561.20 [#/sec] (mean)
-Time per request:       64.053 [ms] (mean)
+Requests per second:    974.65 [#/sec] (mean)
+Time per request:       102.600 [ms] (mean)
+
+CPU: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz

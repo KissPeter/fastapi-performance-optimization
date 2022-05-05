@@ -56,7 +56,6 @@ if os.getenv("CUSTOMHEADERMIDDLEWARE"):
 
 
 class STARLETTEProcessTimeMiddleware:
-    """Load request ID from headers if present. Generate one otherwise."""
 
     app: ASGIApp
 
@@ -72,13 +71,13 @@ class STARLETTEProcessTimeMiddleware:
             return
         start_time = time.time()
 
-        async def handle_outgoing_request(message: Message) -> None:
+        async def send_wrapper(message: Message) -> None:
             if message["type"] == "http.response.start":
                 headers = MutableHeaders(scope=message)
                 headers.append("X-Process-Time", str(time.time() - start_time))
             await send(message)
 
-        await self.app(scope, receive, handle_outgoing_request)
+        await self.app(scope, receive, send_wrapper)
 
 
 if os.getenv("STARLETTEPROCESSTIMEIDDLEWARE"):
@@ -103,13 +102,13 @@ class STARLETTECustomHeaderMiddleware:
             await self.app(scope, receive, send)
             return
 
-        async def handle_outgoing_request(message: Message) -> None:
+        async def send_wrapper(message: Message) -> None:
             if message["type"] == "http.response.start":
                 headers = MutableHeaders(scope=message)
                 headers.append("Custom", "Example")
             await send(message)
 
-        await self.app(scope, receive, handle_outgoing_request)
+        await self.app(scope, receive, send_wrapper)
 
 
 if os.getenv("STARLETTECUSTOMHEADERMIDDLEWARE"):
