@@ -1,1 +1,6 @@
 theme: jekyll-theme-tactile
+description: > # your text below (remove <br> elements if you don't need line breaks)
+  <br><br>
+  <a href="https://www.linkedin.com/in/peterkisshun/">View LinkedIn Profile</a>
+theme: jekyll-theme-minimal
+classes: wide
