@@ -9,8 +9,9 @@
 
 <main class="page-content" aria-label="Content">
     <div class="wrapper">
-<!--        {% include toc.html html=content %}-->
-<!--        {% include anchor_headings.html html=content anchorBody="#" %}-->
+        <b>Table of contents</b><br>
+        {% include toc.html html=content %}
+        {% include anchor_headings.html html=content anchorBody="#" %}
         {{ content }}
     </div>
 </main>
