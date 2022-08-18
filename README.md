@@ -130,3 +130,9 @@ In order to see the performance difference if multiple middlewares are added, an
 
 #### Observations:
 * Some performance drop but less significant as for BaseHTTPMiddleware
+
+# Next
+## Different json response clases
+## workers / threads
+## sync / async API endpoints
+## connection pool size of external resources
