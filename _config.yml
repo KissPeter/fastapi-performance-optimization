@@ -1,3 +1,4 @@
 theme: jekyll-theme-minimal
 logo: "images/fastapi.png"
 classes: wide
+repository: KissPeter/fastapi-performance-optimization
