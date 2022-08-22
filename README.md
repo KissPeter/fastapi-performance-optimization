@@ -133,6 +133,8 @@ In order to see the performance difference if multiple middlewares are added, an
 
 # Next
 ## Different json response clases
-## workers / threads
-## sync / async API endpoints
-## connection pool size of external resources
+## Workers / threads
+## Sync / async API endpoints
+## Connection pool size of external resources
+## Nginx sockets
+## Nginx light
