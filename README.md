@@ -138,3 +138,6 @@ In order to see the performance difference if multiple middlewares are added, an
 ## Connection pool size of external resources
 ## Nginx sockets
 ## Nginx light
+## FastAPI application profiling
+### Arbitrary place of code
+### Profiling middleware
