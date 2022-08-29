@@ -1,9 +1,10 @@
-# FastAPI performance optimisation
+---
+title: Middleware
+layout: template
+filename: middleware.md
+---
 
-[FastAPI](https://fastapi.tiangolo.com/) is a great, high performance web framework but far from perfect.
-This document is intended to provide some tips and ideas to get the most out of it 
-
-## Middleware
+# Middleware
 
 FastAPI is based on [Starlette](https://www.starlette.io/) which supports [Middleware](https://fastapi.tiangolo.com/tutorial/middleware/?h=middlew#middleware), a codebase which wraps your application and runs before / after the request processing.
 With this you can resolve various functions ( authentication, session, logging, metric collection, etc) without taking care of these functions in your application.
@@ -53,7 +54,7 @@ Sample application without any middleware.
 | Requests per second   | 686,21         | 689,44         | 674,9          | **683,52**  | -51,59                     |
 | Time per request [ms] | 145,728        | 145,044        | 148,17         | **146,31**  | 34,03                      |
 
-#### Observations:
+#### Observations
 * Significant drop in the througtput of the container while the average latency raised by ~34ms 
 
 ### With two middlewares
@@ -76,7 +77,7 @@ app.add_middleware(CustomHeaderMiddleware)
 | Requests per second   | 481,74         | 495,27         | 485,43         | **487,48**  | -112,56                    |
 | Time per request [ms] | 207,58         | 201,91         | 206,005        | **205,17**  | 52,95                      |
 
-#### Observations:
+#### Observations
 * By adding another middleware there is significant drop again, the container throughtput is less than half than before
 * Average response time is doupled
 
@@ -116,7 +117,7 @@ class STARLETTEProcessTimeMiddleware:
 | Requests per second   | 1078,18        | 1069,59        | 971,28         | **1039,68** | 0,34                       |
 | Time per request [ms] | 92,75          | 93,49          | 102,96         | **96,40**   | -0,15                      |
 
-#### Observations:
+#### Observations
 * Negligable change on performance 
 
 ### With two Starlette middlewares
@@ -128,16 +129,5 @@ In order to see the performance difference if multiple middlewares are added, an
 | Requests per second   | 878,93	        | 941,79	        | 975,64	        | **932,12**  | 	-11,16                    |
 | Time per request [ms] | 113,77         | 	106,18	       | 102,6          | **107,52**  | 	10,21                     |
 
-#### Observations:
+#### Observations
 * Some performance drop but less significant as for BaseHTTPMiddleware
-
-# Next
-## Different json response clases
-## Workers / threads
-## Sync / async API endpoints
-## Connection pool size of external resources
-## Nginx sockets
-## Nginx light
-## FastAPI application profiling
-### Arbitrary place of code
-### Profiling middleware
