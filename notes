@@ -108,3 +108,11 @@ Requests per second:    974.65 [#/sec] (mean)
 Time per request:       102.600 [ms] (mean)
 
 CPU: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz
+https://github.com/pages-themes/tactile
+https://phuston.github.io/patrickandfrantonarethebestninjas/howto
+https://jekyllrb.com/docs/
+
+# Different json response
+# workers / threads
+# sync / async
+# connection pool size
