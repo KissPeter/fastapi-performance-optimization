@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from starlette.datastructures import MutableHeaders
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
+from fastapi.responses import ORJSONResponse, UJSONResponse, JSONResponse
+import json
 
 
 # from https://fastapi.tiangolo.com/tutorial/body/#import-pydantics-basemodel
@@ -17,12 +19,37 @@ class Item(BaseModel):
     tax: Optional[float] = None
 
 
-app = FastAPI()
+resp_class = os.getenv("JSONRESPONSECLASS", "JSONResponse")
+resp_classes = {
+    "ORJSONResponse": ORJSONResponse,
+    "UJSONResponse": UJSONResponse,
+    "JSONResponse": JSONResponse
+}
+if resp_class in ["ORJSONResponse", "UJSONResponse", "JSONResponse"]:
+    print(f"Set {resp_class}")
+else:
+    print(f"Unsupported response class: {resp_class}, falling back to JSONResponse")
+    resp_class = "JSONResponse"
+
+app = FastAPI(debug=False, default_response_class=resp_classes.get(resp_class))
+json_data = json.load(open('./test_json_1MB.json'))
 
 
 @app.post("/items/")
 async def create_item(item: Item):
     return item
+
+
+@app.post("/async/big_json_response/")
+async def big_json_response(item: Item):
+    _ = item
+    return json_data
+
+
+@app.post("/sync/big_json_response/")
+def big_json_response(item: Item):
+    _ = item
+    return json_data
 
 
 # from https://fastapi.tiangolo.com/tutorial/middleware/
@@ -56,7 +83,6 @@ if os.getenv("CUSTOMHEADERMIDDLEWARE"):
 
 
 class STARLETTEProcessTimeMiddleware:
-
     app: ASGIApp
 
     def __init__(

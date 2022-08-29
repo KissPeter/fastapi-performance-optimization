@@ -116,3 +116,4 @@ https://jekyllrb.com/docs/
 # workers / threads
 # sync / async
 # connection pool size
+# keepalive - nginy - gunicorn
