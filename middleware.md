@@ -11,7 +11,7 @@ With this you can resolve various functions ( authentication, session, logging, 
 Unfortunately the most straightforward implementation has a drawback, it has major impact on the application latency and throughput. 
 
 ### Test environment
-* All the tests were run on a machine with i5-2520M
+* All the tests were run on a machine with i5-2520M CPU
 * Application is built into a container:
 ```shell
 docker build -f Dockerfile -t fastapi_test:latest .
