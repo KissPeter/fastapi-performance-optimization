@@ -117,3 +117,4 @@ https://jekyllrb.com/docs/
 # sync / async
 # connection pool size
 # keepalive - nginy - gunicorn
+# test tools - APIFuzzeer, https://schemathesis.readthedocs.io/en/stable/index.html
