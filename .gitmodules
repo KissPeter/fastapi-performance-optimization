@@ -1,3 +1,0 @@
-[submodule "ab-wrapper"]
-	path = test_files/ab_wrapper
-	url = git@github.com:Somrlik/ab-wrapper.git
