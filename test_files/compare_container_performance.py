@@ -1,5 +1,6 @@
 import os
 import subprocess
+import shlex
 
 from ab_wrapper.runner import Runner
 from ab_wrapper.config import Config
@@ -30,6 +31,7 @@ class ABRunner(Runner):
     def __init__(self, config: Config, parser: Parser, collector: Collector):
         super().__init__(config, parser, collector)
         open(self.CSV_DATA_FILE, 'w').close()
+        self.ab_results = {}
 
     def compose_command(self, config_name: str) -> list:
         """
@@ -50,12 +52,15 @@ class ABRunner(Runner):
 
     @staticmethod
     def execute_command_whole_output(cmd: list) -> (str, str, int):
-        process = subprocess.run(cmd, stdout=subprocess.PIPE,
+        process = subprocess.run(shlex.split(" ".join(cmd)), stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
                                  encoding='ascii',
-                                 shell='/bin/bash',
+                                 shell=False,
                                  timeout=100,
-                                 env=os.environ.copy())
+                                 env=os.environ.copy(),
+                                 check=False,
+                                 universal_newlines=True,
+                                 bufsize=0)
         return process.stdout, process.stderr, int(process.returncode)
 
     def run(self):
@@ -68,16 +73,10 @@ class ABRunner(Runner):
                     print('An ap process failed with error code ' + str(error_code) + '!!!')
                     print(stderr)
                 else:
-                    print(stderr)
-                print("Collecting results")
-                self.collector.collect(key, {
-                    'ab_result': self.parser.parse_ab_result(stdout),
-                    'percentages': self.parser.parse_timing_csv(self.CSV_DATA_FILE)
-                })
+                    self.ab_results = self.parser.parse_ab_result(stdout)
 
         except subprocess.TimeoutExpired:
             print("Timeout reached")
-        self.collector.write_report()
 
 
 class TestContainer:
@@ -87,6 +86,7 @@ class TestContainer:
         self.ab_collector = Collector()
         self.port = port
         self.uri = uri if uri.startswith('/') else f"/{uri}"
+        self.ab_raw_results = {}
 
     def _get_config(self):
         """
@@ -99,7 +99,8 @@ class TestContainer:
                 "clients": 100,
                 "count": 10000,
                 "content_type": "'application/json'",
-                "request_body": os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
+                "request_body": os.path.abspath(
+                    os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
                 "keep-alive": False,
                 "url": f"http://127.0.0.1:{self.port}{self.uri}"}
         }
@@ -113,9 +114,13 @@ class TestContainer:
     def run(self):
         _ab_runner = ABRunner(ABConfig(config=self._get_config()), self.ab_parser, self.ab_collector)
         _ab_runner.run()
+        self.ab_raw_results = _ab_runner.ab_results
 
-    def get_collection(self):
-        return self.ab_collector.data
+    def get_results(self):
+        _return = {}
+        for key in ['failed_requests', 'rps', 'time_mean']:
+            _return[key] = self.ab_raw_results.get(key)
+        return _return
 
 
 class CompareContainers:
@@ -153,6 +158,9 @@ test_config = [
 ]
 # p = CompareContainers(test_config)
 # p.run_test()
+# print(ABRunner.execute_command_whole_output(cmd=['ab', '-q ', '-c 100', '-n 10000', "-T 'application/json'", '-p /home/kissp/PycharmProjects/fastapi-middlewares/test_files/requestbody', ' http://127.0.0.1:8000/items/']))
+# exit()
 p = TestContainer()
 p.run()
-print(p.get_collection())
+print("DATA?")
+print(p.get_results())
