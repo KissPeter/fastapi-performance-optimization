@@ -6,55 +6,54 @@ services:
     ports:
       - "6379:6379"
   app:
-    image: fastapi-performance-test:latest
     build:
       context: app_files
       dockerfile: Dockerfile
     restart: always
   app_no_middleware:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     ports:
       - "8000:8000"
   app_one_base_middleware:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     environment:
       PROCESSTIMEMIDDLEWARE: add
     ports:
       - "8001:8000"
   app_two_base_middlewares:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     environment:
       PROCESSTIMEMIDDLEWARE: add
       CUSTOMHEADERMIDDLEWARE: add
     ports:
       - "8002:8000"
   app_one_starlette_middleware:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     environment:
       STARLETTEPROCESSTIMEIDDLEWARE: add
     ports:
       - "8003:8000"
   app_two_starlette_middlewares:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     environment:
       STARLETTEPROCESSTIMEIDDLEWARE: add
       STARLETTECUSTOMHEADERMIDDLEWARE: add
     ports:
       - "8004:8000"
   app_default_json_response_class:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     environment:
       JSONRESPONSECLASS: JSONResponse
     ports:
       - "8005:8000"
   app_ojson_response_class:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     environment:
       JSONRESPONSECLASS: ORJSONResponse
     ports:
       - "8006:8000"
   app_ujson_response_class:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization_app:latest
     environment:
       JSONRESPONSECLASS: UJSONResponse
     ports:

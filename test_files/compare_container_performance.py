@@ -72,7 +72,7 @@ class ABRunner(Runner):
                 command = self.compose_command(key)
                 print('Running command ' + ' '.join(command))
                 stdout, stderr, error_code = self.execute_command_whole_output(command)
-                if error_code is not 0:
+                if error_code != 0:
                     print('An ap process failed with error code ' + str(error_code) + '!!!')
                     print(stderr)
                 else:
