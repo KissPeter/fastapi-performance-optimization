@@ -1,3 +1,4 @@
+import copy
 import os
 import subprocess
 import shlex
@@ -9,7 +10,15 @@ from ab_wrapper.runner import Runner
 from ab_wrapper.config import Config
 from ab_wrapper.parser import Parser
 from ab_wrapper.collector import Collector
-from typing import Dict, List
+from typing import Dict, List, Union
+from dataclasses import dataclass
+
+
+@dataclass
+class TestFields:
+    failed_requests: str = 'failed_requests'
+    rps: str = 'rps'
+    time_mean: str = 'time_mean'
 
 
 class ABConfig(Config):
@@ -129,15 +138,15 @@ class TestContainer:
 
     def get_results(self):
         _return = {}
-        for key in ['failed_requests', 'rps', 'time_mean']:
+        for key in [TestFields.time_mean, TestFields.rps, TestFields.failed_requests]:
             _return[key] = self.ab_raw_results.get(key)
         return _return
 
 
 class CompareContainers:
-    TEST_RUN_PER_CONTAINER = 1
+    TEST_RUN_PER_CONTAINER = 2
 
-    def __init__(self, test_config: Dict):
+    def __init__(self, test_config: List[dict]):
         self.test_config = test_config
         self.test_results = []
 
@@ -169,7 +178,7 @@ class CompareContainers:
         """
         tabulate_data(
             headers=["Node name", "Last activity"],
-            data=self.node_info.get_failing_nodes(),
+            data=,
         )
         :param headers:
         :param data:
@@ -180,6 +189,29 @@ class CompareContainers:
             table_data.append([k, v])
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
+    @staticmethod
+    def get_avg_of_list(elements: List[Union[int, float]]) -> float:
+        if len(elements) > 0:
+            return round(sum(elements) / len(elements), 4)
+        else:
+            return 0.0
+
+    def sum_results(self, results: List[dict]) -> dict:
+        rps = list()
+        time_mean = list()
+        failed_requests = 0
+        result = defaultdict(list)
+        for test in results:
+            failed_requests += test.get(TestFields.failed_requests)
+            rps.append(test.get(TestFields.rps))
+            time_mean.append(test.get(TestFields.time_mean))
+        # assert failed_requests > 0, f"{failed_requests} requests failed"
+        result[TestFields.rps] = rps.copy()
+        result[TestFields.rps].append(self.get_avg_of_list(rps))
+        result[TestFields.time_mean] = time_mean.copy()
+        result[TestFields.time_mean].append(self.get_avg_of_list(time_mean))
+        return result
+
     def sum_container_results(self):
         """
         [{'name': 'base', 'port': 8000, 'baseline': True,
@@ -187,13 +219,28 @@ class CompareContainers:
         {'name': 'app_one_base_middleware', 'port': 8001, 'baseline': False, 'results': [{'failed_requests': 0, 'rps': 917.87, 'time_mean': 108.948}]}, {'name': 'app_two_base_middlewares', 'port': 8002, 'baseline': False, 'results': [{'failed_requests': 0, 'rps': 612.07, 'time_mean': 163.379}]}]
         :return:
         """
-        baseline = {}
-        results = {}
+        tabulate_headers = ["**Test attribute**"]
+        for i in range(self.TEST_RUN_PER_CONTAINER):
+            tabulate_headers.append(f"**Test run {i + 1}**")
+        tabulate_headers.append("**Average**")
+        tabulate_headers_baseline = tabulate_headers.copy()
+        tabulate_headers.append("Difference to baseline [%]")
+        baseline_rps = 0
+        baseline_time_mean = 0
+        results = []
         for container in self.test_results:
             if container.get('baseline'):
-                baseline = self.sum_container_results(container.get('results'))
+                baseline = self.sum_results(container.get('results'))
+                baseline_rps = baseline.get(TestFields.rps)[-1]
+                baseline_time_mean = baseline.get(TestFields.time_mean)[-1]
+                print(f'Baseline:\n{baseline}')
+                self.tabulate_data(headers=tabulate_headers_baseline, data=baseline)
             else:
-                results = self.sum_container_results(container.get('results'))
+                results = self.sum_results(container.get('results'))
+        for result in results:
+            result[TestFields.rps].append(baseline_rps)
+            result[TestFields.time_mean].append(baseline_time_mean)
+            self.tabulate_data(headers=tabulate_headers, data=result)
 
     def test_container(self, port, uri):
         _results = []
@@ -224,6 +271,7 @@ test_config = [
 ]
 p = CompareContainers(test_config)
 p.run_test()
+p.sum_container_results()
 # exit()
 # p = TestContainer()
 # p.run()

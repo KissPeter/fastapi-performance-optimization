@@ -6,9 +6,11 @@ services:
     ports:
       - "6379:6379"
   app:
+    container_name: fastapi-performance-optimization_app
     build:
       context: app_files
       dockerfile: Dockerfile
+    image: fastapi-performance-optimization_app:latest
     restart: always
   app_no_middleware:
     image: fastapi-performance-optimization_app:latest
