@@ -178,15 +178,17 @@ class CompareContainers:
         """
         tabulate_data(
             headers=["Node name", "Last activity"],
-            data=,
+            data={},
         )
-        :param headers:
-        :param data:
-        :return:
         """
         table_data = []
         for k, v in data.items():
-            table_data.append([k, v])
+            row = [k]
+            if isinstance(v, list):
+                row.extend(v)
+            else:
+                row.append(v)
+            table_data.append(row)
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
     @staticmethod
@@ -212,6 +214,10 @@ class CompareContainers:
         result[TestFields.time_mean].append(self.get_avg_of_list(time_mean))
         return result
 
+    @staticmethod
+    def get_diff_percent_to_baseline(res: float, baseline: float, round_tens:int=2):
+        return round(res / baseline * 100, round_tens)
+
     def sum_container_results(self):
         """
         [{'name': 'base', 'port': 8000, 'baseline': True,
@@ -227,19 +233,24 @@ class CompareContainers:
         tabulate_headers.append("Difference to baseline [%]")
         baseline_rps = 0
         baseline_time_mean = 0
-        results = []
+        results = {}
         for container in self.test_results:
+            # print(f"Container name: {container.get('name')}, container port: {container.get('port')}")
             if container.get('baseline'):
                 baseline = self.sum_results(container.get('results'))
                 baseline_rps = baseline.get(TestFields.rps)[-1]
                 baseline_time_mean = baseline.get(TestFields.time_mean)[-1]
-                print(f'Baseline:\n{baseline}')
+                print(f'Baseline:')
                 self.tabulate_data(headers=tabulate_headers_baseline, data=baseline)
             else:
-                results = self.sum_results(container.get('results'))
-        for result in results:
-            result[TestFields.rps].append(baseline_rps)
-            result[TestFields.time_mean].append(baseline_time_mean)
+                results[container.get('port')] = self.sum_results(container.get('results'))
+        for container_port, result in results.items():
+            print(f"Containerport: {container_port}")
+            cont_avg_rps = result[TestFields.rps][-1]
+            result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps))
+            cont_avg_time_mean = result[TestFields.time_mean][-1]
+            result[TestFields.time_mean].append(
+                self.get_diff_percent_to_baseline(cont_avg_time_mean, baseline_time_mean))
             self.tabulate_data(headers=tabulate_headers, data=result)
 
     def test_container(self, port, uri):
