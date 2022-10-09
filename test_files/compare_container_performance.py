@@ -117,7 +117,7 @@ class TestContainer:
             "_defaults": {
                 "time": 5,
                 "clients": 100,
-                "count": 100,  # 10000
+                "count": 10000,
                 "content_type": "'application/json'",
                 "request_body": os.path.abspath(
                     os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
@@ -144,7 +144,7 @@ class TestContainer:
 
 
 class CompareContainers:
-    TEST_RUN_PER_CONTAINER = 2
+
 
     def __init__(self, test_config: List[dict]):
         self.test_config = test_config
@@ -226,7 +226,7 @@ class CompareContainers:
         :return:
         """
         tabulate_headers = ["**Test attribute**"]
-        for i in range(self.TEST_RUN_PER_CONTAINER):
+        for i in range(TEST_RUN_PER_CONTAINER):
             tabulate_headers.append(f"**Test run {i + 1}**")
         tabulate_headers.append("**Average**")
         tabulate_headers_baseline = tabulate_headers.copy()
@@ -255,7 +255,7 @@ class CompareContainers:
 
     def test_container(self, port, uri):
         _results = []
-        for i in range(self.TEST_RUN_PER_CONTAINER):
+        for i in range(TEST_RUN_PER_CONTAINER):
             print(f"{i}. of {port} / {uri}")
             t = TestContainer(port=port, uri=uri)
             t.run()
@@ -263,27 +263,25 @@ class CompareContainers:
         return _results
 
 
-test_config = [
-    {
-        "name": "base",
-        "port": 8000,
-        "baseline": True
-    },
-    {
-        "name": "app_one_base_middleware",
-        "port": 8001,
-        "baseline": False
-    },
-    {
-        "name": "app_two_base_middlewares",
-        "port": 8002,
-        "baseline": False
-    }
-]
-p = CompareContainers(test_config)
-p.run_test()
-p.sum_container_results()
-# exit()
-# p = TestContainer()
-# p.run()
-# print(p.get_results())
+if __name__ == '__main__':
+    TEST_RUN_PER_CONTAINER = 3
+    test_config = [
+        {
+            "name": "base",
+            "port": 8000,
+            "baseline": True
+        },
+        {
+            "name": "app_one_base_middleware",
+            "port": 8001,
+            "baseline": False
+        },
+        {
+            "name": "app_two_base_middlewares",
+            "port": 8002,
+            "baseline": False
+        }
+    ]
+    p = CompareContainers(test_config)
+    p.run_test()
+    p.sum_container_results()
