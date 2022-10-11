@@ -3,7 +3,7 @@ version: '3.1'
 services:
   redis:
     image: redis
-    cpus: "2"
+    cpus: 2
     ports:
       - "6379:6379"
   app:
@@ -12,23 +12,23 @@ services:
       context: app_files
       dockerfile: Dockerfile
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     restart: always
   app_no_middleware:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     ports:
       - "8000:8000"
   app_one_base_middleware:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     environment:
       PROCESSTIMEMIDDLEWARE: add
     ports:
       - "8001:8000"
   app_two_base_middlewares:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     environment:
       PROCESSTIMEMIDDLEWARE: add
       CUSTOMHEADERMIDDLEWARE: add
@@ -36,14 +36,14 @@ services:
       - "8002:8000"
   app_one_starlette_middleware:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     environment:
       STARLETTEPROCESSTIMEIDDLEWARE: add
     ports:
       - "8003:8000"
   app_two_starlette_middlewares:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     environment:
       STARLETTEPROCESSTIMEIDDLEWARE: add
       STARLETTECUSTOMHEADERMIDDLEWARE: add
@@ -51,21 +51,21 @@ services:
       - "8004:8000"
   app_default_json_response_class:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     environment:
       JSONRESPONSECLASS: JSONResponse
     ports:
       - "8005:8000"
   app_ojson_response_class:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     environment:
       JSONRESPONSECLASS: ORJSONResponse
     ports:
       - "8006:8000"
   app_ujson_response_class:
     image: fastapi-performance-optimization:latest
-    cpus: "2"
+    cpus: 2
     environment:
       JSONRESPONSECLASS: UJSONResponse
     ports:

@@ -216,7 +216,10 @@ class CompareContainers:
 
     @staticmethod
     def get_diff_percent_to_baseline(res: float, baseline: float, round_tens:int=2):
-        return round(res / baseline * 100, round_tens)
+        if baseline > res:
+            return round(baseline / res * 100, round_tens)
+        else:
+            return round(res / baseline * 100, round_tens)
 
     def sum_container_results(self):
         """
@@ -264,7 +267,7 @@ class CompareContainers:
 
 
 if __name__ == '__main__':
-    TEST_RUN_PER_CONTAINER = 3
+    TEST_RUN_PER_CONTAINER = 1
     test_config = [
         {
             "name": "base",
@@ -279,6 +282,16 @@ if __name__ == '__main__':
         {
             "name": "app_two_base_middlewares",
             "port": 8002,
+            "baseline": False
+        },
+        {
+            "name": "app_one_starlette_middleware",
+            "port": 8003,
+            "baseline": False
+        },
+        {
+            "name": "app_two_starlette_middlewares",
+            "port": 8004,
             "baseline": False
         }
     ]
