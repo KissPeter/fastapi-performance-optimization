@@ -151,6 +151,8 @@ class CompareContainers:
     def __init__(self, test_config: List[dict]):
         self.test_config = test_config
         self.test_results = []
+        self.final_results = {}
+        self.baseline = {}
 
     def run_test(self):
         for container in self.test_config:
@@ -238,18 +240,17 @@ class CompareContainers:
         tabulate_headers.append("Difference to baseline [%]")
         baseline_rps = 0
         baseline_time_mean = 0
-        results = {}
         for container in self.test_results:
             # print(f"Container name: {container.get('name')}, container port: {container.get('port')}")
             if container.get('baseline'):
-                baseline = self.sum_results(container.get('results'))
-                baseline_rps = baseline.get(TestFields.rps)[-1]
-                baseline_time_mean = baseline.get(TestFields.time_mean)[-1]
+                self.baseline = self.sum_results(container.get('results'))
+                baseline_rps = self.baseline.get(TestFields.rps)[-1]
+                baseline_time_mean = self.baseline.get(TestFields.time_mean)[-1]
                 print(f'Baseline:')
-                self.tabulate_data(headers=tabulate_headers_baseline, data=baseline)
+                self.tabulate_data(headers=tabulate_headers_baseline, data=self.baseline)
             else:
-                results[container.get('port')] = self.sum_results(container.get('results'))
-        for container_port, result in results.items():
+                self.final_results[container.get('port')] = self.sum_results(container.get('results'))
+        for container_port, result in self.final_results.items():
             print(f"Containerport: {container_port}")
             cont_avg_rps = result[TestFields.rps][-1]
             result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps))

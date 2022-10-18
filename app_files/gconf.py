@@ -4,7 +4,7 @@ import os
 
 if os.getenv('SOCKET'):
     bind = 'unix:/tmp/gunicorn.sock'
-else
+else:
     bind = '0.0.0.0:8000'
 
 workers = os.getenv('WORKERS', 2)
