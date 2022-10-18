@@ -70,3 +70,51 @@ services:
       JSONRESPONSECLASS: UJSONResponse
     ports:
       - "8007:8000"
+app_w1_t1:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 1
+      THREADS: 1
+    ports:
+      - "8008:8000"
+app_w2_t1:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 2
+      THREADS: 1
+    ports:
+      - "8009:8000"
+app_w3_t1:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 3
+      THREADS: 1
+    ports:
+      - "8010:8000"
+app_w1_t2:
+  image: fastapi-performance-optimization:latest
+  cpus: 2
+  environment:
+    WORKERS: 1
+    THREADS: 1
+  ports:
+    - "8011:8000"
+app_w2_t2:
+  image: fastapi-performance-optimization:latest
+  cpus: 2
+  environment:
+    WORKERS: 2
+    THREADS: 1
+  ports:
+    - "8012:8000"
+app_w3_t3:
+  image: fastapi-performance-optimization:latest
+  cpus: 2
+  environment:
+    WORKERS: 3
+    THREADS: 1
+  ports:
+    - "8013:8000"
