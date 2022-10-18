@@ -13,6 +13,8 @@ from ab_wrapper.collector import Collector
 from typing import Dict, List, Union
 from dataclasses import dataclass
 
+TEST_RUN_PER_CONTAINER = 3
+
 
 @dataclass
 class TestFields:
@@ -265,36 +267,3 @@ class CompareContainers:
             _results.append(t.get_results())
         return _results
 
-
-if __name__ == '__main__':
-    TEST_RUN_PER_CONTAINER = 1
-    test_config = [
-        {
-            "name": "base",
-            "port": 8000,
-            "baseline": True
-        },
-        {
-            "name": "app_one_base_middleware",
-            "port": 8001,
-            "baseline": False
-        },
-        {
-            "name": "app_two_base_middlewares",
-            "port": 8002,
-            "baseline": False
-        },
-        {
-            "name": "app_one_starlette_middleware",
-            "port": 8003,
-            "baseline": False
-        },
-        {
-            "name": "app_two_starlette_middlewares",
-            "port": 8004,
-            "baseline": False
-        }
-    ]
-    p = CompareContainers(test_config)
-    p.run_test()
-    p.sum_container_results()
