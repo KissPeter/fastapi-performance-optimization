@@ -35,7 +35,6 @@ jobs:
       - name: 'Run Measurements'
         run: |
           docker-compose ps --all
-          sleep 20
           pytest  -x --html=pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/
       - uses: actions/upload-artifact@v2
         with:
