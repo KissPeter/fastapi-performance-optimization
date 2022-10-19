@@ -219,9 +219,9 @@ class CompareContainers:
     @staticmethod
     def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2):
         if baseline > res:
-            return round(baseline / res * 100, round_tens) * -1
+            return round(baseline / res * 100, round_tens) * -1 - 100
         else:
-            return round(res / baseline * 100, round_tens)
+            return round(res / baseline * 100, round_tens) - 100
 
     def sum_container_results(self):
         """
