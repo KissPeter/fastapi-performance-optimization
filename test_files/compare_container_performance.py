@@ -1,17 +1,16 @@
-import copy
 import os
-import subprocess
 import shlex
+import subprocess
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import Dict, List, Union
 
 from tabulate import tabulate
 
-from ab_wrapper.runner import Runner
+from ab_wrapper.collector import Collector
 from ab_wrapper.config import Config
 from ab_wrapper.parser import Parser
-from ab_wrapper.collector import Collector
-from typing import Dict, List, Union
-from dataclasses import dataclass
+from ab_wrapper.runner import Runner
 
 TEST_RUN_PER_CONTAINER = 3
 
@@ -119,7 +118,7 @@ class TestContainer:
             "_defaults": {
                 "time": 5,
                 "clients": 100,
-                "count": 1000,
+                "count": 5000,
                 "content_type": "'application/json'",
                 "request_body": os.path.abspath(
                     os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
@@ -130,7 +129,7 @@ class TestContainer:
     def pre_warm(self):
         config = self._get_config()
         config["clients"] = int(config.get("clients", 100) / 10)
-        config["count"] = int(config.get("clients", 100) / 10)
+        config["count"] = int(config.get("clients", 100) / 5)
         print(f"Pre-warm config: {config}")
         _ab_runner = ABRunner(ABConfig(config=config), Parser(), Collector())
         print("Pre-warm finished")
@@ -150,7 +149,6 @@ class TestContainer:
 
 class CompareContainers:
 
-
     def __init__(self, test_config: List[dict]):
         self.test_config = test_config
         self.test_results = []
@@ -160,12 +158,9 @@ class CompareContainers:
     def run_test(self):
         for container in self.test_config:
             port = container.get('port')
-            name = container.get('name')
             uri = container.get('uri')
-            baseline = container.get('name', False)
             container['results'] = self.test_container(port=port, uri=uri)
             self.test_results.append(container)
-
         print(self.test_results)
 
     def sum_test_results(self, results: list) -> dict:
@@ -196,7 +191,7 @@ class CompareContainers:
             else:
                 row.append(v)
             table_data.append(row)
-        print(tabulate(table_data, headers=headers, tablefmt="grid"))
+        print(tabulate(table_data, headers=headers, tablefmt="github"))
 
     @staticmethod
     def get_avg_of_list(elements: List[Union[int, float]]) -> float:
@@ -222,9 +217,9 @@ class CompareContainers:
         return result
 
     @staticmethod
-    def get_diff_percent_to_baseline(res: float, baseline: float, round_tens:int=2):
+    def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2):
         if baseline > res:
-            return round(baseline / res * 100, round_tens)
+            return round(baseline / res * 100, round_tens) * -1
         else:
             return round(res / baseline * 100, round_tens)
 
@@ -254,7 +249,7 @@ class CompareContainers:
             else:
                 self.final_results[container.get('port')] = self.sum_results(container.get('results'))
         for container_port, result in self.final_results.items():
-            print(f"Containerport: {container_port}")
+            print(f"Container port: {container_port}")
             cont_avg_rps = result[TestFields.rps][-1]
             result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps))
             cont_avg_time_mean = result[TestFields.time_mean][-1]
@@ -267,7 +262,8 @@ class CompareContainers:
         for i in range(TEST_RUN_PER_CONTAINER):
             print(f"{i}. of {port} / {uri}")
             t = TestContainer(port=port, uri=uri)
+            if i == 0:
+                t.pre_warm()
             t.run()
             _results.append(t.get_results())
         return _results
-
