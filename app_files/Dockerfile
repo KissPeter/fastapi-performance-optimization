@@ -1,6 +1,6 @@
 FROM python:3.9-bullseye
 RUN pip3 install gunicorn==20.1.0 fastapi==0.75.2 uvicorn==0.17.6 orjson==3.6.8
-RUN apt update && apt install -y nginx-light
+RUN DEBIAN_FRONTEND=noninteractive apt update && apt install -y --no-install-recommends nginx-light
 WORKDIR /src
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY app.py .

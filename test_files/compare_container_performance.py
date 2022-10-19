@@ -129,8 +129,10 @@ class TestContainer:
 
     def pre_warm(self):
         config = self._get_config()
-        config["count"] = config.get("clients", 100)
+        config["count"] = int(config.get("clients", 100) / 10)
+        print(f"Pre-warm config: {config}")
         _ab_runner = ABRunner(ABConfig(config=config), Parser(), Collector())
+        print("Pre-warm finished")
         _ab_runner.run()
 
     def run(self):
