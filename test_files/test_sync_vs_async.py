@@ -8,13 +8,15 @@ def test_json_sync_vs_async():
             "name": "app_sync",
             "port": 8000,
             "baseline": True,
-            "uri": "/sync/big_json_response/"
+            "uri": "/sync/big_json_response/",
+            "request_count": 500
         },
         {
             "name": "app_async",
             "port": 8000,
             "baseline": False,
-            "uri": "/async/big_json_response/"
+            "uri": "/async/big_json_response/",
+            "request_count": 500
         }
     ]
 
