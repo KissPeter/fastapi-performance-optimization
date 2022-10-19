@@ -23,7 +23,7 @@ jobs:
         uses: isbang/compose-action@v1.3.2
         with:
           compose-file: "./docker-compose.yml"
-          up-flags: "--build --detach"
+          up-flags: "--build --force-recreate"
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -34,7 +34,7 @@ jobs:
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
       - name: 'Run Measurements'
         run: |
-          docker-compose ps --status running
+          docker-compose ps --all
           sleep 20
           pytest  -x --html=pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/
       - uses: actions/upload-artifact@v2
