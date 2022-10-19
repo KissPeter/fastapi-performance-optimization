@@ -35,8 +35,13 @@ app = FastAPI(debug=False, default_response_class=resp_classes.get(resp_class))
 json_data = json.load(open('./test_json_1MB.json'))
 
 
-@app.post("/items/")
+@app.post("/async/items/")
 async def create_item(item: Item):
+    return item
+
+
+@app.post("/sync/items/")
+def create_item(item: Item):
     return item
 
 

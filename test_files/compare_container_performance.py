@@ -94,7 +94,7 @@ class ABRunner(Runner):
 
 
 class TestContainer:
-    DEFAULT_URI = "/items/"
+    DEFAULT_URI = "/sync/items/"
 
     def __init__(self, port: int = 8000, uri: str = DEFAULT_URI, request_count: int = 5000):
         self.ab_parser = Parser()
@@ -186,10 +186,14 @@ class CompareContainers:
             data={},
         )
         """
+        header_overwrite = {
+            TestFields.rps: "Requests per second",
+            TestFields.time_mean: "Time per request [ms]"
+        }
         print(data)
         table_data = []
         for k, v in data.items():
-            row = [k]
+            row = [header_overwrite.get(k, k)]
             if isinstance(v, list):
                 row.extend(v)
             else:
