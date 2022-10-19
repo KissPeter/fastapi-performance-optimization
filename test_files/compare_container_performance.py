@@ -213,17 +213,18 @@ class CompareContainers:
             time_mean.append(test.get(TestFields.time_mean))
         # assert failed_requests > 0, f"{failed_requests} requests failed"
         result[TestFields.rps] = rps.copy()
-        result[TestFields.rps].append(f"{self.get_avg_of_list(rps)} %")
+        result[TestFields.rps].append(self.get_avg_of_list(rps))
         result[TestFields.time_mean] = time_mean.copy()
         result[TestFields.time_mean].append(self.get_avg_of_list(time_mean))
         return result
 
     @staticmethod
     def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2):
+        print(f"baseline: {baseline}, res: {res}")
         if baseline > res:
-            return round(baseline / res * 100, round_tens) * -1 - 100
+            return f"{round(baseline / res * 100, round_tens) * -1 - 100} %"
         else:
-            return round(res / baseline * 100, round_tens) - 100
+            return f"{round(res / baseline * 100, round_tens) - 100} %"
 
     def sum_container_results(self):
         """
@@ -244,7 +245,7 @@ class CompareContainers:
             # print(f"Container name: {container.get('name')}, container port: {container.get('port')}")
             if container.get('baseline'):
                 self.baseline = self.sum_results(container.get('results'))
-                baseline_rps = float(self.baseline.get(TestFields.rps)[-1].replace("%", "").strip())
+                baseline_rps = self.baseline.get(TestFields.rps)[-1]
                 baseline_time_mean = self.baseline.get(TestFields.time_mean)[-1]
                 print(f'Baseline:')
                 self.tabulate_data(headers=tabulate_headers_baseline, data=self.baseline)
