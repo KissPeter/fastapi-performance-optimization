@@ -95,10 +95,11 @@ class ABRunner(Runner):
 class TestContainer:
     DEFAULT_URI = "/items/"
 
-    def __init__(self, port: int = 8000, uri: str = DEFAULT_URI):
+    def __init__(self, port: int = 8000, uri: str = DEFAULT_URI, request_count: int = 5000):
         self.ab_parser = Parser()
         self.ab_collector = Collector()
         self.port = port
+        self.request_count = request_count
         self.uri = self._identify_uri(uri=uri)
         self.ab_raw_results = {}
 
@@ -117,8 +118,8 @@ class TestContainer:
         return {
             "_defaults": {
                 "time": 5,
-                "clients": 100,
-                "count": 3000,
+                "clients": max(self.request_count / 100, 100),
+                "count": self.request_count,
                 "content_type": "'application/json'",
                 "request_body": os.path.abspath(
                     os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
@@ -159,7 +160,8 @@ class CompareContainers:
         for container in self.test_config:
             port = container.get('port')
             uri = container.get('uri')
-            container['results'] = self.test_container(port=port, uri=uri)
+            request_count = container.get('request_count', 5000)
+            container['results'] = self.test_container(port=port, uri=uri, request_count=request_count)
             self.test_results.append(container)
         print(self.test_results)
 
@@ -211,7 +213,7 @@ class CompareContainers:
             time_mean.append(test.get(TestFields.time_mean))
         # assert failed_requests > 0, f"{failed_requests} requests failed"
         result[TestFields.rps] = rps.copy()
-        result[TestFields.rps].append(self.get_avg_of_list(rps))
+        result[TestFields.rps].append(f"{self.get_avg_of_list(rps)} %")
         result[TestFields.time_mean] = time_mean.copy()
         result[TestFields.time_mean].append(self.get_avg_of_list(time_mean))
         return result
@@ -235,14 +237,14 @@ class CompareContainers:
             tabulate_headers.append(f"**Test run {i + 1}**")
         tabulate_headers.append("**Average**")
         tabulate_headers_baseline = tabulate_headers.copy()
-        tabulate_headers.append("Difference to baseline [%]")
+        tabulate_headers.append("Difference to baseline")
         baseline_rps = 0
         baseline_time_mean = 0
         for container in self.test_results:
             # print(f"Container name: {container.get('name')}, container port: {container.get('port')}")
             if container.get('baseline'):
                 self.baseline = self.sum_results(container.get('results'))
-                baseline_rps = self.baseline.get(TestFields.rps)[-1]
+                baseline_rps = int(self.baseline.get(TestFields.rps)[-1].replace("%", "").strip())
                 baseline_time_mean = self.baseline.get(TestFields.time_mean)[-1]
                 print(f'Baseline:')
                 self.tabulate_data(headers=tabulate_headers_baseline, data=self.baseline)
@@ -257,11 +259,11 @@ class CompareContainers:
                 self.get_diff_percent_to_baseline(cont_avg_time_mean, baseline_time_mean))
             self.tabulate_data(headers=tabulate_headers, data=result)
 
-    def test_container(self, port, uri):
+    def test_container(self, port, uri, request_count):
         _results = []
         for i in range(TEST_RUN_PER_CONTAINER):
             print(f"{i}. of {port} / {uri}")
-            t = TestContainer(port=port, uri=uri)
+            t = TestContainer(port=port, uri=uri, request_count=request_count)
             if i == 0:
                 t.pre_warm()
             t.run()
