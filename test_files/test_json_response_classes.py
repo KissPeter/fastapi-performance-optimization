@@ -1,7 +1,7 @@
 from compare_container_performance import CompareContainers
 
 
-def test_json_response_classes_sync_endpoint():
+def test_json_response_classes():
     test_config = [
         {
             "name": "app_default_json_response_class",
