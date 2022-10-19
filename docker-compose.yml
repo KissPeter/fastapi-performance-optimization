@@ -3,59 +3,134 @@ version: '3.1'
 services:
   redis:
     image: redis
+    cpus: 2
     ports:
       - "6379:6379"
   app:
-    image: fastapi-performance-test:latest
+    container_name: fastapi-performance-optimization
     build:
       context: app_files
       dockerfile: Dockerfile
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     restart: always
   app_no_middleware:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     ports:
       - "8000:8000"
   app_one_base_middleware:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     environment:
       PROCESSTIMEMIDDLEWARE: add
     ports:
       - "8001:8000"
   app_two_base_middlewares:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     environment:
       PROCESSTIMEMIDDLEWARE: add
       CUSTOMHEADERMIDDLEWARE: add
     ports:
       - "8002:8000"
   app_one_starlette_middleware:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     environment:
       STARLETTEPROCESSTIMEIDDLEWARE: add
     ports:
       - "8003:8000"
   app_two_starlette_middlewares:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     environment:
       STARLETTEPROCESSTIMEIDDLEWARE: add
       STARLETTECUSTOMHEADERMIDDLEWARE: add
     ports:
       - "8004:8000"
   app_default_json_response_class:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     environment:
       JSONRESPONSECLASS: JSONResponse
     ports:
       - "8005:8000"
   app_ojson_response_class:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     environment:
       JSONRESPONSECLASS: ORJSONResponse
     ports:
       - "8006:8000"
   app_ujson_response_class:
-    image: fastapi-performance-test:latest
+    image: fastapi-performance-optimization:latest
+    cpus: 2
     environment:
       JSONRESPONSECLASS: UJSONResponse
     ports:
       - "8007:8000"
+  app_w1_t1:
+      image: fastapi-performance-optimization:latest
+      cpus: 2
+      environment:
+        WORKERS: 1
+        THREADS: 1
+      ports:
+        - "8008:8000"
+  app_w2_t1:
+      image: fastapi-performance-optimization:latest
+      cpus: 2
+      environment:
+        WORKERS: 2
+        THREADS: 1
+      ports:
+        - "8009:8000"
+  app_w3_t1:
+      image: fastapi-performance-optimization:latest
+      cpus: 2
+      environment:
+        WORKERS: 3
+        THREADS: 1
+      ports:
+        - "8010:8000"
+  app_w1_t2:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 1
+      THREADS: 1
+    ports:
+      - "8011:8000"
+  app_w2_t2:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 2
+      THREADS: 1
+    ports:
+      - "8012:8000"
+  app_w3_t3:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 3
+      THREADS: 1
+    ports:
+      - "8013:8000"
+  app_nginx_port:
+    image: fastapi-performance-optimization:latest
+    cpus: 4
+    environment:
+      WORKERS: 4
+      THREADS: 1
+    ports:
+      - "8014:8080"
+  app_nginx_socket:
+    image: fastapi-performance-optimization:latest
+    cpus: 4
+    environment:
+      WORKERS: 4
+      THREADS: 1
+    ports:
+      - "8015:8081"
