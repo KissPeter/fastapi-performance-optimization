@@ -223,7 +223,7 @@ class CompareContainers:
     @staticmethod
     def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2, add_percent: bool = False):
         print(f"baseline: {baseline}, res: {res}")
-        _return = round(res / baseline * 100, round_tens) - 100
+        _return = round(res / baseline * 100 - 100, round_tens)
         if add_percent:
             return f"{_return} %"
         return _return
