@@ -34,6 +34,8 @@ jobs:
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
       - name: 'Run Measurements'
         run: |
+          docker-compose ps --status running
+          sleep 20
           pytest  -x --html=pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/
       - uses: actions/upload-artifact@v2
         with:
