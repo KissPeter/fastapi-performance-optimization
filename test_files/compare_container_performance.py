@@ -130,7 +130,7 @@ class TestContainer:
     def pre_warm(self):
         config = self._get_config()
         config["_defaults"]["clients"] = int(config["_defaults"].get("clients", 100) / 10)
-        config["_defaults"]["count"] = int(config["_defaults"].get("clients", 100) / 5)
+        config["_defaults"]["count"] = int(config["_defaults"].get("clients", 100))
         print(f"Pre-warm config: {config}")
         _ab_runner = ABRunner(ABConfig(config=config), Parser(), Collector())
         print("Pre-warm finished")
@@ -244,7 +244,7 @@ class CompareContainers:
             # print(f"Container name: {container.get('name')}, container port: {container.get('port')}")
             if container.get('baseline'):
                 self.baseline = self.sum_results(container.get('results'))
-                baseline_rps = int(self.baseline.get(TestFields.rps)[-1].replace("%", "").strip())
+                baseline_rps = float(self.baseline.get(TestFields.rps)[-1].replace("%", "").strip())
                 baseline_time_mean = self.baseline.get(TestFields.time_mean)[-1]
                 print(f'Baseline:')
                 self.tabulate_data(headers=tabulate_headers_baseline, data=self.baseline)
