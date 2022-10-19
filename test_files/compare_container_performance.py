@@ -55,6 +55,7 @@ class ABRunner(Runner):
         cmd = ['ab']
         options = self.config[config_name]
         cmd.append('-q ')
+        cmd.append('-s 60 ')
         cmd.append('-c ' + str(options['clients']))
         cmd.append('-n ' + str(options['count']))
         cmd.append('-T ' + str(options['content_type']))
@@ -185,6 +186,7 @@ class CompareContainers:
             data={},
         )
         """
+        print(data)
         table_data = []
         for k, v in data.items():
             row = [k]
@@ -219,12 +221,12 @@ class CompareContainers:
         return result
 
     @staticmethod
-    def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2):
+    def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2, add_percent: bool = False):
         print(f"baseline: {baseline}, res: {res}")
-        if baseline > res:
-            return f"{round(baseline / res * 100, round_tens) * -1 - 100} %"
-        else:
-            return f"{round(res / baseline * 100, round_tens) - 100} %"
+        _return = round(res / baseline * 100, round_tens) - 100
+        if add_percent:
+            return f"{_return} %"
+        return _return
 
     def sum_container_results(self):
         """
@@ -254,10 +256,9 @@ class CompareContainers:
         for container_port, result in self.final_results.items():
             print(f"Container port: {container_port}")
             cont_avg_rps = result[TestFields.rps][-1]
-            result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps))
+            result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps, add_percent=True))
             cont_avg_time_mean = result[TestFields.time_mean][-1]
-            result[TestFields.time_mean].append(
-                self.get_diff_percent_to_baseline(cont_avg_time_mean, baseline_time_mean))
+            result[TestFields.time_mean].append(f"{round(baseline_time_mean - cont_avg_time_mean, 2)} ms")
             self.tabulate_data(headers=tabulate_headers, data=result)
 
     def test_container(self, port, uri, request_count):
