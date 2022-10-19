@@ -25,7 +25,7 @@ This document is intended to provide some tips and ideas to get the most out of 
 ### Profiling middleware
 
 ### Test environment
-* All the tests were run on a machine with i5-2520M CPU
+* All the tests were run on  [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml)
 * Application is built into a container:
 ```shell
 docker-compose build

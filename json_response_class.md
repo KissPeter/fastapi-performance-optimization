@@ -13,7 +13,6 @@ Both have their [benchmark](https://github.com/ultrajson/ultrajson#benchmarks) /
 
 ## Test environment
 * The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#Test environment) test set was used
-* Except for these test results are coming from [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml) job
 * 1MB test json has been generated with strings, floats, ints, arrays, dicts, booleans and dates in it using standard Python json
 
 
