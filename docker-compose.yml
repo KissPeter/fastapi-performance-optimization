@@ -120,7 +120,7 @@ services:
       - "8013:8000"
   app_nginx_port:
     image: fastapi-performance-optimization:latest
-    cpus: 4
+    cpus: 2
     environment:
       WORKERS: 4
       THREADS: 1
@@ -128,7 +128,7 @@ services:
       - "8014:8080"
   app_nginx_socket:
     image: fastapi-performance-optimization:latest
-    cpus: 4
+    cpus: 2
     environment:
       WORKERS: 4
       THREADS: 1
