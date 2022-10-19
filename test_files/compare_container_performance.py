@@ -118,7 +118,7 @@ class TestContainer:
             "_defaults": {
                 "time": 5,
                 "clients": 100,
-                "count": 5000,
+                "count": 3000,
                 "content_type": "'application/json'",
                 "request_body": os.path.abspath(
                     os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
