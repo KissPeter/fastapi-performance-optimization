@@ -25,7 +25,7 @@ def test_workers_and_threads():
         {
             "name": "app_w1_t2",
             "port": 8011,
-            "baseline": True
+            "baseline": False,
             "request_count": 500
         },
         {
