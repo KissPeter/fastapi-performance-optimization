@@ -1,6 +1,7 @@
+import pytest
 from compare_container_performance import CompareContainers
 
-
+@pytest.mark.json_classes
 def test_json_response_classes():
     test_config = [
         {

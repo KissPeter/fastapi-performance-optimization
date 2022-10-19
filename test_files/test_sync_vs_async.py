@@ -1,6 +1,7 @@
+import pytest
 from compare_container_performance import CompareContainers
 
-
+@pytest.mark.sync_async
 def test_json_sync_vs_async():
     test_config = [
         {

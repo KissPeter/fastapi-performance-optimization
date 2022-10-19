@@ -1,6 +1,6 @@
-
+import pytest
 from compare_container_performance import CompareContainers
-
+@pytest.mark.middlewares
 def test_middlewares():
     test_config = [
         {

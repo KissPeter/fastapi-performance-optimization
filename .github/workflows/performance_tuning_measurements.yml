@@ -32,11 +32,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
-      - name: 'Run Measurements'
-        run: |
+          mkdir -p reports
           docker-compose ps --all
-          pytest  -x --html=pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/
+      - name: 'Measure middlewares'
+        timeout-minutes: 30
+        run: |
+          pytest  -x --html=./reports/middlewares_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m middlewares
+      - name: 'Measure json response classes'
+        timeout-minutes: 30
+        run: |
+          pytest  -x --html=./reports/json_classes_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m json_classes
+      - name: 'Measure sync vs async endpoints'
+        timeout-minutes: 30
+        run: |
+          pytest  -x --html=./reports/sync_async_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m sync_async
       - uses: actions/upload-artifact@v2
         with:
           name: Pytest-Report-${{ matrix.python-version }}
-          path: pytest.html
+          path: ./reports

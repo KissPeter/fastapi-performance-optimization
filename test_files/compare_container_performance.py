@@ -119,7 +119,7 @@ class TestContainer:
             "_defaults": {
                 "time": 5,
                 "clients": 100,
-                "count": 10000,
+                "count": 1000,
                 "content_type": "'application/json'",
                 "request_body": os.path.abspath(
                     os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
@@ -129,6 +129,7 @@ class TestContainer:
 
     def pre_warm(self):
         config = self._get_config()
+        config["clients"] = int(config.get("clients", 100) / 10)
         config["count"] = int(config.get("clients", 100) / 10)
         print(f"Pre-warm config: {config}")
         _ab_runner = ABRunner(ABConfig(config=config), Parser(), Collector())
