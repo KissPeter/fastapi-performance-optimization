@@ -43,6 +43,6 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 | Requests per second   |             8.45 |             7.93 |             8.04 |          8.14 | 8.63 %                   |
 | Time per request [ms] |         11839.4  |         12618.1  |         12433.8  |      12297.1  | -1053.34 ms               |
  
-## Verdict
+# Verdict
 You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
 Having 6-8% gain by simply chaning to other response class seems promissing isn't it? 

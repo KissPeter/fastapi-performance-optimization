@@ -122,3 +122,6 @@ In order to see the performance difference if multiple middlewares are added, an
 
 ### Observations
 * Still no significant difference, much better than BaseHTTPMiddleware 
+
+# Verdict
+Numbers clearly indicate the significant performance difference between BaseHTTPMiddleware and Starlette middleware. Avoid BaseHTTPMiddleware if you can
