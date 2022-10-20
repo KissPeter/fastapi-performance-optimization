@@ -75,22 +75,13 @@ class Runner:
         return h, m, s
 
     def run(self):
-        # print('This process will take about %02d:%02d:%02d.' % (self.make_time_estimate()))
-        #
-        # sum(int(v['time']) for v in self.config.values())
-
-        # progress_watcher: ProgressWatcher = None
         try:
             for key, config in self.config.items():
                 command = self.compose_command(key)
-                print('Running command ' + ' '.join(command))
-                # progress_watcher: ProgressWatcher = ProgressWatcher(config['time'])
-                # progress_watcher.start()
+                # print('Running command ' + ' '.join(command))
 
                 stdout, stderr, error_code = self.execute_command_whole_output(command)
 
-                # if progress_watcher.stop():
-                #     break
                 if error_code is not 0:
                     print('An ap process failed with error code ' + str(error_code) + '!!!')
                     print(stderr)
@@ -105,10 +96,8 @@ class Runner:
         except subprocess.TimeoutExpired:
             print("Timeout reached")
         except KeyboardInterrupt:
-            # progress_watcher.stop()
             print("Cancelling run!")
 
-        #os.unlink(self.CSV_DATA_FILE)
         self.collector.write_report()
 
 

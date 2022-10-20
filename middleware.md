@@ -11,7 +11,7 @@ With this you can resolve various functions ( authentication, session, logging, 
 Unfortunately the most straightforward implementation has a drawback, it has major impact on the application latency and throughput. 
 
 ## Test environment
-* The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#Test environment) test set was used
+* The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
 
 ## Baseline measurement
 
