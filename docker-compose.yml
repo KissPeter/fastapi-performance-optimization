@@ -99,25 +99,49 @@ services:
     cpus: 2
     environment:
       WORKERS: 1
-      THREADS: 1
+      THREADS: 2
     ports:
       - "8011:8000"
+  app_w1_t3:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 1
+      THREADS: 3
+    ports:
+      - "8012:8000"
   app_w2_t2:
     image: fastapi-performance-optimization:latest
     cpus: 2
     environment:
       WORKERS: 2
-      THREADS: 1
+      THREADS: 2
     ports:
-      - "8012:8000"
+      - "8013:8000"
+  app_w2_t3:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 2
+      THREADS: 3
+    ports:
+      - "8014:8000"
+  app_w3_t2:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 3
+      THREADS: 2
+    ports:
+      - "8015:8000"
   app_w3_t3:
     image: fastapi-performance-optimization:latest
     cpus: 2
     environment:
       WORKERS: 3
-      THREADS: 1
+      THREADS: 3
     ports:
-      - "8013:8000"
+      - "8016:8000"
   app_nginx_port:
     image: fastapi-performance-optimization:latest
     cpus: 2
@@ -125,7 +149,7 @@ services:
       WORKERS: 4
       THREADS: 1
     ports:
-      - "8014:8080"
+      - "8017:8080"
   app_nginx_socket:
     image: fastapi-performance-optimization:latest
     cpus: 2
@@ -133,4 +157,4 @@ services:
       WORKERS: 4
       THREADS: 1
     ports:
-      - "8015:8081"
+      - "8018:8081"
