@@ -67,16 +67,31 @@ test_config = [
         "name": "app_w4_t4",
         "port": 8020,
         "baseline": False,
+    },
+    {
+        "name": "app_w1_t4",
+        "port": 8021,
+        "baseline": False
+    },
+    {
+        "name": "app_w2_t4",
+        "port": 8022,
+        "baseline": False,
+    },
+    {
+        "name": "app_w3_t4",
+        "port": 8023,
+        "baseline": False,
     }
 ]
 
 
 @pytest.mark.workers_and_threads
 def test_workers_and_threads_sync():
-
     p = CompareContainers(test_config)
     p.run_test()
     p.sum_container_results()
+
 
 @pytest.mark.workers_and_threads
 def test_workers_and_threads_async():
@@ -84,6 +99,33 @@ def test_workers_and_threads_async():
     for container in test_config.copy():
         container['uri'] = '/async/items'
         async_test_config.append(container)
+    print(async_test_config)
+    p = CompareContainers(async_test_config)
+    p.run_test()
+    p.sum_container_results()
+
+
+@pytest.mark.workers_and_threads
+def test_workers_and_threads_sync_big_json_response():
+    async_test_config = []
+    for container in test_config.copy():
+        container['uri'] = '/sync/big_json_response'
+        container['request_count'] = 500
+        async_test_config.append(container)
+    print(async_test_config)
+    p = CompareContainers(async_test_config)
+    p.run_test()
+    p.sum_container_results()
+
+
+@pytest.mark.workers_and_threads
+def test_workers_and_threads_async_big_json_response():
+    async_test_config = []
+    for container in test_config.copy():
+        container['uri'] = '/async/big_json_response'
+        container['request_count'] = 500
+        async_test_config.append(container)
+    print(async_test_config)
     p = CompareContainers(async_test_config)
     p.run_test()
     p.sum_container_results()

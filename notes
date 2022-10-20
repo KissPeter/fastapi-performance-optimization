@@ -120,3 +120,26 @@ https://jekyllrb.com/docs/
 
 https://github.com/benoitc/gunicorn/blob/master/examples/example_config.py
 # test tools - APIFuzzeer, https://schemathesis.readthedocs.io/en/stable/index.html
+
+Sync:
+
+   W1    W2    W3    W4
+T1 1230, 1981, 1707, 1686
+T2 1254, 1981, 1788, 1684
+T3 1251, 1995, 1806, 1678
+T4                 , 1644
+
+    T1    T2    T3
+W1 1230, 1254, 1251
+W2 1981, 1981, 1995
+W3 1707, 1788, 1806
+W4 1686, 1686, 1678
+
+
+Async
+   W1    W2    W3    W4
+T1 2029, 2061, 2105, 2792
+T2 1503, 3201, 2348, 2021
+T3 1935, 3292, 2409, 2919
+T4                 , 2113
+

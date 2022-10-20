@@ -248,13 +248,13 @@ class CompareContainers:
                 self.baseline = self.sum_results(container.get('results'))
                 baseline_rps = self.baseline.get(TestFields.rps)[-1]
                 baseline_time_mean = self.baseline.get(TestFields.time_mean)[-1]
-                print(f'Baseline:')
+                print(f"\nBaseline ({container.get('name')}_{container.get('port')}):\n")
                 self.tabulate_data(headers=tabulate_headers_baseline, data=self.baseline)
             else:
                 self.final_results[f"{container.get('name')}_{container.get('port')}"] = \
                     self.sum_results(container.get('results'))
         for container_id, result in self.final_results.items():
-            print(f"\nContainer : {container_id}\n")
+            print(f"\nContainer {container_id}:\n")
             cont_avg_rps = result[TestFields.rps][-1]
             result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps, add_percent=True))
             cont_avg_time_mean = result[TestFields.time_mean][-1]
