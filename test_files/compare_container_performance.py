@@ -132,9 +132,7 @@ class TestContainer:
         config = self._get_config()
         config["_defaults"]["clients"] = int(config["_defaults"].get("clients", 100) / 10)
         config["_defaults"]["count"] = int(config["_defaults"].get("clients", 100))
-        print(f"Pre-warm config: {config}")
         _ab_runner = ABRunner(ABConfig(config=config), Parser(), Collector())
-        print("Pre-warm finished")
         _ab_runner.run()
 
     def run(self):
@@ -190,7 +188,6 @@ class CompareContainers:
             TestFields.rps: "Requests per second",
             TestFields.time_mean: "Time per request [ms]"
         }
-        print(data)
         table_data = []
         for k, v in data.items():
             row = [header_overwrite.get(k, k)]
@@ -226,7 +223,6 @@ class CompareContainers:
 
     @staticmethod
     def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2, add_percent: bool = False):
-        print(f"baseline: {baseline}, res: {res}")
         _return = round(res / baseline * 100 - 100, round_tens)
         if add_percent:
             return f"{_return} %"
