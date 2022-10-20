@@ -44,6 +44,7 @@ docker-compose build
     * ab config: `ab -q -c 100 -n 1000 -T 'application/json' ...`
 * All tests were run 3 times and average has been calculated
 * Before test run the container has been pre-warmed with small amount of queries, result didn't count in the measurement
+* Versions used for these measurements
 * Interested in re-running the tests in your environment?
 ```shell
   git clone git@github.com:KissPeter/fastapi-performance-optimization.git

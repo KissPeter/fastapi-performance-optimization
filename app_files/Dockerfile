@@ -1,5 +1,5 @@
-FROM python:3.9-bullseye
-RUN pip3 install gunicorn==20.1.0 fastapi==0.75.2 uvicorn==0.17.6 orjson==3.6.8
+FROM python:3.10.8-bullseye
+RUN pip3 install starlette==0.20.4 gunicorn==20.1.0 fastapi==0.85.1 uvicorn==0.19.0 orjson==3.8.0 ujson==5.5.0
 RUN DEBIAN_FRONTEND=noninteractive apt update && apt install -y --no-install-recommends nginx-light
 WORKDIR /src
 COPY nginx.conf /etc/nginx/nginx.conf
