@@ -23,26 +23,38 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |              7.4 |             7.41 |             7.67 |        7.4933 |
-| Time per request [ms] |          13521.3 |         13487.2  |         13042.8  |    13350.4    |
+| Requests per second   |              9.5 |             9.11 |             9.81 |        9.4733 |
+| Time per request [ms] |          10521.5 |         10979.8  |         10191.4  |    10564.2    |
 
 
 ## Orjson 
->Note: There are some [specialities](https://github.com/ijl/orjson#str) requre attantion
+>Note: There are some [specialities](https://github.com/ijl/orjson#str) requre attention
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |             7.87 |             7.98 |             8.11 |        7.9867 | 6.58 %                   |
-| Time per request [ms] |         12706.9  |         12523.6  |         12334.4  |    12521.6    | -828.8 ms                 |
+| Requests per second   |             9.61 |            10.07 |             9.46 |        9.7133 | 2.53 %                   |
+| Time per request [ms] |         10401    |          9928.04 |         10572.4  |    10300.5    | 263.75 ms                |
  
 ## UltraJSON 
 >Note: Just like orjson this has its own [speciality](https://github.com/ultrajson/ultrajson#using-an-external-or-system-copy-of-the-double-conversion-library)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |             8.45 |             7.93 |             8.04 |          8.14 | 8.63 %                   |
-| Time per request [ms] |         11839.4  |         12618.1  |         12433.8  |      12297.1  | -1053.34 ms               |
+| Requests per second   |             9.42 |             9.95 |             9.19 |          9.52 | 0.49 %                   |
+| Time per request [ms] |         10620.7  |         10047.3  |         10878    |      10515.3  | 48.9 ms                  |
  
 # Verdict
 You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
-Having 6-8% gain by simply chaning to other response class seems promissing isn't it? 
+Having some gain by simply changing to other response class seems promising isn't it? 
+Please note that you can have different JSON response class for each API endpoint as shown in the FastAPI [docs](https://fastapi.tiangolo.com/advanced/custom-response/#ujsonresponse):
+```python
+from fastapi import FastAPI
+from fastapi.responses import UJSONResponse
+
+app = FastAPI()
+
+
+@app.get("/items/", response_class=UJSONResponse)
+async def read_items():
+    return [{"item_id": "Foo"}]
+```

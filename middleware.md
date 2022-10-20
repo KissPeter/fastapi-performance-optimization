@@ -20,9 +20,8 @@ Sample application without any middleware.
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1358.26  |         1522.84  |          1529.98 |      1470.36  |
-| Time per request [ms] |           73.624 |           65.667 |            65.36 |        68.217 |
-
+| Requests per second   |         1885.57  |         1924.34  |         1953.53  |      1921.15  |
+| Time per request [ms] |           53.034 |           51.966 |           51.189 |        52.063 |
 
 ## With one middleware
 
@@ -41,12 +40,11 @@ Sample application without any middleware.
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1082.77  |         1096.65  |         1102.55  |     1093.99   | -25.6 %                  |
-| Time per request [ms] |           92.355 |           91.187 |           90.699 |       91.4137 | -23.2 ms                 |
-
+| Requests per second   |         1346.22  |         1448.14  |         1423.86  |     1406.07   | -26.81 %                 |
+| Time per request [ms] |           74.282 |           69.054 |           70.232 |       71.1893 | -19.13 ms                |
 
 ### Observations
-* Significant drop in the througtput of the container while the average latency raised by ~23ms 
+* Significant drop in the througtput of the container while the average latency raised by ~19ms 
 
 ## With two middlewares
 
@@ -65,8 +63,8 @@ app.add_middleware(CustomHeaderMiddleware)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |          887.37  |           864.75 |          880.64  |       877.587 | -40.31 %                 |
-| Time per request [ms] |          112.693 |           115.64 |          113.554 |       113.962 | -45.75 ms                |
+| Requests per second   |         1128.21  |         1121.99  |         1113.53  |      1121.24  | -41.64 %                 |
+| Time per request [ms] |           88.636 |           89.127 |           89.804 |        89.189 | -37.13 ms                |
 
 ### Observations
 * By adding another middleware there is significant drop again, the container throughput is around half than before
@@ -105,8 +103,8 @@ class STARLETTEProcessTimeMiddleware:
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1490.14  |         1498.82  |         1489.44  |     1492.8    | 1.53 %                   |
-| Time per request [ms] |           67.108 |           66.719 |           67.139 |       66.9887 | 1.23 ms                  |
+| Requests per second   |         1869.11  |         1891.52  |         1948.64  |     1903.09   | -0.94 %                  |
+| Time per request [ms] |           53.501 |           52.868 |           51.318 |       52.5623 | -0.5 ms                  |
 
 ### Observations
 * Negligible change on performance 
@@ -117,11 +115,11 @@ In order to see the performance difference if multiple middlewares are added, an
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1466.56  |         1499.56  |         1461.85  |       1475.99 | 0.38 %                   |
-| Time per request [ms] |           68.187 |           66.686 |           68.407 |         67.76 | 0.46 ms                  |
+| Requests per second   |          1832.51 |         1871.4   |         1916.97  |     1873.63   | -2.47 %                  |
+| Time per request [ms] |            54.57 |           53.436 |           52.166 |       53.3907 | -1.33 ms                 |
 
 ### Observations
 * Still no significant difference, much better than BaseHTTPMiddleware 
 
 # Verdict
-Numbers clearly indicate the significant performance difference between BaseHTTPMiddleware and Starlette middleware. Avoid BaseHTTPMiddleware if you can
+Numbers clearly indicate the significant performance difference between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can
