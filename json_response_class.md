@@ -14,7 +14,7 @@ Both have their [benchmark](https://github.com/ultrajson/ultrajson#benchmarks) /
 # JSON response classes test
 
 ## Test environment
-* The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#Test environment) test set was used
+* The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
 * 1MB test json has been generated with strings, floats, ints, arrays, dicts, booleans and dates in it using standard Python json
 
 
