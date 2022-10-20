@@ -158,8 +158,9 @@ class CompareContainers:
         for container in self.test_config:
             port = container.get('port')
             uri = container.get('uri')
+            name = container.get('name')
             request_count = container.get('request_count', 5000)
-            container['results'] = self.test_container(port=port, uri=uri, request_count=request_count)
+            container['results'] = self.test_container(port=port, uri=uri, request_count=request_count, name=name)
             self.test_results.append(container)
 
     def sum_test_results(self, results: list) -> dict:
@@ -250,19 +251,20 @@ class CompareContainers:
                 print(f'Baseline:')
                 self.tabulate_data(headers=tabulate_headers_baseline, data=self.baseline)
             else:
-                self.final_results[container.get('port')] = self.sum_results(container.get('results'))
-        for container_port, result in self.final_results.items():
-            print(f"Container port: {container_port}")
+                self.final_results[f"{container.get('name')}_{container.get('port')}"] = \
+                    self.sum_results(container.get('results'))
+        for container_id, result in self.final_results.items():
+            print(f"\nContainer : {container_id}\n")
             cont_avg_rps = result[TestFields.rps][-1]
             result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps, add_percent=True))
             cont_avg_time_mean = result[TestFields.time_mean][-1]
             result[TestFields.time_mean].append(f"{round(baseline_time_mean - cont_avg_time_mean, 2)} ms")
             self.tabulate_data(headers=tabulate_headers, data=result)
 
-    def test_container(self, port, uri, request_count):
+    def test_container(self, port, uri, request_count, name):
         _results = []
         for i in range(TEST_RUN_PER_CONTAINER):
-            print(f"{i}. of container at port {port} ")
+            print(f"{i}. of {name} container at port {port} ")
             t = TestContainer(port=port, uri=uri, request_count=request_count)
             if i == 0:
                 t.pre_warm()
