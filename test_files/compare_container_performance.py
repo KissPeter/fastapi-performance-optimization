@@ -81,7 +81,6 @@ class ABRunner(Runner):
         try:
             for key, config in self.config.items():
                 command = self.compose_command(key)
-                print('Running command ' + ' '.join(command))
                 stdout, stderr, error_code = self.execute_command_whole_output(command)
                 if error_code != 0:
                     print('An ap process failed with error code ' + str(error_code) + '!!!')
@@ -162,7 +161,6 @@ class CompareContainers:
             request_count = container.get('request_count', 5000)
             container['results'] = self.test_container(port=port, uri=uri, request_count=request_count)
             self.test_results.append(container)
-        print(self.test_results)
 
     def sum_test_results(self, results: list) -> dict:
         """
@@ -264,7 +262,7 @@ class CompareContainers:
     def test_container(self, port, uri, request_count):
         _results = []
         for i in range(TEST_RUN_PER_CONTAINER):
-            print(f"{i}. of {port} / {uri}")
+            print(f"{i}. of container at port {port} ")
             t = TestContainer(port=port, uri=uri, request_count=request_count)
             if i == 0:
                 t.pre_warm()
