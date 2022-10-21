@@ -1,0 +1,364 @@
+<svg version="1.1" style="font-family:Roboto;font-size:12px;" xmlns="http://www.w3.org/2000/svg" width="650"
+     height="400" viewBox="0 0 650 400">
+    <defs>
+        <clipPath>
+            <rect x="0" y="0" width="566" height="282" fill="none"></rect>
+        </clipPath>
+    </defs>
+    <rect fill="#ffffff" x="0" y="0" width="650" height="400" rx="0" ry="0"></rect>
+    <rect fill="none" x="74" y="46" width="566" height="282"></rect>
+    <g data-z-index="0"></g>
+    <rect fill="none" data-z-index="1" x="74" y="46" width="566" height="282"></rect>
+    <g data-z-index="1">
+        <path fill="none" stroke-dasharray="none" data-z-index="1" d="M 186.5 46 L 186.5 328" opacity="1"></path>
+        <path fill="none" stroke-dasharray="none" data-z-index="1" d="M 299.5 46 L 299.5 328" opacity="1"></path>
+        <path fill="none" stroke-dasharray="none" data-z-index="1" d="M 413.5 46 L 413.5 328" opacity="1"></path>
+        <path fill="none" stroke-dasharray="none" data-z-index="1" d="M 526.5 46 L 526.5 328" opacity="1"></path>
+        <path fill="none" stroke-dasharray="none" data-z-index="1" d="M 639.5 46 L 639.5 328" opacity="1"></path>
+        <path fill="none" stroke-dasharray="none" data-z-index="1" d="M 73.5 46 L 73.5 328" opacity="1"></path>
+    </g>
+    <g data-z-index="1">
+        <path fill="none" stroke="#e6e6e6" stroke-width="1" stroke-dasharray="none" data-z-index="1"
+              d="M 74 328.5 L 640 328.5" opacity="1"></path>
+        <path fill="none" stroke="#e6e6e6" stroke-width="1" stroke-dasharray="none" data-z-index="1"
+              d="M 74 281.5 L 640 281.5" opacity="1"></path>
+        <path fill="none" stroke="#e6e6e6" stroke-width="1" stroke-dasharray="none" data-z-index="1"
+              d="M 74 234.5 L 640 234.5" opacity="1"></path>
+        <path fill="none" stroke="#e6e6e6" stroke-width="1" stroke-dasharray="none" data-z-index="1"
+              d="M 74 187.5 L 640 187.5" opacity="1"></path>
+        <path fill="none" stroke="#e6e6e6" stroke-width="1" stroke-dasharray="none" data-z-index="1"
+              d="M 74 140.5 L 640 140.5" opacity="1"></path>
+        <path fill="none" stroke="#e6e6e6" stroke-width="1" stroke-dasharray="none" data-z-index="1"
+              d="M 74 93.5 L 640 93.5" opacity="1"></path>
+        <path fill="none" stroke="#e6e6e6" stroke-width="1" stroke-dasharray="none" data-z-index="1"
+              d="M 74 45.5 L 640 45.5" opacity="1"></path>
+    </g>
+    <g data-z-index="2">
+        <path fill="none" stroke="#ccd6eb" stroke-width="1" data-z-index="7" d="M 74 328.5 L 640 328.5"></path>
+    </g>
+    <g data-z-index="2">
+        <text font-family='Roboto-Regular,Roboto' x="24.2890625" data-z-index="7" text-anchor="middle"
+              transform="translate(0,0) rotate(270 24.2890625 187)" style="color:#666666;fill:#666666;" y="187">RPS
+        </text>
+        <path fill="none" data-z-index="7" d="M 74 46 L 74 328"></path>
+    </g>
+    <g data-z-index="3">
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;"
+           clip-path="url(#highcharts-450zp7g-2380-)">
+            <rect x="25" y="191" width="9" height="92" fill="#6f58e9" opacity="1"></rect>
+            <rect x="139" y="181" width="9" height="102" fill="#6f58e9" opacity="1"></rect>
+            <rect x="252" y="66" width="9" height="217" fill="#6f58e9" opacity="1"></rect>
+            <rect x="365" y="86" width="9" height="197" fill="#6f58e9" opacity="1"></rect>
+            <rect x="478" y="195" width="9" height="88" fill="#6f58e9" opacity="1"></rect>
+        </g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" clip-path="none"></g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;"
+           clip-path="url(#highcharts-450zp7g-2380-)">
+            <rect x="39" y="92" width="9" height="191" fill="#94d13d" opacity="1"></rect>
+            <rect x="152" y="61" width="9" height="222" fill="#94d13d" opacity="1"></rect>
+            <rect x="265" y="132" width="9" height="151" fill="#94d13d" opacity="1"></rect>
+            <rect x="379" y="77" width="9" height="206" fill="rgb(148,209,61)" opacity="1"></rect>
+            <rect x="492" y="150" width="9" height="133" fill="#94d13d" opacity="1"></rect>
+        </g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" clip-path="none"></g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;"
+           clip-path="url(#highcharts-450zp7g-2380-)">
+            <rect x="53" y="140" width="9" height="143" fill="#2f7cd3" opacity="1"></rect>
+            <rect x="166" y="117" width="9" height="166" fill="#2f7cd3" opacity="1"></rect>
+            <rect x="279" y="83" width="9" height="200" fill="#2f7cd3" opacity="1"></rect>
+            <rect x="392" y="136" width="9" height="147" fill="#2f7cd3" opacity="1"></rect>
+            <rect x="505" y="104" width="9" height="179" fill="#2f7cd3" opacity="1"></rect>
+        </g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" clip-path="none"></g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;"
+           clip-path="url(#highcharts-450zp7g-2380-)">
+            <rect x="66" y="146" width="9" height="137" fill="#b81beb" opacity="1"></rect>
+            <rect x="179" y="183" width="9" height="100" fill="#b81beb" opacity="1"></rect>
+            <rect x="293" y="70" width="9" height="213" fill="#b81beb" opacity="1"></rect>
+            <rect x="406" y="77" width="9" height="206" fill="#b81beb" opacity="1"></rect>
+            <rect x="519" y="83" width="9" height="200" fill="#b81beb" opacity="1"></rect>
+        </g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" clip-path="none"></g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;"
+           clip-path="url(#highcharts-450zp7g-2380-)">
+            <rect x="80" y="198" width="9" height="85" fill="#39f104" opacity="1"></rect>
+            <rect x="193" y="57" width="9" height="226" fill="#39f104" opacity="1"></rect>
+            <rect x="306" y="196" width="9" height="87" fill="#39f104" opacity="1"></rect>
+            <rect x="419" y="128" width="9" height="155" fill="#39f104" opacity="1"></rect>
+            <rect x="532" y="96" width="9" height="187" fill="#39f104" opacity="1"></rect>
+        </g>
+        <g data-z-index="0.1" opacity="1" transform="translate(74,46) scale(1 1)" clip-path="none"></g>
+    </g>
+    <g data-z-index="3">
+        <g stroke-linecap="round" style="cursor:pointer;" transform="translate(616,10)">
+            <title>Chart context menu</title>
+            <rect fill="#ffffff" x="0.5" y="0.5" width="24" height="22" rx="2" ry="2" stroke="none"
+                  stroke-width="1"></rect>
+            <path fill="#666666" d="M 6 6.5 L 20 6.5 M 6 11.5 L 20 11.5 M 6 16.5 L 20 16.5" data-z-index="1"
+                  stroke="#666666" stroke-width="3"></path>
+            <text font-family='Roboto-Regular,Roboto' x="0" data-z-index="1" y="12"
+                  style="color:#333333;font-weight:normal;fill:#333333;"></text>
+        </g>
+    </g>
+    <text font-family='Roboto-Regular,Roboto' x="325" text-anchor="middle" data-z-index="4"
+          style="color:#333333;font-size:18px;fill:#333333;" y="24">FastAPI async. endpoint RPS - 1MB response
+    </text>
+    <text font-family='Roboto-Regular,Roboto' x="325" text-anchor="middle" data-z-index="4"
+          style="color:#666666;fill:#666666;" y="45"></text>
+    <text font-family='Roboto-Regular,Roboto' x="10" text-anchor="start" data-z-index="4"
+          style="color:#666666;fill:#666666;" y="397"></text>
+    <g data-z-index="6" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;">
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(15,169)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">981
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(125,159)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 081
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(238,44)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 304
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;pointer-events:none;" transform="translate(351,64)" opacity="0">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 101
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(468,173)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">940
+            </text>
+        </g>
+    </g>
+    <g data-z-index="6" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;">
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(25,70)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 034
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(138,39)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 365
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(251,110)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 609
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(365,55)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 188
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(478,128)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 419
+            </text>
+        </g>
+    </g>
+    <g data-z-index="6" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;">
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(39,118)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 524
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(152,95)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 763
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(265,61)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 129
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;pointer-events:none;" transform="translate(378,114)" opacity="0">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 563
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;pointer-events:none;" transform="translate(491,82)" opacity="0">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 901
+            </text>
+        </g>
+    </g>
+    <g data-z-index="6" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;">
+        <g data-z-index="1" style="cursor:pointer;pointer-events:none;" transform="translate(52,124)" opacity="0">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 459
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(165,161)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 069
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(279,48)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 263
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;pointer-events:none;" transform="translate(392,55)" opacity="0">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 190
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(505,61)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 130
+            </text>
+        </g>
+    </g>
+    <g data-z-index="6" opacity="1" transform="translate(74,46) scale(1 1)" style="cursor:pointer;">
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(70,176)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">903
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(179,35)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">2 406
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(296,174)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">927
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(405,106)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 649
+            </text>
+        </g>
+        <g data-z-index="1" style="cursor:pointer;" transform="translate(518,74)">
+            <text font-family='Roboto-Regular,Roboto' x="5" data-z-index="1" y="16"
+                  style="color:black;font-size:11px;font-weight:bold;fill:black;">1 986
+            </text>
+        </g>
+    </g>
+    <g data-z-index="7" transform="translate(107,360)">
+        <rect fill="none" rx="0" ry="0" x="0" y="0" width="436" height="25" visibility="visible"></rect>
+        <g data-z-index="1">
+            <g>
+                <g data-z-index="1" transform="translate(8,3)">
+                    <text font-family='Roboto-Regular,Roboto' x="21"
+                          style="color:#333333;cursor:pointer;font-size:12px;font-weight:bold;fill:#333333;"
+                          text-anchor="start" data-z-index="2" y="15">Thread 1
+                    </text>
+                    <rect x="2" y="4" width="12" height="12" fill="#6f58e9" rx="6" ry="6" data-z-index="3"></rect>
+                </g>
+                <g data-z-index="1" transform="translate(96.0859375,3)">
+                    <text font-family='Roboto-Regular,Roboto' x="21" y="15"
+                          style="color:#333333;cursor:pointer;font-size:12px;font-weight:bold;fill:#333333;"
+                          text-anchor="start" data-z-index="2">Thread 2
+                    </text>
+                    <rect x="2" y="4" width="12" height="12" fill="#94d13d" rx="6" ry="6" data-z-index="3"></rect>
+                </g>
+                <g data-z-index="1" transform="translate(184.171875,3)">
+                    <text font-family='Roboto-Regular,Roboto' x="21" y="15"
+                          style="color:#333333;cursor:pointer;font-size:12px;font-weight:bold;fill:#333333;"
+                          text-anchor="start" data-z-index="2">Thread 3
+                    </text>
+                    <rect x="2" y="4" width="12" height="12" fill="#2f7cd3" rx="6" ry="6" data-z-index="3"></rect>
+                </g>
+                <g data-z-index="1" transform="translate(272.2578125,3)">
+                    <text font-family='Roboto-Regular,Roboto' x="21" y="15"
+                          style="color:#333333;cursor:pointer;font-size:12px;font-weight:bold;fill:#333333;"
+                          text-anchor="start" data-z-index="2">Thread 4
+                    </text>
+                    <rect x="2" y="4" width="12" height="12" fill="#b81beb" rx="6" ry="6" data-z-index="3"></rect>
+                </g>
+                <g data-z-index="1" transform="translate(360.34375,3)">
+                    <text font-family='Roboto-Regular,Roboto' x="21" y="15"
+                          style="color:#333333;cursor:pointer;font-size:12px;font-weight:bold;fill:#333333;"
+                          text-anchor="start" data-z-index="2">Thread 5
+                    </text>
+                    <rect x="2" y="4" width="12" height="12" fill="#39f104" rx="6" ry="6" data-z-index="3"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+    <g data-z-index="7">
+        <text font-family='Roboto-Regular,Roboto' x="130.6"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="middle"
+              transform="translate(0,0)" y="347" opacity="1">Worker 1
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="243.79999999999998"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="middle"
+              transform="translate(0,0)" y="347" opacity="1">Worker 2
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="357"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="middle"
+              transform="translate(0,0)" y="347" opacity="1">Worker 3
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="470.19999999999993"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="middle"
+              transform="translate(0,0)" y="347" opacity="1">Worker 4
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="583.4"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="middle"
+              transform="translate(0,0)" y="347" opacity="1">Worker 5
+        </text>
+    </g>
+    <g data-z-index="7">
+        <text font-family='Roboto-Regular,Roboto' x="59"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end"
+              transform="translate(0,0)" y="333" opacity="1">0
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="59"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end"
+              transform="translate(0,0)" y="286" opacity="1">500
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="59"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end"
+              transform="translate(0,0)" y="239" opacity="1">1000
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="59"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end"
+              transform="translate(0,0)" y="192" opacity="1">1500
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="59"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end"
+              transform="translate(0,0)" y="145" opacity="1">2000
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="59"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end"
+              transform="translate(0,0)" y="98" opacity="1">2500
+        </text>
+        <text font-family='Roboto-Regular,Roboto' x="59"
+              style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end"
+              transform="translate(0,0)" y="51" opacity="1">3000
+        </text>
+    </g>
+    <g style="cursor:default;white-space:nowrap;pointer-events:none;" data-z-index="8" transform="translate(403,73)"
+       opacity="1" visibility="visible">
+        <path fill="none"
+              d="M 3.5 0.5 L 106.5 0.5 C 109.5 0.5 109.5 0.5 109.5 3.5 L 109.5 41.5 C 109.5 44.5 109.5 44.5 106.5 44.5 L 59.5 44.5 L 53.5 50.5 L 47.5 44.5 L 3.5 44.5 C 0.5 44.5 0.5 44.5 0.5 41.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5"
+              stroke="#000000" stroke-opacity="0.049999999999999996" stroke-width="5"
+              transform="translate(1, 1)"></path>
+        <path fill="none"
+              d="M 3.5 0.5 L 106.5 0.5 C 109.5 0.5 109.5 0.5 109.5 3.5 L 109.5 41.5 C 109.5 44.5 109.5 44.5 106.5 44.5 L 59.5 44.5 L 53.5 50.5 L 47.5 44.5 L 3.5 44.5 C 0.5 44.5 0.5 44.5 0.5 41.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5"
+              stroke="#000000" stroke-opacity="0.09999999999999999" stroke-width="3" transform="translate(1, 1)"></path>
+        <path fill="none"
+              d="M 3.5 0.5 L 106.5 0.5 C 109.5 0.5 109.5 0.5 109.5 3.5 L 109.5 41.5 C 109.5 44.5 109.5 44.5 106.5 44.5 L 59.5 44.5 L 53.5 50.5 L 47.5 44.5 L 3.5 44.5 C 0.5 44.5 0.5 44.5 0.5 41.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5"
+              stroke="#000000" stroke-opacity="0.15" stroke-width="1" transform="translate(1, 1)"></path>
+        <path fill="rgba(247,247,247,0.85)"
+              d="M 3.5 0.5 L 106.5 0.5 C 109.5 0.5 109.5 0.5 109.5 3.5 L 109.5 41.5 C 109.5 44.5 109.5 44.5 106.5 44.5 L 59.5 44.5 L 53.5 50.5 L 47.5 44.5 L 3.5 44.5 C 0.5 44.5 0.5 44.5 0.5 41.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5"
+              stroke="#94d13d" stroke-width="1"></path>
+        <text font-family='Roboto-Regular,Roboto' x="8" data-z-index="1" y="20"
+              style="color:#333333;font-size:12px;fill:#333333;">
+            <tspan style="font-size: 10px">Worker 4</tspan>
+            <tspan dy="15" x="8">​</tspan>
+            <tspan style="fill:#94d13d">●</tspan>
+            Thread 2:
+            <tspan style="font-weight:bold;">2 188</tspan>
+            <tspan>​</tspan>
+        </text>
+    </g>
+</svg>

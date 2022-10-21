@@ -49,15 +49,11 @@ jobs:
         timeout-minutes: 30
         run: |
           pytest -x --html=./reports/json_classes_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m json_classes
-      - name: 'Measure workers and threads'
-        timeout-minutes: 30
-        run: |
-          pytest -x --html=./reports/workers_and_threads_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m workers_and_threads
       - uses: actions/upload-artifact@v2
         with:
           name: Pytest-Report-${{ matrix.python-version }}
           path: ./reports
-  works_and_threads:
+  workers_and_threads:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 300
     strategy:
