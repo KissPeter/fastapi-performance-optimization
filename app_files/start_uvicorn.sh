@@ -1,2 +1,2 @@
 echo "Workers: $WORKERS"
-uvicorn--workers="$WORKERS" app:app
+uvicorn --workers="$WORKERS" app:app
