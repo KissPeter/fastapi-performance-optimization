@@ -1,0 +1,58 @@
+---
+title: Workers and threads
+layout: template
+filename: workers_and_threads.md
+---
+
+# Gunicorn Workers and Threads
+
+Not strictly FastAPI performance tuning, but performance improvement on runner environment naturally helps for the system. [Gunicorn](https://gunicorn.org/) is one straightforward option to run FastAPI in [production](https://www.uvicorn.org/deployment/#gunicorn) environment
+For high performance low latency, cheap, robust and reliable services it is important to get the maximum out of a single computing unit. In this example we will focus on a container with only 2 CPU cores allocated.
+This is typically used and GitHub Action container has two CPU cores allocated where [these](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) measurements were executed
+
+## Gunicorn
+
+[Gunicorn](https://gunicorn.org/) is a mature, fully featured server and process manager.
+Gunicorn can manage the processes and threads for us and run [UvicornWorker](https://www.uvicorn.org/deployment/#gunicorn) which can carry FastAPI application
+
+## Uvicorn
+
+Uvicorn can run FastAPI application even with multiple workers, convenient during development thanks to the [reload](https://www.uvicorn.org/deployment/#running-from-the-command-line) capability but even their documentation [suggests](https://www.uvicorn.org/deployment/#gunicorn) to run with Gunicorn in production
+
+## Workers
+Workers are pre-forked processes spawn by Gunicorn. Number of workers had to be pre-defined, there is no process pool like e.g [php-fpm](https://www.digitalocean.com/community/tutorials/php-fpm-nginx#2-configure-php-fpm-pool)
+Gunicorn documentation [suggests](https://docs.gunicorn.org/en/latest/design.html?highlight=workers#how-many-workers) using `(2 x $num_cores) + 1` as the number of workers, but also reminds: `Always remember, there is such a thing as too many workers. After a point your worker processes will start thrashing system resources decreasing the throughput of the entire system.` 
+We will see it in our measurements
+
+## Threads
+Gunicorn can also fork processes for each worker. We know the story around [GIL](https://tenthousandmeters.com/blog/python-behind-the-scenes-13-the-gil-and-its-effects-on-python-multithreading/), but don't judge, measure
+This is how it looks like in action:
+<img src="https://miro.medium.com/max/1400/1*IWcHIxgsf71p19rbJrfZmA.jpeg">
+> Source: https://medium.com/@nhudinhtuan/gunicorn-worker-types-practice-advice-for-better-performance-7a299bb8f929
+
+## Measurements
+
+1-5 Workers and 1-5 threads were measured, this together is 25 measurements in the [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) way. There would be place for further measurements E.g measuring with 0 threads or raising the counts to even higher and so on. Also note that some values are not fitting due to intermittent performance issue during measurement.  
+
+### Synchronous API endpoint with small request / response
+
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_small_response.svg">
+
+### Asynchronous API endpoint with small request / response
+
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_small_response.svg">
+
+
+### Synchronous API endpoint with 1MB response
+
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_big_response.svg">
+
+
+### Asynchronous API endpoint with 1MB response
+
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_big_response.svg">
+
+
+# Verdict
+
+# Gunicorn vs Uvicorn
