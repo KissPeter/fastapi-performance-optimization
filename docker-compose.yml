@@ -91,7 +91,7 @@ services:
     "environment":
       "THREADS": 0
       "WORKERS": 1
-    "image": "fastapi-performance-optimization:latest"
+    "image": fastapi-performance-optimization:latest
     "ports":
       - "8010:8000"
   "app_gunicorn_w2_t0":
@@ -99,7 +99,7 @@ services:
     "environment":
       "THREADS": 0
       "WORKERS": 2
-    "image": "fastapi-performance-optimization:latest"
+    "image": fastapi-performance-optimization:latest
     "ports":
       - "8011:8000"
   app_uvicorn_w1:

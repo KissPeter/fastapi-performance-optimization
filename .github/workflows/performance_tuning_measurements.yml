@@ -50,14 +50,15 @@ jobs:
 #        timeout-minutes: 30
 #        run: |
 #          pytest -x --html=./reports/json_classes_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m json_classes
-      - name: 'Measure Gunicorn vs Uvicorn'
-        timeout-minutes: 30
-        run: |
-          pytest -x --html=./reports/gunicorn_vs_uvicorn_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m gunicorn_vs_uvicorn
       - name: 'Measure Nginx port vs socket'
         timeout-minutes: 30
         run: |
           pytest -x --html=./reports/nginx_port_vs_socket_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m nginx_port_vs_socket
+      - name: 'Measure Gunicorn vs Uvicorn'
+        timeout-minutes: 30
+        run: |
+          pytest -x --html=./reports/gunicorn_vs_uvicorn_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m gunicorn_vs_uvicorn
+
       - uses: actions/upload-artifact@v2
         with:
           name: Pytest-Report-${{ matrix.python-version }}
