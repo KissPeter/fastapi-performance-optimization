@@ -4,4 +4,5 @@ WORKDIR /src
 COPY app.py .
 COPY test_json_1MB.json .
 EXPOSE 8000
-ENTRYPOINT ["uvicorn", "--workers=1", "app:app"]
+ENV WORKERS=1
+ENTRYPOINT ["sh", "-c", "uvicorn", "--workers=$WORKERS", "app:app"]
