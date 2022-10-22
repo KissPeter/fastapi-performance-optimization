@@ -20,39 +20,60 @@ Gunicorn can manage the processes and threads for us and run [UvicornWorker](htt
 Uvicorn can run FastAPI application even with multiple workers, convenient during development thanks to the [reload](https://www.uvicorn.org/deployment/#running-from-the-command-line) capability but even their documentation [suggests](https://www.uvicorn.org/deployment/#gunicorn) to run with Gunicorn in production
 
 ## Workers
-Workers are pre-forked processes spawn by Gunicorn. Number of workers had to be pre-defined, there is no process pool like e.g [php-fpm](https://www.digitalocean.com/community/tutorials/php-fpm-nginx#2-configure-php-fpm-pool)
+
+Workers are pre-forked processes spawn by Gunicorn. Number of workers had to be pre-defined, there is no process pool like e.g: [php-fpm](https://www.digitalocean.com/community/tutorials/php-fpm-nginx#2-configure-php-fpm-pool)
 Gunicorn documentation [suggests](https://docs.gunicorn.org/en/latest/design.html?highlight=workers#how-many-workers) using `(2 x $num_cores) + 1` as the number of workers, but also reminds: `Always remember, there is such a thing as too many workers. After a point your worker processes will start thrashing system resources decreasing the throughput of the entire system.` 
 We will see it in our measurements
 
 ## Threads
 Gunicorn can also fork processes for each worker. We know the story around [GIL](https://tenthousandmeters.com/blog/python-behind-the-scenes-13-the-gil-and-its-effects-on-python-multithreading/), but don't judge, measure
 This is how it looks like in action:
-<img src="https://miro.medium.com/max/1400/1*IWcHIxgsf71p19rbJrfZmA.jpeg">
-> Source: https://medium.com/@nhudinhtuan/gunicorn-worker-types-practice-advice-for-better-performance-7a299bb8f929
+
+<img src="https://miro.medium.com/max/1400/1*IWcHIxgsf71p19rbJrfZmA.jpeg" alt="Gunicorn workers and threads">
+
+> > Source: https://medium.com/@nhudinhtuan/gunicorn-worker-types-practice-advice-for-better-performance-7a299bb8f929
 
 ## Measurements
 
-1-5 Workers and 1-5 threads were measured, this together is 25 measurements in the [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) way. There would be place for further measurements E.g measuring with 0 threads or raising the counts to even higher and so on. Also note that some values are not fitting due to intermittent performance issue during measurement.  
+1-5 Workers and 1-5 threads were measured, this together is 25 measurements in the [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) way. There would be place for further measurements E.g measuring with 0 threads or raising the counts to even higher and so on. Also note that some values are not fitting due to intermittent performance issue during measurement.
+Request is the same in allcases the difference is the size of the response (few bytes vs 1MB)
 
 ### Synchronous API endpoint with small request / response
 
-<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_small_response.svg">
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_small_response.svg" alt="Measurement results">
+
+##### Observation
+2 worker configuration outperforms all others, thread number seems no significant impact
 
 ### Asynchronous API endpoint with small request / response
 
-<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_small_response.svg">
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_small_response.svg" alt="Measurement results">
 
+##### Observation 
+
+Result is not as clear as for synchronous endpoint, 3 workers and 1 thread seems the winner
 
 ### Synchronous API endpoint with 1MB response
 
-<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_big_response.svg">
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_big_response.svg" alt="Measurement results">
 
+##### Observation
+
+Similar to small responses 2 workers performing the best
 
 ### Asynchronous API endpoint with 1MB response
 
-<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_big_response.svg">
+<img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_big_response.svg" alt="Measurement results">
 
+##### Observation
+
+For some strange reason 2 and 5 threads working the best at each worker count, but best results are at 2 and 3 workers
 
 # Verdict
 
+No clear winner, but suggestion of Gunicorn documentation was right, `there is such a thing as too many workers`.
+It is highlyrecommended making a measurement like this and select the best combination for the given usecase. Feel free to reuse the [test code](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/test_workers_and_threads.py)
+
 # Gunicorn vs Uvicorn
+
+You may ask why use Gunicorn instead of Uvicorn for application where latency is not that critical and high load is not expected?

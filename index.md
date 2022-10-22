@@ -12,6 +12,7 @@ This document is intended to provide some tips and ideas to get the most out of 
 
 * [Fastapi Middleware performance tuning](https://kisspeter.github.io/fastapi-performance-optimization/middleware)
 * [Fastapi JSON response classes comparison](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class)
+* [Gunicorn workers and threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)
 
 # Stay tuned for new ideas:
 ## Workers / threads
