@@ -1,6 +1,5 @@
 "version": "3.1"
 
-
 "services":
   "app_w1_t1":
     "cpus": 2

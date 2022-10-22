@@ -1,8 +1,7 @@
-FROM python:3.9-bullseye
-RUN pip3 install gunicorn==20.1.0 fastapi==0.75.2 uvicorn==0.17.6 orjson==3.6.8
+FROM python:3.10.8-bullseye
+RUN python -m pip install --upgrade pip && pip3 install fastapi==0.85.1 uvicorn==0.19.0 orjson==3.8.0 ujson==5.5.0
 WORKDIR /src
 COPY app.py .
-COPY gconf.py .
 COPY test_json_1MB.json .
 EXPOSE 8000
-ENTRYPOINT [ "uvicorn", "--workers=1", "app:app"]
+ENTRYPOINT ["uvicorn", "--workers=1", "app:app"]
