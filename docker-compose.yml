@@ -84,7 +84,7 @@ services:
     environment:
       WORKERS: 3
       THREADS: 1
-      SOCKET: True
+      SOCKET: 1
     ports:
       - "8009:8081"
   "app_gunicorn_w1_t0":
