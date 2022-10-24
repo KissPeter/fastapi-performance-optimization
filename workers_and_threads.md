@@ -42,14 +42,14 @@ Request is the same in allcases the difference is the size of the response (few 
 
 <img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_small_response.svg" alt="Measurement results">
 
-##### Observation
+#### Observation
 2 worker configuration outperforms all others, thread number seems no significant impact
 
 ### Asynchronous API endpoint with small request / response
 
 <img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_small_response.svg" alt="Measurement results">
 
-##### Observation 
+#### Observation 
 
 Result is not as clear as for synchronous endpoint, 3 workers and 1 thread seems the winner
 
@@ -57,7 +57,7 @@ Result is not as clear as for synchronous endpoint, 3 workers and 1 thread seems
 
 <img src="https://kisspeter.github.io/fastapi-performance-optimization/images/sync_big_response.svg" alt="Measurement results">
 
-##### Observation
+#### Observation
 
 Similar to small responses 2 workers performing the best
 
@@ -65,14 +65,14 @@ Similar to small responses 2 workers performing the best
 
 <img src="https://kisspeter.github.io/fastapi-performance-optimization/images/async_big_response.svg" alt="Measurement results">
 
-##### Observation
+#### Observation
 
 For some strange reason 2 and 5 threads working the best at each worker count, but best results are at 2 and 3 workers
 
-# Verdict
+## Verdict
 
 No clear winner, but suggestion of Gunicorn documentation was right, `there is such a thing as too many workers`.
-It is highlyrecommended making a measurement like this and select the best combination for the given usecase. Feel free to reuse the [test code](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/test_workers_and_threads.py)
+It is highly recommended making a measurement like this and select the best combination for the given usecase. Feel free to reuse the [test code](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/test_workers_and_threads.py)
 
 # Gunicorn vs Uvicorn
 
