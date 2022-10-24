@@ -13,19 +13,18 @@ This document is intended to provide some tips and ideas to get the most out of 
 ## [Fastapi Middleware performance tuning](https://kisspeter.github.io/fastapi-performance-optimization/middleware)
 ## [Fastapi JSON response classes comparison](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class)
 ## [Gunicorn workers and threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)
+## [Nginx in front of FastAPI](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket)
 
 # Stay tuned for new ideas:
 ## Sync / async API endpoints
 ## Connection pool size of external resources
-## Nginx sockets
-## Nginx light
 ## FastAPI application profiling
 ### Arbitrary place of code
 ### Profiling middleware
 
 ### Test environment
 * All the tests were run on  [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml)
-* Application is built into a container:
+* Application is built into a container, you can build it like this:
 ```shell
 docker-compose build
 ```
@@ -40,7 +39,7 @@ docker-compose build
     cpus: 2
     restart: always
 ```
-* All the tests were run with the same [ab](https://httpd.apache.org/docs/2.4/programs/ab.html) tool configuration available [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/run_ab.sh)
+* All the tests were run with the same [ab](https://httpd.apache.org/docs/2.4/programs/ab.html) tool configuration available [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/compare_container_performance.py#L51)
     * ab config: `ab -q -c 100 -n 1000 -T 'application/json' ...`
 * All tests were run 3 times and average has been calculated
 * Before test run the container has been pre-warmed with small amount of queries, result didn't count in the measurement
