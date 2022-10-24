@@ -102,6 +102,22 @@ services:
     "image": fastapi-performance-optimization:latest
     "ports":
       - "8011:8000"
+  "app_gunicorn_w1_t4":
+    "cpus": 2
+    "environment":
+      "THREADS": 4
+      "WORKERS": 1
+    "image": fastapi-performance-optimization:latest
+    "ports":
+      - "8012:8000"
+  "app_gunicorn_w2_t2":
+    "cpus": 2
+    "environment":
+      "THREADS": 2
+      "WORKERS": 2
+    "image": fastapi-performance-optimization:latest
+    "ports":
+      - "8014:8000"
   app_uvicorn_w1:
     container_name: fastapi-performance-optimization-uvicorn
     build:
@@ -113,11 +129,11 @@ services:
     "environment":
       "WORKERS": 1
     "ports":
-      - "8012:8000"
+      - "8015:8000"
   app_uvicorn_w2:
     image: fastapi-performance-optimization-uvicorn:latest
     "cpus": 2
     "environment":
       "WORKERS": 2
     "ports":
-      - "8014:8000"
+      - "8016:8000"
