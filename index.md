@@ -15,7 +15,6 @@ This document is intended to provide some tips and ideas to get the most out of 
 * [Gunicorn workers and threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)
 
 # Stay tuned for new ideas:
-## Workers / threads
 ## Sync / async API endpoints
 ## Connection pool size of external resources
 ## Nginx sockets
