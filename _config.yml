@@ -4,4 +4,3 @@ classes: wide
 repository: KissPeter/fastapi-performance-optimization
 url: "https://kisspeter.github.io/fastapi-performance-optimization/"
 plugins:
-  - jekyll-sitemap
