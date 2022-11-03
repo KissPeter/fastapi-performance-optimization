@@ -5,3 +5,9 @@ repository: KissPeter/fastapi-performance-optimization
 baseurl: "fastapi-performance-optimization/"
 plugins:
   - jekyll-sitemap
+defaults:
+  -
+    scope:
+      path: 'googlef22b7190d84ae479.html'
+    values:
+      sitemap: false
