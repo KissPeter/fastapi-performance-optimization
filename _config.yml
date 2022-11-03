@@ -2,6 +2,6 @@ theme: jekyll-theme-minimal
 logo: "images/fastapi.png"
 classes: wide
 repository: KissPeter/fastapi-performance-optimization
-baseurl: "https://kisspeter.github.io/fastapi-performance-optimization/"
+baseurl: "fastapi-performance-optimization/"
 plugins:
   - jekyll-sitemap
