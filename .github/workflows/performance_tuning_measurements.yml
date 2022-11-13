@@ -61,7 +61,9 @@ jobs:
       - name: 'Nginx socker vs socket + keepalive'
         timeout-minutes: 30
         run: |
-          ./bin/run_tests.sh nginx_socker_keepalive
+          ls -al 
+          ls -al ./bin
+          ./bin/run_test.sh nginx_socker_keepalive
 
       - uses: actions/upload-artifact@v2
         with:
