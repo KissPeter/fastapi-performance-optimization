@@ -58,6 +58,10 @@ jobs:
 #        timeout-minutes: 30
 #        run: |
 #          pytest -x --html=./reports/gunicorn_vs_uvicorn_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m gunicorn_vs_uvicorn
+      - name: 'Nginx socker vs socket + keepalive'
+        timeout-minutes: 30
+        run: |
+          ./bin/run_tests.sh nginx_socker_keepalive
 
       - uses: actions/upload-artifact@v2
         with:

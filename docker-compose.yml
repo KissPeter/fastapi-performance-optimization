@@ -138,3 +138,13 @@ services:
       "WORKERS": 2
     "ports":
       - "8016:8000"
+  app_nginx_socket_keepalive:
+    image: fastapi-performance-optimization:latest
+    cpus: 2
+    environment:
+      WORKERS: 3
+      THREADS: 1
+      SOCKET: 1
+      KEEPALIVE: 1
+    ports:
+      - "8017:8082"
