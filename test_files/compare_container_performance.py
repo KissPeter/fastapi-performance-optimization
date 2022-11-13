@@ -82,6 +82,7 @@ class ABRunner(Runner):
         try:
             for key, config in self.config.items():
                 command = self.compose_command(key)
+                print(f"Command: {command}")
                 stdout, stderr, error_code = self.execute_command_whole_output(command)
                 if error_code != 0:
                     print(
@@ -300,7 +301,8 @@ class CompareContainers:
             )
             self.tabulate_data(headers=tabulate_headers, data=result)
 
-    def test_container(self, port, uri, request_count, name, keep_alive):
+    @staticmethod
+    def test_container(port, uri, request_count, name, keep_alive):
         _results = []
         for i in range(TEST_RUN_PER_CONTAINER):
             print(f"{i}. of {name} container at port {port} ")
