@@ -1,7 +1,6 @@
 import os
 
-# ENV GUNICORN_CMD_ARGS="-c gconf.py --worker-tmp-dir /dev/shm --bind unix:/tmp/gunicorn.sock"
-
+#
 if os.getenv('SOCKET'):
     bind = 'unix:/tmp/gunicorn.sock'
 else:
@@ -21,3 +20,4 @@ keepalive = 5
 max_requests = 0
 max_requests_jitter = 0
 worker_class = 'uvicorn.workers.UvicornWorker'
+worker_tmp_dir = '/dev/shm'

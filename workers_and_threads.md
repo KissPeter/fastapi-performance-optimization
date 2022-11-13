@@ -67,7 +67,8 @@ Similar to small responses 2 workers performing the best
 
 #### Observation
 
-For some strange reason 2 and 5 threads working the best at each worker count, but best results are at 2 and 3 workers
+* For some strange reason 2 and 5 threads working the best at each worker count, but best results are at 2 and 3 workers
+* **FastAPI latency was lowest** at 3 workers and 2 threads
 
 ## Verdict
 
