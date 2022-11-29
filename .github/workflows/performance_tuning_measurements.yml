@@ -16,15 +16,15 @@ jobs:
     timeout-minutes: 300
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # , macos-latest, windows-latest
-        python-version: [ '3.10' ] # '3.6', '3.7', '3.8', '3.9', 
+        os: [ ubuntu-latest ]
+        python-version: [ '3.10' ]
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v3
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: 'Docker Compose'
-        uses: isbang/compose-action@v1.3.2
+        uses: isbang/compose-action@v1.4.1
         with:
           compose-file: "./docker-compose.yml"
           up-flags: "--build --force-recreate"
@@ -38,69 +38,47 @@ jobs:
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports
           docker-compose ps --all
-#      - name: 'Measure middlewares'
-#        timeout-minutes: 30
-#        run: |
-#          pytest -x --html=./reports/middlewares_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m middlewares
-#      - name: 'Measure sync vs async endpoints'
-#        timeout-minutes: 30
-#        run: |
-#          pytest -x --html=./reports/sync_async_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m sync_async
-#      - name: 'Measure json response classes'
-#        timeout-minutes: 30
-#        run: |
-#          pytest -x --html=./reports/json_classes_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m json_classes
-#      - name: 'Measure Nginx port vs socket'
-#        timeout-minutes: 30
-#        run: |
-#          pytest -x --html=./reports/nginx_port_vs_socket_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m nginx_port_vs_socket
-#      - name: 'Measure Gunicorn vs Uvicorn'
-#        timeout-minutes: 30
-#        run: |
-#          pytest -x --html=./reports/gunicorn_vs_uvicorn_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m gunicorn_vs_uvicorn
+      - name: 'Measure middlewares'
+        run: ./bin/run_test.sh middlewares
+      - name: 'Measure sync vs async endpoints'
+        run: ./bin/run_test.sh sync_async
+      - name: 'Measure json response classes'
+        run: ./bin/run_test.sh json_classes
+      - name: 'Measure Nginx port vs socket'
+        run: ./bin/run_test.sh nginx_port_vs_socket
+      - name: 'Measure Gunicorn vs Uvicorn'
+        run: ./bin/run_test.sh gunicorn_vs_uvicorn
       - name: 'Nginx socker vs socket + keepalive'
-        timeout-minutes: 30
-        run: |
-          ls -al 
-          ls -al ./bin
-          ./bin/run_test.sh nginx_socker_keepalive
-
+        run: ./bin/run_test.sh nginx_socker_keepalive
       - uses: actions/upload-artifact@v2
         with:
           name: Pytest-Report-${{ matrix.python-version }}
           path: ./reports
-#  workers_and_threads:
-#    runs-on: ${{ matrix.os }}
-#    timeout-minutes: 300
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest ] # , macos-latest, windows-latest
-#        python-version: [ '3.10' ] # '3.6', '3.7', '3.8', '3.9',
-#    steps:
-#      - name: 'Checkout Repository'
-#        uses: actions/checkout@v3
-#      - uses: satackey/action-docker-layer-caching@v0.0.11
-#        continue-on-error: true
-#      - name: 'Docker Compose'
-#        uses: isbang/compose-action@v1.3.2
-#        with:
-#          compose-file: "./docker-compose_workers_and_threads.yml"
-#          up-flags: "--build --force-recreate"
-#      - name: Set up Python
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install --upgrade pip
-#          if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
-#          mkdir -p reports
-#          docker-compose ps --all
-#      - name: 'Measure workers and threads'
-#        timeout-minutes: 30
-#        run: |
-#          pytest -x --html=./reports/workers_and_threads_pytest.html --self-contained-html --show-capture=stdout -vv -rP test_files/ -m workers_and_threads
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: Pytest-Report-${{ matrix.python-version }}
-#          path: ./reports
+  workers_and_threads:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 300
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ] # , macos-latest, windows-latest
+        python-version: [ '3.10' ] # '3.6', '3.7', '3.8', '3.9',
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: 'Docker Compose'
+        uses: isbang/compose-action@v1.4.1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
+          mkdir -p reports
+          docker-compose ps --all
+      - name: 'Measure workers and threads'
+        run: ./bin/run_test.shworkers_and_threads
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Pytest-Report-${{ matrix.python-version }}
+          path: ./reports
