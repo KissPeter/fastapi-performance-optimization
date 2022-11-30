@@ -14,7 +14,7 @@ test_config_w2 = [
 ]
 
 
-class GunicornUvicorn(TestBase):
+class TestGunicornUvicorn(TestBase):
 
     @pytest.mark.gunicorn_vs_uvicorn
     def test_gunicorn_vs_uvicorn_sync_w1(self):

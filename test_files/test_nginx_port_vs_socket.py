@@ -9,7 +9,7 @@ test_config = [
 ]
 
 
-class NginxPortvsSocket(TestBase):
+class TestNginxPortvsSocket(TestBase):
     @pytest.mark.nginx_port_vs_socket
     def testnginx_port_vs_socket_sync(self):
         p = CompareContainers(test_config)

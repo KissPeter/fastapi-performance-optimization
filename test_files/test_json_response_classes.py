@@ -28,7 +28,7 @@ test_config = [
 ]
 
 
-class JSONClasses(TestBase):
+class TestJSONClasses(TestBase):
     @pytest.mark.json_classes
     def test_json_response_classes(self):
         p = CompareContainers(test_config)

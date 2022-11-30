@@ -4,7 +4,7 @@ from compare_container_performance import CompareContainers
 from test_base import TestBase
 
 
-class SyncAsync(TestBase):
+class TestSyncAsync(TestBase):
 
     @pytest.mark.sync_async
     def test_json_sync_vs_async_small_response(self):

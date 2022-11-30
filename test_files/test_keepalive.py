@@ -9,7 +9,7 @@ test_config = [
 ]
 
 
-class NginxKeepalive(TestBase):
+class TestNginxKeepalive(TestBase):
     @pytest.mark.nginx_socker_keepalive
     def testnginx_socker_keepalive_sync(self):
         p = CompareContainers(test_config)

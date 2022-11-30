@@ -32,7 +32,7 @@ test_config = [
 ]
 
 
-class WorkersThreads(TestBase):
+class TestWorkersThreads(TestBase):
 
     @pytest.mark.workers_and_threads
     def test_workers_and_threads_sync(self):

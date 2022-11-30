@@ -3,7 +3,7 @@ from compare_container_performance import CompareContainers
 from test_base import TestBase
 
 
-class Middleware(TestBase):
+class TestMiddleware(TestBase):
 
     @pytest.mark.middlewares
     def test_middlewares(self):
