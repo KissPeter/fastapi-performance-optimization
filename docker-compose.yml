@@ -9,7 +9,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     restart: always
   app_default_json_response_class:
     image: fastapi-performance-optimization:latest
@@ -18,7 +18,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       JSONRESPONSECLASS: JSONResponse
   app_gunicorn_w1_t0:
@@ -28,7 +28,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       THREADS: 0
       WORKERS: 1
@@ -39,7 +39,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       THREADS: 4
       WORKERS: 1
@@ -50,7 +50,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       THREADS: 0
       WORKERS: 2
@@ -61,7 +61,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       THREADS: 2
       WORKERS: 2
@@ -72,7 +72,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       THREADS: 1
       WORKERS: 3
@@ -83,7 +83,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       SOCKET: 1
       THREADS: 1
@@ -95,7 +95,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       KEEPALIVE: 1
       SOCKET: 1
@@ -108,7 +108,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
   app_ojson_response_class:
     image: fastapi-performance-optimization:latest
     ports:
@@ -116,7 +116,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       JSONRESPONSECLASS: ORJSONResponse
   app_one_base_middleware:
@@ -126,7 +126,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       PROCESSTIMEMIDDLEWARE: add
   app_one_starlette_middleware:
@@ -136,7 +136,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       STARLETTEPROCESSTIMEIDDLEWARE: add
   app_two_base_middlewares:
@@ -146,7 +146,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       CUSTOMHEADERMIDDLEWARE: add
       PROCESSTIMEMIDDLEWARE: add
@@ -157,7 +157,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       STARLETTECUSTOMHEADERMIDDLEWARE: add
       STARLETTEPROCESSTIMEIDDLEWARE: add
@@ -168,7 +168,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       JSONRESPONSECLASS: UJSONResponse
   app_uvicorn_w1:
@@ -182,7 +182,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       WORKERS: 1
     restart: always
@@ -193,7 +193,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'
     environment:
       WORKERS: 2
   redis:
@@ -203,4 +203,4 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
+          cpus: '2'

@@ -178,7 +178,7 @@ class CompareContainers:
         for container in self.test_config:
             port = container.get("port")
             uri = container.get("uri")
-            keep_alive = container.get("keep_alive")
+            keep_alive = container.get("keep_alive", False)
             name = container.get("name")
             request_count = container.get("request_count", 5000)
             container["results"] = self.test_container(
