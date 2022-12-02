@@ -40,10 +40,10 @@ jobs:
           docker-compose ps --all
       - name: 'Measure middlewares'
         run: ./bin/run_test.sh middlewares
-      - name: 'Measure sync vs async endpoints'
-        run: ./bin/run_test.sh sync_async
-      - name: 'Measure json response classes'
-        run: ./bin/run_test.sh json_classes
+#      - name: 'Measure sync vs async endpoints'
+#        run: ./bin/run_test.sh sync_async
+#      - name: 'Measure json response classes'
+#        run: ./bin/run_test.sh json_classes
       - name: 'Measure Nginx port vs socket'
         run: ./bin/run_test.sh nginx_port_vs_socket
       - name: 'Measure Gunicorn vs Uvicorn'
@@ -79,7 +79,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
-          mkdir -p reports
+          mkdir -p reports test_files/svg
           docker-compose ps --all
       - name: 'Measure workers and threads'
         run: ./bin/run_test.sh workers_and_threads
@@ -87,3 +87,7 @@ jobs:
         with:
           name: Pytest-Report-${{ matrix.python-version }}
           path: ./reports
+      - uses: actions/upload-artifact@v2
+        with:
+          name: SVG-${{ matrix.python-version }}
+          path: test_files/svg

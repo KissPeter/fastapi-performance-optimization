@@ -22,6 +22,14 @@ class TestFields:
     time_mean: str = "time_mean"
 
 
+def get_field_from_container_name(name, pos:int = 1):
+    threads = name
+    if '_' in name:
+        name_split = name.split('_')
+        if len(name_split) >= 3:
+            threads = name_split[pos]
+    return threads
+
 class ABConfig(Config):
     def __init__(self, config: Dict):
         # we don't want to load from file so don't call super
@@ -173,6 +181,8 @@ class CompareContainers:
         self.test_results = []
         self.final_results = {}
         self.baseline = {}
+        self.chart_titles = [0]
+        self.chart_values = [0]
 
     def run_test(self):
         for container in self.test_config:
@@ -263,6 +273,7 @@ class CompareContainers:
         {'name': 'app_one_base_middleware', 'port': 8001, 'baseline': False, 'results': [{'failed_requests': 0, 'rps': 917.87, 'time_mean': 108.948}]}, {'name': 'app_two_base_middlewares', 'port': 8002, 'baseline': False, 'results': [{'failed_requests': 0, 'rps': 612.07, 'time_mean': 163.379}]}]
         :return:
         """
+
         tabulate_headers = ["**Test attribute**"]
         for i in range(TEST_RUN_PER_CONTAINER):
             tabulate_headers.append(f"**Test run {i + 1}**")
@@ -276,6 +287,8 @@ class CompareContainers:
             if container.get("baseline"):
                 self.baseline = self.sum_results(container.get("results"))
                 baseline_rps = self.baseline.get(TestFields.rps)[-1]
+                self.chart_values[0] = baseline_rps
+                self.chart_titles[0] = get_field_from_container_name(container.get('name'))
                 baseline_time_mean = self.baseline.get(TestFields.time_mean)[-1]
                 print(
                     f"\nBaseline ({container.get('name')}_{container.get('port')}):\n"
@@ -290,6 +303,8 @@ class CompareContainers:
         for container_id, result in self.final_results.items():
             print(f"\nContainer {container_id}:\n")
             cont_avg_rps = result[TestFields.rps][-1]
+            self.chart_values.append(cont_avg_rps)
+            self.chart_titles.append(get_field_from_container_name(container_id))
             result[TestFields.rps].append(
                 self.get_diff_percent_to_baseline(
                     cont_avg_rps, baseline_rps, add_percent=True
