@@ -13,12 +13,15 @@ class Bar:
         self.graph.height = 768
         self.graph.graph_title = graph_title
         self.graph.show_graph_title = True
+        self.graph.bar_gap = True
 
         for i in range(len(titles)):
             self.graph.add_data({'data': values[i], 'title': titles[i]})
 
     def save(self, filename):
-        root = os.path.dirname(__file__)
+        _dir = os.path.join(os.path.dirname(__file__), "svg")
+        if not os.path.exists(_dir):
+            os.makedirs(_dir)
         res = self.graph.burn()
-        with open(f'{os.path.join(root, "svg", filename)}.py.svg', 'w') as f:
+        with open(f'{os.path.join(_dir, os.getenv("PYTEST_CURRENT_TEST", ""), filename)}.py.svg', 'w') as f:
             f.write(res)
