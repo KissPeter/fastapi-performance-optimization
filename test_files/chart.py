@@ -5,7 +5,7 @@ from svg.charts import bar
 
 class Bar:
 
-    def __init__(self, fields: List, values: List[int], titles: List[str], graph_title: str):
+    def __init__(self, fields: List, values: List[List[float]], titles: List[str], graph_title: str):
         self.graph = bar.VerticalBar(fields)
         self.graph.stack = 'side'
         self.graph.scale_integers = True
@@ -14,7 +14,7 @@ class Bar:
         self.graph.graph_title = graph_title
         self.graph.show_graph_title = True
 
-        for i in range(len(values)):
+        for i in range(len(titles)):
             self.graph.add_data({'data': values[i], 'title': titles[i]})
 
     def save(self, filename):

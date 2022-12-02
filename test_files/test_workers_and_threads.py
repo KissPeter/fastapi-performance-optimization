@@ -21,15 +21,20 @@ test_config_t5 = [{"name": "app_w1_t5", "port": 8104, "baseline": True},
     {"name": "app_w4_t5", "port": 8119, "baseline": False}, {"name": "app_w5_t5", "port": 8124, "baseline": False}, ]
 
 
-def generate_chart(t, values, titles):
-    fields = []
-    for test_config_item in t:
-        fields.append(get_field_from_container_name(test_config_item['name'], 1))
+def generate_chart(t, values, fields):
+    no_of_threads = get_field_from_container_name(t[0]['name'], 2).replace('t', '')
     c = Bar(fields=fields,
-            values=values,
-            titles=titles,
-            graph_title=f"{get_field_from_container_name(t[0]['name'], 2).replace('t', '')} Threads container RPS")
+            values=[values],
+            titles=[f"{no_of_threads} Gunicorn thread"],
+            graph_title=f"{no_of_threads} thread container RPS")
     c.save(filename=get_field_from_container_name(t[0]['name'], 2))
+
+# fields = ['w1', 'w2', 'w3', 'w4', 'w5']
+# values = [[727.5733, 1092.9267, 1077.9467, 1051.2367, 987.6333]]
+# titles = ['1 Gunicorn thread']
+# graph_title = '1 Threads container RPS'
+# c = Bar(fields=fields, values=values, titles=titles, graph_title=graph_title)
+# c.save('asd')
 
 
 class TestWorkersThreads(TestBase):
@@ -41,7 +46,7 @@ class TestWorkersThreads(TestBase):
         p = CompareContainers(test_config)
         p.run_test()
         p.sum_container_results()
-        generate_chart(t=test_config, values=p.chart_values, titles=p.chart_titles)
+        generate_chart(t=test_config, values=p.chart_values, fields=p.chart_titles)
 
     @pytest.mark.parametrize("test_config",
                              [test_config_t1, test_config_t2, test_config_t3, test_config_t4, test_config_t5])
@@ -55,7 +60,7 @@ class TestWorkersThreads(TestBase):
         p = CompareContainers(async_test_config)
         p.run_test()
         p.sum_container_results()
-        generate_chart(t=test_config, values=p.chart_values, titles=p.chart_titles)
+        generate_chart(t=test_config, values=p.chart_values, fields=p.chart_titles)
 
     @pytest.mark.parametrize("test_config",
                              [test_config_t1, test_config_t2, test_config_t3, test_config_t4, test_config_t5])
@@ -70,7 +75,7 @@ class TestWorkersThreads(TestBase):
         p = CompareContainers(async_test_config)
         p.run_test()
         p.sum_container_results()
-        generate_chart(t=test_config, values=p.chart_values, titles=p.chart_titles)
+        generate_chart(t=test_config, values=p.chart_values, fields=p.chart_titles)
 
     @pytest.mark.parametrize("test_config",
                              [test_config_t1, test_config_t2, test_config_t3, test_config_t4, test_config_t5])
@@ -85,4 +90,4 @@ class TestWorkersThreads(TestBase):
         p = CompareContainers(async_test_config)
         p.run_test()
         p.sum_container_results()
-        generate_chart(t=test_config, values=p.chart_values, titles=p.chart_titles)
+        generate_chart(t=test_config, values=p.chart_values, fields=p.chart_titles)
