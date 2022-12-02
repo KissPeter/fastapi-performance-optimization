@@ -9,7 +9,8 @@ class Bar:
         self.graph = bar.VerticalBar(fields)
         self.graph.stack = 'side'
         self.graph.scale_integers = True
-        self.graph.width, g.height = 1024, 768
+        self.graph.width = 1024
+        self.graph.height = 768
         self.graph.graph_title = graph_title
         self.graph.show_graph_title = True
 
