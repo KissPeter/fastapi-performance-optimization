@@ -1,5 +1,6 @@
-from typing import List
 import os
+from typing import List
+
 from svg.charts import bar
 
 
@@ -19,9 +20,11 @@ class Bar:
             self.graph.add_data({'data': values[i], 'title': titles[i]})
 
     def save(self, filename):
-        _dir = os.path.join(os.path.dirname(__file__), "svg")
+        test_name_cleared = ''.join(filter(str.isalnum, os.getenv("PYTEST_CURRENT_TEST", "")))
+        _dir = os.path.join(os.path.dirname(__file__), test_name_cleared, "svg")
+
         if not os.path.exists(_dir):
             os.makedirs(_dir)
         res = self.graph.burn()
-        with open(f'{os.path.join(_dir, os.getenv("PYTEST_CURRENT_TEST", ""), filename)}.py.svg', 'w') as f:
+        with open(f'{os.path.join(_dir, filename)}.py.svg', 'w') as f:
             f.write(res)
