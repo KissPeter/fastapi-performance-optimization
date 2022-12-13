@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - '*measure*'
-      - '**'
   pull_request:
     branches: [ main ]
 
