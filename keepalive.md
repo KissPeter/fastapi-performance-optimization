@@ -24,37 +24,67 @@ http_client = urllib3.PoolManager(
 Let's see how to support HTTP connection keep-alive from FastAPI
 
 
-## What is 
+## What is HTTP keepalive?
 
-https://en.wikipedia.org/wiki/HTTP_persistent_connection
-https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/HTTP_persistent_connection.svg/600px-HTTP_persistent_connection.svg.png
+When your client and server frequently interacts you should always create [persistent HTTP connection](
+https://en.wikipedia.org/wiki/HTTP_persistent_connection)
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/HTTP_persistent_connection.svg/600px-HTTP_persistent_connection.svg.png" alt="HTTP Keepalive">
+
 
 ## Measurements
 
 ### Synchronous API endpoint with small request / response
 
-#### Nginx - APP via port
+#### Nginx - APP connection, but no keepalive
 
-#### Nginx - APP via socket
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
+|-----------------------|------------------|------------------|------------------|---------------|
+| Requests per second   |          900.11  |          844.94  |          846.34  |       863.797 |
+| Time per request [ms] |          111.098 |          118.351 |          118.156 |       115.868 |
+
+
+#### Nginx - APP connection with keepalive
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |          948.01  |          955.86  |          941.48  |       948.45  | 9.8 %                    |
+| Time per request [ms] |          105.485 |          104.617 |          106.215 |       105.439 | 10.43 ms                 |
+
 
 ### Observations
-* FastAPI queries per second is 1923 which is slightly better than using ports
-* API latency improved as well
+* 9,8% improvement only because we reuse our existing connections
 
-### Asynchronous API endpoint with 1MB response
+### Asynchronous API endpoint with small request / response
 
-#### Nginx - APP via port
+#### Nginx - APP connection, but no keepalive
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
+|-----------------------|------------------|------------------|------------------|---------------|
+| Requests per second   |         1495.79  |         1406.19  |         1441.5   |     1447.83   |
+| Time per request [ms] |           66.854 |           71.114 |           69.372 |       69.1133 |
 
 
-#### Nginx - APP via socket
+#### Nginx - APP connection with keepalive
 
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |         1630.65  |         1680.86  |         1688.54  |     1666.68   | 15.12 %                  |
+| Time per request [ms] |           61.325 |           59.493 |           59.223 |       60.0137 | 9.1 ms                   |
 
+### Observations
+* 15% improvement by this simple change for async endpoint
 
 ## Verdict
 
+* Regardless of the use case sync / async endpoint we can improve our overall performance with this tiny change. 
+* If you use HTTPS connection creation has even higher overhead do the the additional SSL layer
 
 # Pro tip:
+
 * This is a full **Nginx config for FastAPI** with keepalive support:
+
 ```shell
 user nobody nogroup;
 pid /var/run/nginx.pid;
@@ -117,3 +147,4 @@ http {
 }
 
 ```
+![](./test.svg)
