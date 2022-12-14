@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Chart.js example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+<div>
+    <canvas id="myChart2"></canvas>
+
+</div>
+<hr>
+
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+<script>
+    const ctx = document.getElementById('myChart');
+    const ctx2 = document.getElementById('myChart2');
+    const ops = {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'asd', 'Green', 'Purple', 'Orange'],
+            datasets: [
+                {
+                    label: 'Dataset 1',
+                    data: [1, 2, 4, 5, 6, 7],
+                    stack: 'Stack 0',
+                },
+                {
+                    label: 'Dataset 2',
+                    data: [1, 2, 4, 5, 6, 7],
+                    stack: 'Stack 1',
+                },
+            ]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Chart.js Bar Chart - Stacked'
+                },
+            },
+            responsive: true,
+            interaction: {
+                intersect: false,
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true
+                }
+            }
+        }
+    };
+    new Chart(ctx, ops);
+    new Chart(ctx2, ops);
+
+</script>
+
+
+</body>
+</html>

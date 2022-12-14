@@ -8,6 +8,6 @@ COPY app.py .
 COPY gconf.py .
 COPY test_json_1MB.json .
 COPY start_services.sh .
-ENV GUNICORN_CMD_ARGS="-c gconf.py --worker-tmp-dir /dev/shm --keep-alive=5 --access-logfile=None --reuse-port"
-EXPOSE 8000 8080-8081
+ENV GUNICORN_CMD_ARGS="-c gconf.py --reuse-port"
+EXPOSE 8000 8080-8082
 ENTRYPOINT /src/start_services.sh

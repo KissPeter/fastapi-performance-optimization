@@ -17,13 +17,20 @@ TEST_RUN_PER_CONTAINER = 3
 
 @dataclass
 class TestFields:
-    failed_requests: str = 'failed_requests'
-    rps: str = 'rps'
-    time_mean: str = 'time_mean'
+    failed_requests: str = "failed_requests"
+    rps: str = "rps"
+    time_mean: str = "time_mean"
 
+
+def get_field_from_container_name(name, pos:int = 1):
+    threads = name
+    if '_' in name:
+        name_split = name.split('_')
+        if len(name_split) >= 3:
+            threads = name_split[pos]
+    return threads
 
 class ABConfig(Config):
-
     def __init__(self, config: Dict):
         # we don't want to load from file so don't call super
         self.config = {}
@@ -40,10 +47,9 @@ class ABConfig(Config):
 
 
 class ABRunner(Runner):
-
     def __init__(self, config: Config, parser: Parser, collector: Collector):
         super().__init__(config, parser, collector)
-        open(self.CSV_DATA_FILE, 'w').close()
+        open(self.CSV_DATA_FILE, "w").close()
         self.ab_results = {}
 
     def compose_command(self, config_name: str) -> list:
@@ -52,38 +58,46 @@ class ABRunner(Runner):
         :param config_name:
         :return:
         """
-        cmd = ['ab']
+        cmd = ["ab"]
         options = self.config[config_name]
-        cmd.append('-q ')
-        cmd.append('-s 60 ')
-        cmd.append('-c ' + str(options['clients']))
-        cmd.append('-n ' + str(options['count']))
-        cmd.append('-T ' + str(options['content_type']))
-        cmd.append('-p ' + str(options['request_body']))
-        cmd.append(' ' + options['url'])
+        cmd.append("-q ")
+        cmd.append("-s 60 ")
+        cmd.append("-c " + str(options["clients"]))
+        cmd.append("-n " + str(options["count"]))
+        cmd.append("-T " + str(options["content_type"]))
+        cmd.append("-p " + str(options["request_body"]))
+        cmd.append(" " + options["url"])
 
         return cmd
 
     @staticmethod
     def execute_command_whole_output(cmd: list) -> (str, str, int):
-        process = subprocess.run(shlex.split(" ".join(cmd)), stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE,
-                                 encoding='ascii',
-                                 shell=False,
-                                 timeout=100,
-                                 env=os.environ.copy(),
-                                 check=False,
-                                 universal_newlines=True,
-                                 bufsize=0)
+        process = subprocess.run(
+            shlex.split(" ".join(cmd)),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            encoding="ascii",
+            shell=False,
+            timeout=100,
+            env=os.environ.copy(),
+            check=False,
+            universal_newlines=True,
+            bufsize=0,
+        )
         return process.stdout, process.stderr, int(process.returncode)
 
     def run(self):
         try:
             for key, config in self.config.items():
                 command = self.compose_command(key)
+                print(f"Command: {command}")
                 stdout, stderr, error_code = self.execute_command_whole_output(command)
                 if error_code != 0:
-                    print('An ap process failed with error code ' + str(error_code) + '!!!')
+                    print(
+                        "An ap process failed with error code "
+                        + str(error_code)
+                        + "!!!"
+                    )
                     print(stderr)
                 else:
                     self.ab_results = self.parser.parse_ab_result(stdout)
@@ -95,17 +109,24 @@ class ABRunner(Runner):
 class TestContainer:
     DEFAULT_URI = "/sync/items/"
 
-    def __init__(self, port: int = 8000, uri: str = DEFAULT_URI, request_count: int = 5000):
+    def __init__(
+        self,
+        port: int = 8000,
+        uri: str = DEFAULT_URI,
+        request_count: int = 5000,
+        keep_alive: bool = False,
+    ):
         self.ab_parser = Parser()
         self.ab_collector = Collector()
         self.port = port
         self.request_count = request_count
+        self.keep_alive = keep_alive
         self.uri = self._identify_uri(uri=uri)
         self.ab_raw_results = {}
 
     def _identify_uri(self, uri):
         if uri:
-            uri = uri if uri.startswith('/') else f"/{uri}"
+            uri = uri if uri.startswith("/") else f"/{uri}"
         else:
             uri = self.DEFAULT_URI
         return uri
@@ -122,20 +143,28 @@ class TestContainer:
                 "count": self.request_count,
                 "content_type": "'application/json'",
                 "request_body": os.path.abspath(
-                    os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requestbody')),
-                "keep-alive": False,
-                "url": f"http://127.0.0.1:{self.port}{self.uri}"}
+                    os.path.join(
+                        os.path.dirname(os.path.realpath(__file__)), "requestbody"
+                    )
+                ),
+                "keep-alive": self.keep_alive,
+                "url": f"http://127.0.0.1:{self.port}{self.uri}",
+            }
         }
 
     def pre_warm(self):
         config = self._get_config()
-        config["_defaults"]["clients"] = int(config["_defaults"].get("clients", 100) / 10)
+        config["_defaults"]["clients"] = int(
+            config["_defaults"].get("clients", 100) / 10
+        )
         config["_defaults"]["count"] = int(config["_defaults"].get("clients", 100))
         _ab_runner = ABRunner(ABConfig(config=config), Parser(), Collector())
         _ab_runner.run()
 
     def run(self):
-        _ab_runner = ABRunner(ABConfig(config=self._get_config()), self.ab_parser, self.ab_collector)
+        _ab_runner = ABRunner(
+            ABConfig(config=self._get_config()), self.ab_parser, self.ab_collector
+        )
         _ab_runner.run()
         self.ab_raw_results = _ab_runner.ab_results
 
@@ -147,20 +176,28 @@ class TestContainer:
 
 
 class CompareContainers:
-
     def __init__(self, test_config: List[dict]):
         self.test_config = test_config
         self.test_results = []
         self.final_results = {}
         self.baseline = {}
+        self.chart_titles = [0]
+        self.chart_values = [0]
 
     def run_test(self):
         for container in self.test_config:
-            port = container.get('port')
-            uri = container.get('uri')
-            name = container.get('name')
-            request_count = container.get('request_count', 5000)
-            container['results'] = self.test_container(port=port, uri=uri, request_count=request_count, name=name)
+            port = container.get("port")
+            uri = container.get("uri")
+            keep_alive = container.get("keep_alive", False)
+            name = container.get("name")
+            request_count = container.get("request_count", 5000)
+            container["results"] = self.test_container(
+                port=port,
+                uri=uri,
+                request_count=request_count,
+                name=name,
+                keep_alive=keep_alive,
+            )
             self.test_results.append(container)
 
     def sum_test_results(self, results: list) -> dict:
@@ -185,7 +222,7 @@ class CompareContainers:
         """
         header_overwrite = {
             TestFields.rps: "Requests per second",
-            TestFields.time_mean: "Time per request [ms]"
+            TestFields.time_mean: "Time per request [ms]",
         }
         table_data = []
         for k, v in data.items():
@@ -221,7 +258,9 @@ class CompareContainers:
         return result
 
     @staticmethod
-    def get_diff_percent_to_baseline(res: float, baseline: float, round_tens: int = 2, add_percent: bool = False):
+    def get_diff_percent_to_baseline(
+        res: float, baseline: float, round_tens: int = 2, add_percent: bool = False
+    ):
         _return = round(res / baseline * 100 - 100, round_tens)
         if add_percent:
             return f"{_return} %"
@@ -234,6 +273,7 @@ class CompareContainers:
         {'name': 'app_one_base_middleware', 'port': 8001, 'baseline': False, 'results': [{'failed_requests': 0, 'rps': 917.87, 'time_mean': 108.948}]}, {'name': 'app_two_base_middlewares', 'port': 8002, 'baseline': False, 'results': [{'failed_requests': 0, 'rps': 612.07, 'time_mean': 163.379}]}]
         :return:
         """
+
         tabulate_headers = ["**Test attribute**"]
         for i in range(TEST_RUN_PER_CONTAINER):
             tabulate_headers.append(f"**Test run {i + 1}**")
@@ -244,28 +284,49 @@ class CompareContainers:
         baseline_time_mean = 0
         for container in self.test_results:
             # print(f"Container name: {container.get('name')}, container port: {container.get('port')}")
-            if container.get('baseline'):
-                self.baseline = self.sum_results(container.get('results'))
+            if container.get("baseline"):
+                self.baseline = self.sum_results(container.get("results"))
                 baseline_rps = self.baseline.get(TestFields.rps)[-1]
+                self.chart_values[0] = baseline_rps
+                self.chart_titles[0] = get_field_from_container_name(container.get('name'))
                 baseline_time_mean = self.baseline.get(TestFields.time_mean)[-1]
-                print(f"\nBaseline ({container.get('name')}_{container.get('port')}):\n")
-                self.tabulate_data(headers=tabulate_headers_baseline, data=self.baseline)
+                print(
+                    f"\nBaseline ({container.get('name')}_{container.get('port')}):\n"
+                )
+                self.tabulate_data(
+                    headers=tabulate_headers_baseline, data=self.baseline
+                )
             else:
-                self.final_results[f"{container.get('name')}_{container.get('port')}"] = \
-                    self.sum_results(container.get('results'))
+                self.final_results[
+                    f"{container.get('name')}_{container.get('port')}"
+                ] = self.sum_results(container.get("results"))
         for container_id, result in self.final_results.items():
             print(f"\nContainer {container_id}:\n")
             cont_avg_rps = result[TestFields.rps][-1]
-            result[TestFields.rps].append(self.get_diff_percent_to_baseline(cont_avg_rps, baseline_rps, add_percent=True))
+            self.chart_values.append(cont_avg_rps)
+            self.chart_titles.append(get_field_from_container_name(container_id))
+            result[TestFields.rps].append(
+                self.get_diff_percent_to_baseline(
+                    cont_avg_rps, baseline_rps, add_percent=True
+                )
+            )
             cont_avg_time_mean = result[TestFields.time_mean][-1]
-            result[TestFields.time_mean].append(f"{round(baseline_time_mean - cont_avg_time_mean, 2)} ms")
+            result[TestFields.time_mean].append(
+                f"{round(baseline_time_mean - cont_avg_time_mean, 2)} ms"
+            )
             self.tabulate_data(headers=tabulate_headers, data=result)
 
-    def test_container(self, port, uri, request_count, name):
+    @staticmethod
+    def test_container(port, uri, request_count, name, keep_alive):
         _results = []
         for i in range(TEST_RUN_PER_CONTAINER):
             print(f"{i}. of {name} container at port {port} ")
-            t = TestContainer(port=port, uri=uri, request_count=request_count)
+            t = TestContainer(
+                port=port,
+                uri=uri,
+                request_count=request_count,
+                keep_alive=keep_alive
+            )
             if i == 0:
                 t.pre_warm()
             t.run()
