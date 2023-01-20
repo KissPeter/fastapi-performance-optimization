@@ -82,11 +82,11 @@ jobs:
           docker-compose ps --all
       - name: 'Measure workers and threads'
         run: ./bin/run_test.sh workers_and_threads
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Pytest-Report-${{ matrix.python-version }}
           path: ./reports
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: SVG-${{ matrix.python-version }}
           path: test_files/svg
