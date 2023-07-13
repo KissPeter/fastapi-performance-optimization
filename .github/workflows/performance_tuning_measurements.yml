@@ -2,7 +2,7 @@ name: 'Fastapi Performance tuning measurements'
 on:
   push:
     branches:
-      - '*measure*'
+      - '**'
   pull_request:
     branches: [ main ]
 
