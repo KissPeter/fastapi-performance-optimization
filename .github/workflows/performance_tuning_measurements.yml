@@ -90,3 +90,9 @@ jobs:
         with:
           name: SVG-${{ matrix.python-version }}
           path: test_files/svg
+      - name: Lint Code Base
+        uses: super-linter/super-linter/slim@v5
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
