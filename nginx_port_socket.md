@@ -104,6 +104,7 @@ Sample config is [here](https://github.com/KissPeter/fastapi-performance-optimiz
 # Pro tip:
 * If you use [nginx-light](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/Dockerfile#L3) instead of nginx in your Docker build you can save ~100MB container image size.
 * This is a full **Nginx config for FastAPI**:
+
 ```shell
 user nobody nogroup;
 pid /var/run/nginx.pid;
