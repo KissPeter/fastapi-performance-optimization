@@ -79,7 +79,7 @@ https://en.wikipedia.org/wiki/HTTP_persistent_connection)
 ## Verdict
 
 * Regardless of the use case sync / async endpoint we can improve our overall performance with this tiny change. 
-* If you use HTTPS connection creation has even higher overhead do the the additional SSL layer
+* If you use HTTPS connection creation has even higher overhead due the the additional SSL layer
 
 # Pro tip:
 
