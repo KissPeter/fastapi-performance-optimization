@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>json_classes.html</title>
+    <style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.log {
+  background-color: #e6e6e6;
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  height: 230px;
+  overflow-y: scroll;
+  padding: 5px;
+  white-space: pre-wrap;
+}
+.log:only-child {
+  height: inherit;
+}
+
+div.image {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.image img {
+  width: 320px;
+}
+
+div.video {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.video video {
+  overflow: hidden;
+  width: 320px;
+  height: 240px;
+}
+
+.collapsed {
+  display: none;
+}
+
+.expander::after {
+  content: " (show details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.collapser::after {
+  content: " (hide details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+
+.sort-icon {
+  font-size: 0px;
+  float: left;
+  margin-right: 5px;
+  margin-top: 5px;
+  /*triangle*/
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+.inactive .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #E6E6E6;
+}
+.asc.active .sort-icon {
+  /*finish triangle*/
+  border-bottom: 8px solid #999;
+}
+.desc.active .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #999;
+}
+</style></head>
+  <body onLoad="init()">
+    <script>/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+function toArray(iter) {
+    if (iter === null) {
+        return null;
+    }
+    return Array.prototype.slice.call(iter);
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
+}
+
+function sortColumn(elem) {
+    toggleSortStates(elem);
+    const colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
+    let key;
+    if (elem.classList.contains('result')) {
+        key = keyResult;
+    } else if (elem.classList.contains('links')) {
+        key = keyLink;
+    } else {
+        key = keyAlpha;
+    }
+    sortTable(elem, key(colIndex));
+}
+
+function showAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(showExtras);
+}
+
+function hideAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(hideExtras);
+}
+
+function showExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.remove('collapsed');
+    expandcollapse.classList.remove('expander');
+    expandcollapse.classList.add('collapser');
+}
+
+function hideExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.add('collapsed');
+    expandcollapse.classList.remove('collapser');
+    expandcollapse.classList.add('expander');
+}
+
+function showFilters() {
+    let visibleString = getQueryParameter('visible') || 'all';
+    visibleString = visibleString.toLowerCase();
+    const checkedItems = visibleString.split(',');
+
+    const filterItems = document.getElementsByClassName('filter');
+    for (let i = 0; i < filterItems.length; i++) {
+        filterItems[i].hidden = false;
+
+        if (visibleString != 'all') {
+            filterItems[i].checked = checkedItems.includes(filterItems[i].getAttribute('data-test-result'));
+            filterTable(filterItems[i]);
+        }
+    }
+}
+
+function addCollapse() {
+    // Add links for show/hide all
+    const resulttable = find('table#results-table');
+    const showhideall = document.createElement('p');
+    showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
+                            '<a href="javascript:hideAllExtras()">Hide all details</a>';
+    resulttable.parentElement.insertBefore(showhideall, resulttable);
+
+    // Add show/hide link to each result
+    findAll('.col-result').forEach(function(elem) {
+        const collapsed = getQueryParameter('collapsed') || 'Passed';
+        const extras = elem.parentNode.nextElementSibling;
+        const expandcollapse = document.createElement('span');
+        if (extras.classList.contains('collapsed')) {
+            expandcollapse.classList.add('expander');
+        } else if (collapsed.includes(elem.innerHTML)) {
+            extras.classList.add('collapsed');
+            expandcollapse.classList.add('expander');
+        } else {
+            expandcollapse.classList.add('collapser');
+        }
+        elem.appendChild(expandcollapse);
+
+        elem.addEventListener('click', function(event) {
+            if (event.currentTarget.parentNode.nextElementSibling.classList.contains('collapsed')) {
+                showExtras(event.currentTarget);
+            } else {
+                hideExtras(event.currentTarget);
+            }
+        });
+    });
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function init () { // eslint-disable-line no-unused-vars
+    resetSortHeaders();
+
+    addCollapse();
+
+    showFilters();
+
+    sortColumn(find('.initial-sort'));
+
+    findAll('.sortable').forEach(function(elem) {
+        elem.addEventListener('click',
+            function() {
+                sortColumn(elem);
+            }, false);
+    });
+}
+
+function sortTable(clicked, keyFunc) {
+    const rows = findAll('.results-table-row');
+    const reversed = !clicked.classList.contains('asc');
+    const sortedRows = sort(rows, keyFunc, reversed);
+    /* Whole table is removed here because browsers acts much slower
+     * when appending existing elements.
+     */
+    const thead = document.getElementById('results-table-head');
+    document.getElementById('results-table').remove();
+    const parent = document.createElement('table');
+    parent.id = 'results-table';
+    parent.appendChild(thead);
+    sortedRows.forEach(function(elem) {
+        parent.appendChild(elem);
+    });
+    document.getElementsByTagName('BODY')[0].appendChild(parent);
+}
+
+function sort(items, keyFunc, reversed) {
+    const sortArray = items.map(function(item, i) {
+        return [keyFunc(item), i];
+    });
+
+    sortArray.sort(function(a, b) {
+        const keyA = a[0];
+        const keyB = b[0];
+
+        if (keyA == keyB) return 0;
+
+        if (reversed) {
+            return keyA < keyB ? 1 : -1;
+        } else {
+            return keyA > keyB ? 1 : -1;
+        }
+    });
+
+    return sortArray.map(function(item) {
+        const index = item[1];
+        return items[index];
+    });
+}
+
+function keyAlpha(colIndex) {
+    return function(elem) {
+        return elem.childNodes[1].childNodes[colIndex].firstChild.data.toLowerCase();
+    };
+}
+
+function keyLink(colIndex) {
+    return function(elem) {
+        const dataCell = elem.childNodes[1].childNodes[colIndex].firstChild;
+        return dataCell == null ? '' : dataCell.innerText.toLowerCase();
+    };
+}
+
+function keyResult(colIndex) {
+    return function(elem) {
+        const strings = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed',
+            'Skipped', 'Passed'];
+        return strings.indexOf(elem.childNodes[1].childNodes[colIndex].firstChild.data);
+    };
+}
+
+function resetSortHeaders() {
+    findAll('.sort-icon').forEach(function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
+    findAll('.sortable').forEach(function(elem) {
+        const icon = document.createElement('div');
+        icon.className = 'sort-icon';
+        icon.textContent = 'vvv';
+        elem.insertBefore(icon, elem.firstChild);
+        elem.classList.remove('desc', 'active');
+        elem.classList.add('asc', 'inactive');
+    });
+}
+
+function toggleSortStates(elem) {
+    //if active, toggle between asc and desc
+    if (elem.classList.contains('active')) {
+        elem.classList.toggle('asc');
+        elem.classList.toggle('desc');
+    }
+
+    //if inactive, reset all other functions and add ascending active
+    if (elem.classList.contains('inactive')) {
+        resetSortHeaders();
+        elem.classList.remove('inactive');
+        elem.classList.add('active');
+    }
+}
+
+function isAllRowsHidden(value) {
+    return value.hidden == false;
+}
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const classOutcome = outcome + ' results-table-row';
+    const outcomeRows = document.getElementsByClassName(classOutcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        outcomeRows[i].hidden = !elem.checked;
+    }
+
+    const rows = findAll('.results-table-row').filter(isAllRowsHidden);
+    const allRowsHidden = rows.length == 0 ? true : false;
+    const notFoundMessage = document.getElementById('not-found-message');
+    notFoundMessage.hidden = !allRowsHidden;
+}
+</script>
+    <h1>json_classes.html</h1>
+    <p>Report generated on 30-Nov-2022 at 15:09:42 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.2.0</p>
+    <h2>Environment</h2>
+    <table id="environment">
+      <tr>
+        <td>Packages</td>
+        <td>{"pluggy": "1.0.0", "pytest": "7.2.0"}</td></tr>
+      <tr>
+        <td>Platform</td>
+        <td>macOS-12.6-arm64-arm-64bit</td></tr>
+      <tr>
+        <td>Plugins</td>
+        <td>{"anyio": "3.6.2", "html": "3.2.0", "hypothesis": "6.56.4", "metadata": "2.0.4", "schemathesis": "3.17.5", "subtests": "0.7.0"}</td></tr>
+      <tr>
+        <td>Python</td>
+        <td>3.9.6</td></tr></table>
+    <h2>Summary</h2>
+    <p>1 tests ran in 213.47 seconds. </p>
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">1 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">0 failed</span>, <input checked="true" class="filter" data-test-result="error" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">0 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
+    <h2>Results</h2>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+          <th class="sortable" col="name">Test</th>
+          <th class="sortable" col="duration">Duration</th>
+          <th class="sortable links" col="links">Links</th></tr>
+        <tr hidden="true" id="not-found-message">
+          <th colspan="4">No results found. Try to check the filters</th></tr></thead>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">test_files/test_json_response_classes.py::TestJSONClasses::test_json_response_classes</td>
+          <td class="col-duration">213.39</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>0. of app_default_json_response_class container at port 8005 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 10&#x27;, &#x27;-n 10&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8005/sync/big_json_response/&#x27;]
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8005/sync/big_json_response/&#x27;]
+1. of app_default_json_response_class container at port 8005 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8005/sync/big_json_response/&#x27;]
+2. of app_default_json_response_class container at port 8005 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8005/sync/big_json_response/&#x27;]
+0. of app_ojson_response_class container at port 8006 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 10&#x27;, &#x27;-n 10&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8006/sync/big_json_response/&#x27;]
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8006/sync/big_json_response/&#x27;]
+1. of app_ojson_response_class container at port 8006 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8006/sync/big_json_response/&#x27;]
+2. of app_ojson_response_class container at port 8006 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8006/sync/big_json_response/&#x27;]
+0. of app_ujson_response_class container at port 8007 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 10&#x27;, &#x27;-n 10&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8007/sync/big_json_response/&#x27;]
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8007/sync/big_json_response/&#x27;]
+1. of app_ujson_response_class container at port 8007 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8007/sync/big_json_response/&#x27;]
+2. of app_ujson_response_class container at port 8007 
+Command: [&#x27;ab&#x27;, &#x27;-q &#x27;, &#x27;-s 60 &#x27;, &#x27;-c 100&#x27;, &#x27;-n 500&#x27;, &quot;-T &#x27;application/json&#x27;&quot;, &#x27;-p /Users/pkiss/PycharmProjects/fastapi-performance-optimization/test_files/requestbody&#x27;, &#x27; http://127.0.0.1:8007/sync/big_json_response/&#x27;]
+
+Baseline (app_default_json_response_class_8005):
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
+|-----------------------|------------------|------------------|------------------|---------------|
+| Requests per second   |            20.86 |            19.49 |            21.4  |       20.5833 |
+| Time per request [ms] |          4792.8  |          5129.77 |          4673.61 |     4865.39   |
+
+Container app_ojson_response_class_8006:
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |            22.28 |            22.31 |            22.86 |       22.4833 | 9.23 %                   |
+| Time per request [ms] |          4487.82 |          4483    |          4375.06 |     4448.63   | 416.76 ms                |
+
+Container app_ujson_response_class_8007:
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |            22.57 |            21.61 |            22.06 |         22.08 | 7.27 %                   |
+| Time per request [ms] |          4429.92 |          4626.87 |          4533.86 |       4530.22 | 335.18 ms                |
+<br/> ----------------------------Captured stdout teardown---------------------------- <br/>CONTAINER ID   NAME                                                                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d532519388c5   fastapi-performance-optimization-app_w2_t2-1                         0.30%     58.59MiB / 5.785GiB   0.99%     1.78kB / 0B       16.4kB / 0B       7
+e7c0ea1a0efb   fastapi-performance-optimization-app_w1_t5-1                         0.23%     41.18MiB / 5.785GiB   0.70%     1.85kB / 0B       0B / 0B           6
+4133d552e475   fastapi-performance-optimization-app_w1_t1-1                         0.34%     60.57MiB / 5.785GiB   1.02%     10.6MB / 9.31MB   4.19MB / 0B       46
+89b5d8b5c831   fastapi-performance-optimization-app_w5_t5-1                         1.19%     108.6MiB / 5.785GiB   1.83%     1.85kB / 0B       69.6kB / 0B       10
+3fdc76f04607   fastapi-performance-optimization-app_w4_t2-1                         1.09%     91.18MiB / 5.785GiB   1.54%     1.85kB / 0B       307kB / 0B        9
+b2bfe0d08a79   fastapi-performance-optimization-app_w2_t4-1                         0.44%     58.66MiB / 5.785GiB   0.99%     1.85kB / 0B       233kB / 0B        7
+127049463c39   fastapi-performance-optimization-app_w1_t4-1                         0.22%     42.06MiB / 5.785GiB   0.71%     1.85kB / 0B       0B / 0B           6
+f057dfdaebd7   fastapi-performance-optimization-app_w5_t3-1                         1.00%     109.3MiB / 5.785GiB   1.85%     1.85kB / 0B       8.19kB / 0B       10
+2ed0a6d8a530   fastapi-performance-optimization-app_w4_t4-1                         1.14%     90.57MiB / 5.785GiB   1.53%     1.85kB / 0B       340kB / 0B        9
+2411ae315e26   fastapi-performance-optimization-app_w2_t3-1                         1.33%     57.73MiB / 5.785GiB   0.97%     1.85kB / 0B       0B / 0B           7
+55ebefad600f   fastapi-performance-optimization-app_w5_t4-1                         0.98%     107.9MiB / 5.785GiB   1.82%     1.78kB / 0B       90.1kB / 0B       10
+726eea16e10b   fastapi-performance-optimization-app_w2_t1-1                         0.86%     58.42MiB / 5.785GiB   0.99%     1.85kB / 0B       28.7kB / 0B       7
+a50bbe626f0c   fastapi-performance-optimization-app_w3_t1-1                         0.65%     74.05MiB / 5.785GiB   1.25%     1.85kB / 0B       24.6kB / 0B       8
+52585ddc4d79   fastapi-performance-optimization-app_w1_t2-1                         0.28%     50.93MiB / 5.785GiB   0.86%     2.34MB / 2.06MB   201kB / 0B        46
+baacf84631ac   fastapi-performance-optimization-app_w4_t5-1                         0.94%     91.75MiB / 5.785GiB   1.55%     1.85kB / 0B       311kB / 0B        9
+f85d4cda56a5   fastapi-performance-optimization-app_w4_t1-1                         1.17%     90.53MiB / 5.785GiB   1.53%     1.85kB / 0B       57.3kB / 0B       9
+d70696d6681a   fastapi-performance-optimization-app_w1_t3-1                         0.17%     42.15MiB / 5.785GiB   0.71%     1.85kB / 0B       98.3kB / 0B       6
+e17451cbdb29   fastapi-performance-optimization-app_w5_t2-1                         1.22%     109MiB / 5.785GiB     1.84%     1.85kB / 0B       348kB / 0B        10
+738c352df5d4   fastapi-performance-optimization-app_w5_t1-1                         1.66%     107.4MiB / 5.785GiB   1.81%     1.85kB / 0B       41kB / 0B         10
+023cd2f67dca   fastapi-performance-optimization-app_w4_t3-1                         0.87%     91.09MiB / 5.785GiB   1.54%     1.85kB / 0B       57.3kB / 0B       9
+6907f27a13b0   fastapi-performance-optimization-app_w3_t4-1                         0.66%     73.97MiB / 5.785GiB   1.25%     1.85kB / 0B       57.3kB / 0B       8
+1a385788917c   fastapi-performance-optimization-app_w3_t3-1                         1.34%     75.64MiB / 5.785GiB   1.28%     1.85kB / 0B       4.1kB / 0B        8
+e23fb256fdd5   fastapi-performance-optimization-app_w3_t2-1                         0.95%     74.79MiB / 5.785GiB   1.26%     1.85kB / 0B       147kB / 0B        8
+d983bb84f2e8   fastapi-performance-optimization-app_w3_t5-1                         0.78%     74.17MiB / 5.785GiB   1.25%     1.85kB / 0B       254kB / 0B        8
+91a171500ae5   fastapi-performance-optimization-app_w2_t5-1                         0.60%     57.77MiB / 5.785GiB   0.98%     1.85kB / 0B       28.7kB / 0B       7
+3b4a2adc46fa   fastapi-performance-optimization-app_no_middleware-1                 0.53%     97.22MiB / 5.785GiB   1.64%     769kB / 674kB     393kB / 0B        67
+aaa600af45c7   fastapi-performance-optimization                                     0.73%     59.42MiB / 5.785GiB   1.00%     1.94kB / 0B       0B / 0B           7
+2db787db8c3d   fastapi-performance-optimization-app_nginx_port-1                    1.17%     76.46MiB / 5.785GiB   1.29%     1.9kB / 0B        258kB / 4.1kB     8
+a9f298fbd729   fastapi-performance-optimization-app_nginx_socket-1                  0.54%     75.32MiB / 5.785GiB   1.27%     1.83kB / 0B       999kB / 0B        8
+d8e71ad5fdc2   fastapi-performance-optimization-redis-1                             0.26%     10.03MiB / 5.785GiB   0.17%     2.12kB / 0B       4.76MB / 0B       5
+90f0c73d8598   fastapi-performance-optimization-app_gunicorn_w2_t0-1                1.16%     60.58MiB / 5.785GiB   1.02%     1.9kB / 0B        2.38MB / 0B       7
+f10c851f13ee   fastapi-performance-optimization-app_ojson_response_class-1          0.60%     91.01MiB / 5.785GiB   1.54%     3.78MB / 1.39GB   119kB / 8.19kB    85
+410fa8eff560   fastapi-performance-optimization-app_gunicorn_w1_t0-1                0.33%     42.55MiB / 5.785GiB   0.72%     2.01kB / 0B       1.63MB / 0B       6
+a91c6fa9504d   fastapi-performance-optimization-app_uvicorn_w2-1                    0.57%     63.02MiB / 5.785GiB   1.06%     1.94kB / 0B       1.81MB / 0B       6
+2129f6ff07dc   fastapi-performance-optimization-app_gunicorn_w2_t2-1                0.62%     57.62MiB / 5.785GiB   0.97%     1.9kB / 0B        147kB / 0B        7
+a955b883050c   fastapi-performance-optimization-app_two_base_middlewares-1          0.91%     58.86MiB / 5.785GiB   0.99%     1.9kB / 0B        545kB / 0B        7
+b603e389360b   fastapi-performance-optimization-app_two_starlette_middlewares-1     0.64%     58.82MiB / 5.785GiB   0.99%     1.9kB / 0B        135kB / 0B        7
+126392371cbc   fastapi-performance-optimization-app_one_starlette_middleware-1      1.03%     59.47MiB / 5.785GiB   1.00%     1.9kB / 0B        811kB / 0B        7
+7cfa3365470f   fastapi-performance-optimization-app_default_json_response_class-1   0.65%     133.1MiB / 5.785GiB   2.25%     3.82MB / 1.39GB   979kB / 0B        87
+1f2220d48d85   fastapi-performance-optimization-app_gunicorn_w1_t4-1                0.32%     41.64MiB / 5.785GiB   0.70%     1.9kB / 0B        41kB / 0B         6
+5bd3f208466d   fastapi-performance-optimization-app_ujson_response_class-1          0.48%     82.4MiB / 5.785GiB    1.39%     3.73MB / 1.39GB   3.37MB / 0B       83
+ea58eb237b71   fastapi-performance-optimization-app_nginx_socket_keepalive-1        0.83%     74.81MiB / 5.785GiB   1.26%     1.9kB / 0B        422kB / 0B        8
+098dea3ee78a   fastapi-performance-optimization-uvicorn                             0.16%     24.62MiB / 5.785GiB   0.42%     1.9kB / 0B        5.12MB / 0B       3
+4d65cbf7db7d   fastapi-performance-optimization-app_one_base_middleware-1           0.42%     58.15MiB / 5.785GiB   0.98%     1.9kB / 0B        352kB / 0B        7
+ca949150e7fa   keen_archimedes                                                      0.00%     306.6MiB / 5.785GiB   5.18%     0B / 0B           0B / 24.6kB       2
+1267371701a8   beautiful_galois                                                     0.00%     162.3MiB / 5.785GiB   2.74%     0B / 0B           0B / 24.6kB       2
+7139708a7056   nanomq                                                               0.00%     3.141MiB / 5.785GiB   0.05%     10.7kB / 0B       0B / 0B           20
+89558782ba44   jolly_murdock                                                        0.62%     73.78MiB / 5.785GiB   1.25%     16.5kB / 0B       9.92MB / 20.8GB   10
+<br/></div></td></tr></tbody></table></body></html>
