@@ -90,9 +90,24 @@ jobs:
         with:
           name: SVG-${{ matrix.python-version }}
           path: test_files/svg
+
+
+
+  Linter:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 300
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ] # , macos-latest, windows-latest
+        python-version: [ '3.10' ] # '3.6', '3.7', '3.8', '3.9',
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
       - name: Lint Code Base
         uses: super-linter/super-linter/slim@v5
         env:
           VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: master
+          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
