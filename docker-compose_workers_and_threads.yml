@@ -1,203 +1,277 @@
-"version": "3.1"
-
-"services":
-  "app_w1_t1":
-    "cpus": 2
-    "environment":
-      "THREADS": 1
-      "WORKERS": 1
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8100:8000"
-  "app_w1_t2":
-    "cpus": 2
-    "environment":
-      "THREADS": 2
-      "WORKERS": 1
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8101:8000"
-  "app_w1_t3":
-    "cpus": 2
-    "environment":
-      "THREADS": 3
-      "WORKERS": 1
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8102:8000"
-  "app_w1_t4":
-    "cpus": 2
-    "environment":
-      "THREADS": 4
-      "WORKERS": 1
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8103:8000"
-  "app_w1_t5":
-    "cpus": 2
-    "environment":
-      "THREADS": 5
-      "WORKERS": 1
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8104:8000"
-  "app_w2_t1":
-    "cpus": 2
-    "environment":
-      "THREADS": 1
-      "WORKERS": 2
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8105:8000"
-  "app_w2_t2":
-    "cpus": 2
-    "environment":
-      "THREADS": 2
-      "WORKERS": 2
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8106:8000"
-  "app_w2_t3":
-    "cpus": 2
-    "environment":
-      "THREADS": 3
-      "WORKERS": 2
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8107:8000"
-  "app_w2_t4":
-    "cpus": 2
-    "environment":
-      "THREADS": 4
-      "WORKERS": 2
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8108:8000"
-  "app_w2_t5":
-    "cpus": 2
-    "environment":
-      "THREADS": 5
-      "WORKERS": 2
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8109:8000"
-  "app_w3_t1":
-    "cpus": 2
-    "environment":
-      "THREADS": 1
-      "WORKERS": 3
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8110:8000"
-  "app_w3_t2":
-    "cpus": 2
-    "environment":
-      "THREADS": 2
-      "WORKERS": 3
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8111:8000"
-  "app_w3_t3":
-    "cpus": 2
-    "environment":
-      "THREADS": 3
-      "WORKERS": 3
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8112:8000"
-  "app_w3_t4":
-    "cpus": 2
-    "environment":
-      "THREADS": 4
-      "WORKERS": 3
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8113:8000"
-  "app_w3_t5":
-    "cpus": 2
-    "environment":
-      "THREADS": 5
-      "WORKERS": 3
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8114:8000"
-  "app_w4_t1":
-    "cpus": 2
-    "environment":
-      "THREADS": 1
-      "WORKERS": 4
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8115:8000"
-  "app_w4_t2":
-    "cpus": 2
-    "environment":
-      "THREADS": 2
-      "WORKERS": 4
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8116:8000"
-  "app_w4_t3":
-    "cpus": 2
-    "environment":
-      "THREADS": 3
-      "WORKERS": 4
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8117:8000"
-  "app_w4_t4":
-    "cpus": 2
-    "environment":
-      "THREADS": 4
-      "WORKERS": 4
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8118:8000"
-  "app_w4_t5":
-    "cpus": 2
-    "environment":
-      "THREADS": 5
-      "WORKERS": 4
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8119:8000"
-  "app_w5_t1":
-    "cpus": 2
-    "environment":
-      "THREADS": 1
-      "WORKERS": 5
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8120:8000"
-  "app_w5_t2":
-    "cpus": 2
-    "environment":
-      "THREADS": 2
-      "WORKERS": 5
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8121:8000"
-  "app_w5_t3":
-    "cpus": 2
-    "environment":
-      "THREADS": 3
-      "WORKERS": 5
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8122:8000"
-  "app_w5_t4":
-    "cpus": 2
-    "environment":
-      "THREADS": 4
-      "WORKERS": 5
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8123:8000"
-  "app_w5_t5":
-    "cpus": 2
-    "environment":
-      "THREADS": 5
-      "WORKERS": 5
-    "image": "fastapi-performance-optimization:latest"
-    "ports":
-    - "8124:8000"
+version: '3.1'
+services:
+  app_w1_t1:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8100:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 1
+      WORKERS: 1
+  app_w1_t2:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8101:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 2
+      WORKERS: 1
+  app_w1_t3:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8102:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 3
+      WORKERS: 1
+  app_w1_t4:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8103:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 4
+      WORKERS: 1
+  app_w1_t5:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8104:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 5
+      WORKERS: 1
+  app_w2_t1:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8105:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 1
+      WORKERS: 2
+  app_w2_t2:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8106:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 2
+      WORKERS: 2
+  app_w2_t3:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8107:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 3
+      WORKERS: 2
+  app_w2_t4:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8108:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 4
+      WORKERS: 2
+  app_w2_t5:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8109:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 5
+      WORKERS: 2
+  app_w3_t1:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8110:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 1
+      WORKERS: 3
+  app_w3_t2:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8111:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 2
+      WORKERS: 3
+  app_w3_t3:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8112:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 3
+      WORKERS: 3
+  app_w3_t4:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8113:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 4
+      WORKERS: 3
+  app_w3_t5:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8114:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 5
+      WORKERS: 3
+  app_w4_t1:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8115:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 1
+      WORKERS: 4
+  app_w4_t2:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8116:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 2
+      WORKERS: 4
+  app_w4_t3:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8117:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 3
+      WORKERS: 4
+  app_w4_t4:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8118:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 4
+      WORKERS: 4
+  app_w4_t5:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8119:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 5
+      WORKERS: 4
+  app_w5_t1:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8120:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 1
+      WORKERS: 5
+  app_w5_t2:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8121:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 2
+      WORKERS: 5
+  app_w5_t3:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8122:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 3
+      WORKERS: 5
+  app_w5_t4:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8123:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 4
+      WORKERS: 5
+  app_w5_t5:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8124:8000
+    deploy:
+      resources:
+        limits:
+         cpus: '2'
+    environment:
+      THREADS: 5
+      WORKERS: 5

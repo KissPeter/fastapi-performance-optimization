@@ -1,140 +1,206 @@
-version: '3.1'
-
+version: '3.8'
 services:
-  redis:
-    image: redis
-    cpus: 2
-    ports:
-      - "6379:6379"
   app:
+    image: fastapi-performance-optimization:latest
     container_name: fastapi-performance-optimization
     build:
       context: app_files
       dockerfile: Dockerfile
-    image: fastapi-performance-optimization:latest
-    cpus: 2
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
     restart: always
-  app_no_middleware:
-    image: fastapi-performance-optimization:latest
-    cpus: 2
-    ports:
-      - "8000:8000"
-  app_one_base_middleware:
-    image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      PROCESSTIMEMIDDLEWARE: add
-    ports:
-      - "8001:8000"
-  app_two_base_middlewares:
-    image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      PROCESSTIMEMIDDLEWARE: add
-      CUSTOMHEADERMIDDLEWARE: add
-    ports:
-      - "8002:8000"
-  app_one_starlette_middleware:
-    image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      STARLETTEPROCESSTIMEIDDLEWARE: add
-    ports:
-      - "8003:8000"
-  app_two_starlette_middlewares:
-    image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      STARLETTEPROCESSTIMEIDDLEWARE: add
-      STARLETTECUSTOMHEADERMIDDLEWARE: add
-    ports:
-      - "8004:8000"
   app_default_json_response_class:
     image: fastapi-performance-optimization:latest
-    cpus: 2
+    ports:
+    - 8005:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
     environment:
       JSONRESPONSECLASS: JSONResponse
-    ports:
-      - "8005:8000"
-  app_ojson_response_class:
+  app_gunicorn_w1_t0:
     image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      JSONRESPONSECLASS: ORJSONResponse
     ports:
-      - "8006:8000"
-  app_ujson_response_class:
+    - 8010:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      THREADS: 0
+      WORKERS: 1
+  app_gunicorn_w1_t4:
     image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      JSONRESPONSECLASS: UJSONResponse
     ports:
-      - "8007:8000"
+    - 8012:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      THREADS: 4
+      WORKERS: 1
+  app_gunicorn_w2_t0:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8011:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      THREADS: 0
+      WORKERS: 2
+  app_gunicorn_w2_t2:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8014:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      THREADS: 2
+      WORKERS: 2
   app_nginx_port:
     image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      WORKERS: 3
-      THREADS: 1
     ports:
-      - "8008:8080"
+    - 8008:8080
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      THREADS: 1
+      WORKERS: 3
   app_nginx_socket:
     image: fastapi-performance-optimization:latest
-    cpus: 2
-    environment:
-      WORKERS: 3
-      THREADS: 1
-      SOCKET: 1
     ports:
-      - "8009:8081"
-  "app_gunicorn_w1_t0":
-    "cpus": 2
-    "environment":
-      "THREADS": 0
-      "WORKERS": 1
-    "image": fastapi-performance-optimization:latest
-    "ports":
-      - "8010:8000"
-  "app_gunicorn_w2_t0":
-    "cpus": 2
-    "environment":
-      "THREADS": 0
-      "WORKERS": 2
-    "image": fastapi-performance-optimization:latest
-    "ports":
-      - "8011:8000"
-  "app_gunicorn_w1_t4":
-    "cpus": 2
-    "environment":
-      "THREADS": 4
-      "WORKERS": 1
-    "image": fastapi-performance-optimization:latest
-    "ports":
-      - "8012:8000"
-  "app_gunicorn_w2_t2":
-    "cpus": 2
-    "environment":
-      "THREADS": 2
-      "WORKERS": 2
-    "image": fastapi-performance-optimization:latest
-    "ports":
-      - "8014:8000"
+    - 8009:8081
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      SOCKET: 1
+      THREADS: 1
+      WORKERS: 3
+  app_nginx_socket_keepalive:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8017:8082
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      KEEPALIVE: 1
+      SOCKET: 1
+      THREADS: 1
+      WORKERS: 3
+  app_no_middleware:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8000:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+  app_ojson_response_class:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8006:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      JSONRESPONSECLASS: ORJSONResponse
+  app_one_base_middleware:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8001:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      PROCESSTIMEMIDDLEWARE: add
+  app_one_starlette_middleware:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8003:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+  app_two_base_middlewares:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8002:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      CUSTOMHEADERMIDDLEWARE: add
+      PROCESSTIMEMIDDLEWARE: add
+  app_two_starlette_middlewares:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8004:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      STARLETTECUSTOMHEADERMIDDLEWARE: add
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+  app_ujson_response_class:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - 8007:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      JSONRESPONSECLASS: UJSONResponse
   app_uvicorn_w1:
+    image: fastapi-performance-optimization-uvicorn:latest
     container_name: fastapi-performance-optimization-uvicorn
     build:
       context: app_files
       dockerfile: Dockerfile_uvicorn
-    image: fastapi-performance-optimization-uvicorn:latest
+    ports:
+    - 8015:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
     restart: always
-    "cpus": 2
-    "environment":
-      "WORKERS": 1
-    "ports":
-      - "8015:8000"
   app_uvicorn_w2:
     image: fastapi-performance-optimization-uvicorn:latest
-    "cpus": 2
-    "environment":
-      "WORKERS": 2
-    "ports":
-      - "8016:8000"
+    ports:
+    - 8016:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+  redis:
+    image: redis
+    ports:
+    - 6379:6379
+    deploy:
+      resources:
+        limits:
+          cpus: '2'

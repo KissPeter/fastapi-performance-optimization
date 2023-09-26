@@ -44,9 +44,13 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 | Time per request [ms] |         10620.7  |         10047.3  |         10878    |      10515.3  | 48.9 ms                  |
  
 # Verdict
-You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
-Having some gain by simply changing to other response class seems promising isn't it? 
+
+* You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
+* Having some gain by simply changing to other response class seems promissing isn't it?
+
+
 Please note that you can have different JSON response class for each API endpoint as shown in the FastAPI [docs](https://fastapi.tiangolo.com/advanced/custom-response/#ujsonresponse):
+    
 ```python
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse

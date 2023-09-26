@@ -23,7 +23,7 @@ Sample application without any middleware.
 | Requests per second   |         1885.57  |         1924.34  |         1953.53  |      1921.15  |
 | Time per request [ms] |           53.034 |           51.966 |           51.189 |        52.063 |
 
-## With one middleware
+## FastAPI timing middleware
 
 > Source of middleware is the official [FastAPI docs](https://www.starlette.io/middleware/#basehttpmiddleware)
 
@@ -70,7 +70,7 @@ app.add_middleware(CustomHeaderMiddleware)
 * By adding another middleware there is significant drop again, the container throughput is around half than before
 * Average response time is raised
 
-## With one Starlette middleware
+## Starlette timing middleware
 
 Fortunately there is a better way of extending the application with middleware capabilities however this is slightly less convenient:
 Motivation is from [Starlette Session Middleware](https://github.com/encode/starlette/blob/master/starlette/middleware/sessions.py)
@@ -107,7 +107,8 @@ class STARLETTEProcessTimeMiddleware:
 | Time per request [ms] |           53.501 |           52.868 |           51.318 |       52.5623 | -0.5 ms                  |
 
 ### Observations
-* Negligible change on performance 
+* Negligible change on performance
+* Same function as **FastAPI timing middleware**, but better performance
 
 ## With two Starlette middlewares
 
@@ -122,4 +123,4 @@ In order to see the performance difference if multiple middlewares are added, an
 * Still no significant difference, much better than BaseHTTPMiddleware 
 
 # Verdict
-Numbers clearly indicate the significant performance difference between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can
+Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can
