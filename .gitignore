@@ -2,3 +2,5 @@
 _site/*
 /test_files/data.csv
 /.hypothesis/
+/test_files/.hypothesis/
+/reports/*.html
