@@ -1,0 +1,6790 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Questionnaires Detail Service",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/questionnaires/{questionnaireId}/appendices": {
+      "get": {
+        "tags": [
+          "AppendicesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/appendices/list": {
+      "get": {
+        "tags": [
+          "AppendicesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scopeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/appendices": {
+      "get": {
+        "tags": [
+          "AppendicesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AppendicesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixCreateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixCreateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixCreateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixCreateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/appendices/list": {
+      "get": {
+        "tags": [
+          "AppendicesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scopeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/appendices/{appendixId}": {
+      "put": {
+        "tags": [
+          "AppendicesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixUpdateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixUpdateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixUpdateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixUpdateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AppendicesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/appendices/location": {
+      "put": {
+        "tags": [
+          "AppendicesLocationData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendicesLocationModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendicesLocationModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendicesLocationModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendicesLocationModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/questionnaires/{questionnaireId}/responses/{responseId}/appendices": {
+      "get": {
+        "tags": [
+          "AppendicesViewerData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/AppendixMode"
+            }
+          },
+          {
+            "name": "responseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendicesOutputModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendicesOutputModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendicesOutputModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/appendices/{appendixId}/items": {
+      "get": {
+        "tags": [
+          "AppendixItemsData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/appendices/{appendixId}/items": {
+      "get": {
+        "tags": [
+          "AppendixItemsData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AppendixItemsData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemCreateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemCreateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemCreateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemCreateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/appendices/{appendixId}/items/{appendixItemId}": {
+      "put": {
+        "tags": [
+          "AppendixItemsData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemUpdateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemUpdateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemUpdateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendixItemUpdateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AppendixItemsData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/appendix_item_summaries": {
+      "get": {
+        "tags": [
+          "AppendixItemSummariesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scopeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendixItemSummaryModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendixItemSummaryModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendixItemSummaryModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/participant/questionnaires/{questionnaireId}/responses/{responseId}/appendices/{appendixId}/items": {
+      "get": {
+        "tags": [
+          "AppendixItemsViewerData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "appendixId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "responseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendixItemsOutputModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendixItemsOutputModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppendixItemsOutputModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/attachments/{attachmentLookupId}": {
+      "get": {
+        "tags": [
+          "AttachmentData"
+        ],
+        "parameters": [
+          {
+            "name": "attachmentLookupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/auth/check": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/auth/check/manager": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/auth/check/responder": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/boards/questionnaires": {
+      "get": {
+        "tags": [
+          "BoardsApp"
+        ],
+        "parameters": [
+          {
+            "name": "showActive",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireForBoardsInfoDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireForBoardsInfoDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireForBoardsInfoDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check": {
+      "get": {
+        "tags": [
+          "Check"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/check/version": {
+      "get": {
+        "tags": [
+          "Check"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/check/ping": {
+      "get": {
+        "tags": [
+          "Check"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/contentpages/{pageId}": {
+      "get": {
+        "tags": [
+          "ContentPageData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentPageModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentPageModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentPageModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ContentPageData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentPageUpdateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentPageUpdateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentPageUpdateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentPageUpdateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/contentpages/{pageId}/enableintro": {
+      "put": {
+        "tags": [
+          "ContentPageData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartPageEnabledUpdateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartPageEnabledUpdateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartPageEnabledUpdateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartPageEnabledUpdateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/contingency-triggers": {
+      "get": {
+        "tags": [
+          "ContingencyTriggersData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "parentQuestionId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          {
+            "name": "displayIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContingencyTriggersModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContingencyTriggersModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContingencyTriggersModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/contingency-triggers/v1": {
+      "get": {
+        "tags": [
+          "ContingencyTriggersData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "parentQuestionId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          {
+            "name": "displayIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContingencyTriggersModelV1"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContingencyTriggersModelV1"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContingencyTriggersModelV1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/has-triggers": {
+      "get": {
+        "tags": [
+          "ContingencyTriggersData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "parentQuestionId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          {
+            "name": "displayIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/environment": {
+      "get": {
+        "tags": [
+          "EnvironmentData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/launch": {
+      "post": {
+        "tags": [
+          "Launch"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LaunchModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LaunchModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LaunchModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LaunchModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/launchform": {
+      "post": {
+        "tags": [
+          "Launch"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "encoding": {
+                "token": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/meetinggroups": {
+      "get": {
+        "tags": [
+          "MeeetingGroups"
+        ],
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MeetingGroupDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MeetingGroupDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MeetingGroupDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/questions/{questionId}/options/summary": {
+      "get": {
+        "tags": [
+          "OptionsSummaryData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsSummaryOutputModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsSummaryOutputModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsSummaryOutputModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/questions/{questionId}/options/summary/v1": {
+      "get": {
+        "tags": [
+          "OptionsSummaryData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsSummaryOutputModelV1"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsSummaryOutputModelV1"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsSummaryOutputModelV1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/pages": {
+      "get": {
+        "tags": [
+          "PagesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagesModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagesModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagesModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PagesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageCreateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageCreateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageCreateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageCreateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PagesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageUpdateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageUpdateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageUpdateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageUpdateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/pages/{pageId}": {
+      "delete": {
+        "tags": [
+          "PagesData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/questionnaires/{questionnaireId}/progresses/{responseId}": {
+      "get": {
+        "tags": [
+          "Participant"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "responseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/participant/questionnaires/{questionnaireId}/data": {
+      "get": {
+        "tags": [
+          "Participant"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "responseId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponderResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponderResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponderResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/participant/questionnaires/{questionnaireId}/preview": {
+      "get": {
+        "tags": [
+          "Participant"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "showPrefill",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponderResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponderResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponderResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/participantresponses": {
+      "get": {
+        "tags": [
+          "ParticipantResponses"
+        ],
+        "parameters": [
+          {
+            "name": "showActive",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/prefiller/questionnaires/{questionnaireId}/prefilledresponses/{prefilledResponseId}": {
+      "get": {
+        "tags": [
+          "PrefillerData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/prefiller/prefilledresponses/{prefilledResponseId}/answer": {
+      "post": {
+        "tags": [
+          "PrefillerData"
+        ],
+        "parameters": [
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/prefiller/prefilledresponses/{prefilledResponseId}/comment": {
+      "post": {
+        "tags": [
+          "PrefillerData"
+        ],
+        "parameters": [
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/prefiller/prefilledresponses/{prefilledResponseId}/attachment": {
+      "post": {
+        "tags": [
+          "PrefillerData"
+        ],
+        "parameters": [
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prefilledAttachment": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "QuestionUniqueId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "Title": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "encoding": {
+                "prefilledAttachment": {
+                  "style": "form"
+                },
+                "QuestionUniqueId": {
+                  "style": "form"
+                },
+                "Title": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/prefiller/prefilledresponses/{prefilledResponseId}/questions/{questionId}/attachments/{attachmentLookupId}": {
+      "delete": {
+        "tags": [
+          "PrefillerData"
+        ],
+        "parameters": [
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "attachmentLookupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/prefiller/questionnaires/{questionnaireId}/prefilledprogresses/{prefilledResponseId}": {
+      "get": {
+        "tags": [
+          "PrefillerData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/prefiller/questionnaires/{questionnaireId}/prefilledprogresses": {
+      "get": {
+        "tags": [
+          "PrefillerData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/linkablequestions": {
+      "get": {
+        "tags": [
+          "QuestionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkableQuestionsListModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkableQuestionsListModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkableQuestionsListModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/linkablequestions/v1": {
+      "get": {
+        "tags": [
+          "QuestionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkableListQuestionsModelV1"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkableListQuestionsModelV1"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkableListQuestionsModelV1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/questions/{questionId}": {
+      "get": {
+        "tags": [
+          "QuestionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "QuestionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/questions": {
+      "post": {
+        "tags": [
+          "QuestionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "QuestionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/questionnaires": {
+      "get": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertQuestionnaireRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertQuestionnaireRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertQuestionnaireRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertQuestionnaireRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}": {
+      "put": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateQuestionnaireRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateQuestionnaireRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateQuestionnaireRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateQuestionnaireRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{sourceQuestionnaireId}/copy": {
+      "post": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "sourceQuestionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyQuestionnaireRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyQuestionnaireRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyQuestionnaireRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyQuestionnaireRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/publish": {
+      "post": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishQuestionnaireRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishQuestionnaireRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishQuestionnaireRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishQuestionnaireRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/detail": {
+      "get": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireMasterDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/versions/{version}": {
+      "delete": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/pages": {
+      "get": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagesModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagesModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagesModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/participants": {
+      "post": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyQuestionnaireRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyQuestionnaireRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyQuestionnaireRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyQuestionnaireRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireParticipantsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireParticipantsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireParticipantsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/versions/{version}/closedate": {
+      "put": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCloseDateRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCloseDateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCloseDateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCloseDateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCloseDateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCloseDateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCloseDateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/premiumfeatures/validate": {
+      "get": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/pages/hasblank": {
+      "get": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/signatures/required": {
+      "get": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/location": {
+      "put": {
+        "tags": [
+          "QuestionnairesLocationData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireLocationModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireLocationModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireLocationModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireLocationModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/questionpages/{pageId}": {
+      "get": {
+        "tags": [
+          "QuestionPageData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionPageModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionPageModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionPageModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/questionsummaries": {
+      "get": {
+        "tags": [
+          "QuestionSummaryData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageSummary"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageSummary"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageSummary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/questionsummaries/v1": {
+      "get": {
+        "tags": [
+          "QuestionSummaryData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageSummaryModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageSummaryModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageSummaryModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/questionnaires/{questionnaireId}/summary": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/reports/questionnaires/{questionnaireId}/user": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/reports/questionnaires/{questionnaireId}": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/responder/answer": {
+      "post": {
+        "tags": [
+          "ResponderData"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/responder/comment": {
+      "post": {
+        "tags": [
+          "ResponderData"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionResponseDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/responder/progress": {
+      "post": {
+        "tags": [
+          "ResponderData"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/responder/submit": {
+      "post": {
+        "tags": [
+          "ResponderData"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/responder/sign": {
+      "post": {
+        "tags": [
+          "ResponderData"
+        ],
+        "parameters": [
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseSignatureModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseSignatureModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseSignatureModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/participant/responder/unsign": {
+      "post": {
+        "tags": [
+          "ResponderData"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireResponseInfoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/participant/attachments/{attachmentLookupId}": {
+      "get": {
+        "tags": [
+          "ResponderData"
+        ],
+        "parameters": [
+          {
+            "name": "attachmentLookupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentLookupDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentLookupDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentLookupDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fixcolumns": {
+      "get": {
+        "tags": [
+          "Responses"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/responses/{responseId}": {
+      "get": {
+        "tags": [
+          "Responses"
+        ],
+        "parameters": [
+          {
+            "name": "responseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/progresses": {
+      "get": {
+        "tags": [
+          "Responses"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/responses": {
+      "get": {
+        "tags": [
+          "Responses"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/responses/prefilled": {
+      "get": {
+        "tags": [
+          "Responses"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrefilledResponseDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrefilledResponseDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrefilledResponseDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questionnaires/{questionnaireId}/responses/{prefilledResponseId}/prefilled": {
+      "get": {
+        "tags": [
+          "Responses"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireWithAnswersDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireWithAnswersDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireWithAnswersDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/prefilledresponses/{prefilledResponseId}/note": {
+      "put": {
+        "tags": [
+          "Responses"
+        ],
+        "parameters": [
+          {
+            "name": "prefilledResponseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrefilledResponseNoteDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrefilledResponseNoteDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrefilledResponseNoteDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrefilledResponseNoteDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/clear-signatures": {
+      "get": {
+        "tags": [
+          "Responses"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireSettings"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireSettings"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireSettings"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/timezones": {
+      "get": {
+        "tags": [
+          "TimeZones"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarTimeZoneDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarTimeZoneDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarTimeZoneDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/triggeroptions/{uniqueId}": {
+      "get": {
+        "tags": [
+          "TriggerOptionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "uniqueId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builder/questionnaires/{questionnaireId}/triggerquestions/{questionId}": {
+      "get": {
+        "tags": [
+          "TriggerQuestionData"
+        ],
+        "parameters": [
+          {
+            "name": "questionnaireId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "meetingGroupIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "nullable": true
+            }
+          },
+          {
+            "name": "writableMeetingGroupIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserInfoSummaryWithSignatureDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserInfoSummaryWithSignatureDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserInfoSummaryWithSignatureDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/signatures": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "signatureImage": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  }
+                }
+              },
+              "encoding": {
+                "signatureImage": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/widget/questionnaires": {
+      "get": {
+        "tags": [
+          "Widget"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/widget/questionnaires/meetinggroups": {
+      "post": {
+        "tags": [
+          "Widget"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "nullable": true
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "nullable": true
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "nullable": true
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "nullable": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/MeetingGroupDTO"
+                    }
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/MeetingGroupDTO"
+                    }
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/MeetingGroupDTO"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AppendixCreateModel": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AppendixUpdateModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AppendicesLocationModel": {
+        "type": "object",
+        "properties": {
+          "appendixId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AppendixMode": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AppendixOutputModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "selected": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AppendicesOutputModel": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppendixOutputModel"
+            },
+            "nullable": true
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AppendixItemCreateModel": {
+        "type": "object",
+        "properties": {
+          "appendixId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "hideBackgroundBar": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AppendixItemUpdateModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "hideBackgroundBar": {
+            "type": "boolean"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AppendixItemSummaryModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "header": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "hideBackgroundBar": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AppendixItemOutputModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appendixId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "hideBackgroundBar": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AppendixItemsOutputModel": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppendixItemOutputModel"
+            },
+            "nullable": true
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "QuestionnaireForBoardsInfoDTO": {
+        "type": "object"
+      },
+      "PageType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ContentPageModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageType": {
+            "$ref": "#/components/schemas/PageType"
+          }
+        }
+      },
+      "ContentPageUpdateModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageType": {
+            "$ref": "#/components/schemas/PageType"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VersionModel": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "StartPageEnabledUpdateModel": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OptionModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOtherOption": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TriggerQuestionModel": {
+        "type": "object",
+        "properties": {
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayText": {
+            "type": "string",
+            "nullable": true
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionModel"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "ContingencyTriggersModel": {
+        "type": "object",
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TriggerQuestionModel"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "TriggerQuestionModelV1": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parentNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasParent": {
+            "type": "boolean"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayText": {
+            "type": "string",
+            "nullable": true
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionModel"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "ContingencyTriggersModelV1": {
+        "type": "object",
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TriggerQuestionModelV1"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "SettingsModel": {
+        "type": "object",
+        "properties": {
+          "maxTableColumnLength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfOptionsToShowDropDown": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newQuestionsRequired": {
+            "type": "boolean"
+          },
+          "appendicesAvailable": {
+            "type": "boolean"
+          },
+          "flagChangesEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "FeaturesModel": {
+        "type": "object",
+        "properties": {
+          "tableQuestionsEnabled": {
+            "type": "boolean"
+          },
+          "appendicesEnabled": {
+            "type": "boolean"
+          },
+          "questionLinksEnabled": {
+            "type": "boolean"
+          },
+          "signaturesEnabled": {
+            "type": "boolean"
+          },
+          "copyQuestionEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EnvironmentModel": {
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/SettingsModel"
+          },
+          "features": {
+            "$ref": "#/components/schemas/FeaturesModel"
+          }
+        }
+      },
+      "LaunchModel": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "MeetingGroupDTO": {
+        "type": "object",
+        "properties": {
+          "meetingGroupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meetingGroupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "OptionsSummary": {
+        "type": "object"
+      },
+      "OptionsSummaryOutputModel": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionsSummary"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "OptionsSummaryModel": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parentNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasParent": {
+            "type": "boolean"
+          },
+          "displayText": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "OptionsSummaryOutputModelV1": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionsSummaryModel"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "PageModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageType": {
+            "$ref": "#/components/schemas/PageType"
+          },
+          "selected": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagesModel": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PageModel"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "PageCreateModel": {
+        "type": "object",
+        "properties": {
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PageUpdateModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageType": {
+            "$ref": "#/components/schemas/PageType"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ProgressDTO": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionnaireResponseId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countAll": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countAnswered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countActive": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countActiveAnswered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countRequired": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countRequiredAnswered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countRequiredActive": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countRequiredActiveAnswered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageProgress": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ProgressDTO"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "StartPageDTO": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "displaySiteLogo": {
+            "type": "boolean"
+          },
+          "pageType": {
+            "$ref": "#/components/schemas/PageType"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "AnswerDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "hashedValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasChangedFromPrefill": {
+            "type": "boolean"
+          }
+        }
+      },
+      "QuestionType": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ConditionDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "triggerQuestionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "triggerQuestionUniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "triggerOptionIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "triggerOptionUniqueIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "contingentQuestionIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "OptionDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOtherOption": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TableQuestionColumnOutputModel": {
+        "type": "object",
+        "properties": {
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AttachmentDetailDto": {
+        "type": "object",
+        "properties": {
+          "lookupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "QuestionDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "unformattedLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "nonNumberedQuestion": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "linkable": {
+            "type": "boolean"
+          },
+          "questionTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "hideBackgroundBar": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "includeComment": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "displayLabelAndControlInline": {
+            "type": "boolean"
+          },
+          "questionType": {
+            "$ref": "#/components/schemas/QuestionType"
+          },
+          "childQuestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionDTO"
+            },
+            "nullable": true
+          },
+          "contingentOn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConditionDTO"
+            },
+            "nullable": true
+          },
+          "hasRange": {
+            "type": "boolean"
+          },
+          "rangeMin": {
+            "type": "number",
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": "number",
+            "format": "double"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDTO"
+            },
+            "nullable": true
+          },
+          "singleAnswerOnly": {
+            "type": "boolean"
+          },
+          "includeOtherOption": {
+            "type": "boolean"
+          },
+          "showAsRatingTable": {
+            "type": "boolean"
+          },
+          "defaultRowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TableQuestionColumnOutputModel"
+            },
+            "nullable": true
+          },
+          "hasIndividualPrefilledAnswer": {
+            "type": "boolean"
+          },
+          "hasMasterPrefilledAnswer": {
+            "type": "boolean"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentDetailDto"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "QuestionWithAnswerDTO": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "$ref": "#/components/schemas/AnswerDTO"
+          },
+          "childQuestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionDTO"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "unformattedLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "nonNumberedQuestion": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "linkable": {
+            "type": "boolean"
+          },
+          "questionTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "hideBackgroundBar": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "includeComment": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "displayLabelAndControlInline": {
+            "type": "boolean"
+          },
+          "questionType": {
+            "$ref": "#/components/schemas/QuestionType"
+          },
+          "contingentOn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConditionDTO"
+            },
+            "nullable": true
+          },
+          "hasRange": {
+            "type": "boolean"
+          },
+          "rangeMin": {
+            "type": "number",
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": "number",
+            "format": "double"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDTO"
+            },
+            "nullable": true
+          },
+          "singleAnswerOnly": {
+            "type": "boolean"
+          },
+          "includeOtherOption": {
+            "type": "boolean"
+          },
+          "showAsRatingTable": {
+            "type": "boolean"
+          },
+          "defaultRowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TableQuestionColumnOutputModel"
+            },
+            "nullable": true
+          },
+          "hasIndividualPrefilledAnswer": {
+            "type": "boolean"
+          },
+          "hasMasterPrefilledAnswer": {
+            "type": "boolean"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentDetailDto"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "PageWithAnswersDTO": {
+        "type": "object",
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionDTO"
+            },
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageType": {
+            "$ref": "#/components/schemas/PageType"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "HorizontalAlignment": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "EndPageWithSignatureDTO": {
+        "type": "object",
+        "properties": {
+          "signature": {
+            "type": "string",
+            "nullable": true
+          },
+          "showSignatureDate": {
+            "type": "boolean"
+          },
+          "signatureDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultText": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDefaultText": {
+            "type": "boolean"
+          },
+          "signaturesEnabled": {
+            "type": "boolean"
+          },
+          "signatureRequired": {
+            "type": "boolean"
+          },
+          "signatureAlignment": {
+            "$ref": "#/components/schemas/HorizontalAlignment"
+          },
+          "pageType": {
+            "$ref": "#/components/schemas/PageType"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "QuestionnaireWithAnswersDTO": {
+        "type": "object",
+        "properties": {
+          "startPage": {
+            "$ref": "#/components/schemas/StartPageDTO"
+          },
+          "questionPages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PageWithAnswersDTO"
+            },
+            "nullable": true
+          },
+          "endPage": {
+            "$ref": "#/components/schemas/EndPageWithSignatureDTO"
+          },
+          "furthestVisitedPageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "lastVisitedPageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "boardMemberName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isMaster": {
+            "type": "boolean"
+          },
+          "isPrefilled": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultSiteLogoPng": {
+            "type": "string",
+            "nullable": true
+          },
+          "newQuestionsRequiredByDefault": {
+            "type": "boolean"
+          },
+          "lastBuilderPageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "appendicesAvailable": {
+            "type": "boolean"
+          },
+          "appendicesWithItemsAvailable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ResponderResult": {
+        "type": "object",
+        "properties": {
+          "numberOfOptionsToShowDropDown": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionnaire": {
+            "$ref": "#/components/schemas/QuestionnaireWithAnswersDTO"
+          }
+        }
+      },
+      "QuestionnaireStatus": {
+        "enum": [
+          0,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "UserResponseDTO": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionnaireResponseId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/QuestionnaireStatus"
+          },
+          "openDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "closeDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "hasResponded": {
+            "type": "boolean"
+          },
+          "isComplete": {
+            "type": "boolean"
+          },
+          "responseDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "numberOfQuestionPagesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfQuestionPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "responderProgress": {
+            "$ref": "#/components/schemas/ProgressDTO"
+          }
+        }
+      },
+      "AnswerRequestDTO": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionUniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "siteName": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "prefilledResponseId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "LinkableQuestionListModel": {
+        "type": "object",
+        "properties": {
+          "scopeId": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "optionText": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        }
+      },
+      "LinkableQuestionsListModel": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkableQuestionListModel"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        }
+      },
+      "LinkableListQuestionModelV1": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parentNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasParent": {
+            "type": "boolean"
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "optionText": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        }
+      },
+      "LinkableListQuestionsModelV1": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkableListQuestionModelV1"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        }
+      },
+      "ConditionUpdateModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "triggerQuestionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "triggerQuestionUniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "triggerOptionIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "triggerOptionUniqueIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "QuestionUpdateModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pageId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "parentQuestionId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "questionType": {
+            "$ref": "#/components/schemas/QuestionType"
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "unformattedLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "nonNumberedQuestion": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "linkable": {
+            "type": "boolean"
+          },
+          "questionTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "hideBackgroundBar": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "displayLabelAndControlInline": {
+            "type": "boolean"
+          },
+          "contingentOn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConditionUpdateModel"
+            },
+            "nullable": true
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "QuestionnaireResponseSummaryDTO": {
+        "type": "object",
+        "properties": {
+          "questionnaireResponseId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "userLastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "userFirstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "responseDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isComplete": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changeTimestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "anonymousIndex": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfQuestionPagesCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfQuestionPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentComplete": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "QuestionnaireMasterGroupAssignmentDetailsDTO": {
+        "type": "object"
+      },
+      "CalendarTimeZoneDTO": {
+        "type": "object",
+        "properties": {
+          "calendarTimeZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeZoneInformation": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changeTimestamp": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "QuestionnaireMasterDTO": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "openDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "closeDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "author": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "responsesAreAnonymous": {
+            "type": "boolean"
+          },
+          "allowMultipleResponses": {
+            "type": "boolean"
+          },
+          "responseSummariesPopulated": {
+            "type": "boolean"
+          },
+          "questionnaireMasterHiddenStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionnaireMasterHiddenUserIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "questionnaireResponseSummaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireResponseSummaryDTO"
+            },
+            "nullable": true
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changeTimestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "questionnaireMasterGroupAssignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireMasterGroupAssignmentDetailsDTO"
+            },
+            "nullable": true
+          },
+          "numberOfParticipants": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "calendarTimeZone": {
+            "$ref": "#/components/schemas/CalendarTimeZoneDTO"
+          },
+          "calendarTimeZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isPrefilled": {
+            "type": "boolean"
+          },
+          "percentComplete": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "InsertQuestionnaireRequest": {
+        "type": "object"
+      },
+      "UpdateQuestionnaireRequest": {
+        "type": "object"
+      },
+      "QuestionnaireModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appendicesVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastBuilderPageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isPrefilled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CopyQuestionnaireRequest": {
+        "type": "object",
+        "properties": {
+          "copyWithPrefillData": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PublishQuestionnaireRequest": {
+        "type": "object",
+        "properties": {
+          "calendarTimeZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "responsesAreAnonymous": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ModifyQuestionnaireRequest": {
+        "type": "object"
+      },
+      "QuestionnaireParticipantsDto": {
+        "type": "object",
+        "properties": {
+          "participantIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "proposedParticipantIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "UpdateCloseDateRequest": {
+        "type": "object",
+        "properties": {
+          "closeDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "calendarTimeZoneId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UpdateCloseDateResponse": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changeTimestamp": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "QuestionnaireLocationModel": {
+        "type": "object",
+        "properties": {
+          "pageId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "QuestionModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parentQuestionId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "unformattedLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "nonNumberedQuestion": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "linkable": {
+            "type": "boolean"
+          },
+          "hideBackgroundBar": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "isContingent": {
+            "type": "boolean"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "displayLabelAndControlInline": {
+            "type": "boolean"
+          },
+          "questionType": {
+            "$ref": "#/components/schemas/QuestionType"
+          },
+          "childQuestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionModel"
+            },
+            "nullable": true
+          },
+          "contingentOn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConditionDTO"
+            },
+            "nullable": true
+          },
+          "hasIndividualPrefilledAnswer": {
+            "type": "boolean"
+          },
+          "hasMasterPrefilledAnswer": {
+            "type": "boolean"
+          },
+          "isNumbered": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        }
+      },
+      "QuestionPageModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "displayIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstQuestionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionModel"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "PageSummary": {
+        "type": "object",
+        "properties": {
+          "displayText": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        }
+      },
+      "PageSummaryModel": {
+        "type": "object",
+        "properties": {
+          "displayText": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        }
+      },
+      "ExportRequestType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ReportOutputType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "SpreadsheetReportType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DocumentReportType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ExportRequestModel": {
+        "type": "object",
+        "properties": {
+          "requestType": {
+            "$ref": "#/components/schemas/ExportRequestType"
+          },
+          "outputFormat": {
+            "$ref": "#/components/schemas/ReportOutputType"
+          },
+          "spreadSheetType": {
+            "$ref": "#/components/schemas/SpreadsheetReportType"
+          },
+          "chartType": {
+            "$ref": "#/components/schemas/DocumentReportType"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "highlightAnswers": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "includeAttachments": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "QuestionResponseDTO": {
+        "required": [
+          "questionUniqueId",
+          "responseId"
+        ],
+        "type": "object",
+        "properties": {
+          "questionUniqueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "siteName": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "responseId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        }
+      },
+      "QuestionnaireResponseInfoDTO": {
+        "required": [
+          "questionnaireId",
+          "responseId"
+        ],
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "responseId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageUniqueId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ResponseSignatureDTO": {
+        "type": "object",
+        "properties": {
+          "signature": {
+            "type": "string",
+            "nullable": true
+          },
+          "showSignatureDate": {
+            "type": "boolean"
+          },
+          "signatureDate": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ResponseSignatureModel": {
+        "type": "object",
+        "properties": {
+          "signatureMissing": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "signature": {
+            "$ref": "#/components/schemas/ResponseSignatureDTO"
+          }
+        }
+      },
+      "AttachmentLookupDTO": {
+        "type": "object",
+        "properties": {
+          "lookupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          }
+        }
+      },
+      "PrefilledResponseDTO": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "prefilledResponseId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "userFirstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "userLastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasPrefillData": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PrefilledResponseNoteDTO": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "QuestionnaireSettings": {
+        "type": "object",
+        "properties": {
+          "newQuestionsRequiredByDefault": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "showSignatureDate": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "dateFormat": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "shortDateFormat": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "longDateFormat": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "timeFormat": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "siteLogo": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "hasSiteLogo": {
+            "type": "boolean"
+          },
+          "signaturesEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "tableQuestionsEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "appendicesEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "questionLinksEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "reportingEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "copyQuestionEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "flagChangesEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "showInactiveQuestionnaires": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "prefillEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "directorsOfficersEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "changeDateEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "evaluationsEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "clientSideAnalyticsEnabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "clientSideAnalyticsSamplingPercentage": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        }
+      },
+      "CalendarTimeZoneDto": {
+        "type": "object",
+        "properties": {
+          "calendarTimeZoneId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserInfoSummaryWithSignatureDto": {
+        "type": "object",
+        "properties": {
+          "hasSignature": {
+            "type": "boolean"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "externalUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}
