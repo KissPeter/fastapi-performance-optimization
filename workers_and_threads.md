@@ -10,7 +10,6 @@ Not strictly FastAPI performance tuning, but performance improvement on runner e
 For high performance low latency, cheap, robust and reliable services it is important to get the maximum out of a single computing unit. In this example we will focus on a container with only 2 CPU cores allocated.
 This is typically used and GitHub Action container has two CPU cores allocated where [these](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) measurements were executed.
 
-  
 ## Gunicorn
 
 [Gunicorn](https://gunicorn.org/) is a mature, fully featured server and process manager.
