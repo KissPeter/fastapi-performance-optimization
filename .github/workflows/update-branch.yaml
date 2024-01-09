@@ -1,9 +1,7 @@
 name: Update branch
 
 on:
-  push:
-    branches:
-      - 'main'
+  pull_request
 
 jobs:
   autoupdate:
@@ -18,3 +16,4 @@ jobs:
           require_passed_checks: false
           sort: 'created'
           direction: 'desc'
+          require_auto_merge_enabled: true
