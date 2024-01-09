@@ -50,9 +50,9 @@ jobs:
 #      - name: 'Nginx socker vs socket + keepalive'
 #        run: ./bin/run_test.sh nginx_socker_keepalive
 #      - uses: actions/upload-artifact@v2
-        with:
-          name: Pytest-Report-${{ matrix.python-version }}
-          path: ./reports
+#        with:
+#          name: Pytest-Report-${{ matrix.python-version }}
+#          path: ./reports
   workers_and_threads:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 300
