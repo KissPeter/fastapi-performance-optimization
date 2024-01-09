@@ -37,19 +37,19 @@ jobs:
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports
           docker-compose ps --all
-      - name: 'Measure middlewares'
-        run: ./bin/run_test.sh middlewares
+#      - name: 'Measure middlewares'
+#        run: ./bin/run_test.sh middlewares
 #      - name: 'Measure sync vs async endpoints'
 #        run: ./bin/run_test.sh sync_async
 #      - name: 'Measure json response classes'
 #        run: ./bin/run_test.sh json_classes
-      - name: 'Measure Nginx port vs socket'
-        run: ./bin/run_test.sh nginx_port_vs_socket
-      - name: 'Measure Gunicorn vs Uvicorn'
-        run: ./bin/run_test.sh gunicorn_vs_uvicorn
-      - name: 'Nginx socker vs socket + keepalive'
-        run: ./bin/run_test.sh nginx_socker_keepalive
-      - uses: actions/upload-artifact@v2
+#      - name: 'Measure Nginx port vs socket'
+#        run: ./bin/run_test.sh nginx_port_vs_socket
+#      - name: 'Measure Gunicorn vs Uvicorn'
+#        run: ./bin/run_test.sh gunicorn_vs_uvicorn
+#      - name: 'Nginx socker vs socket + keepalive'
+#        run: ./bin/run_test.sh nginx_socker_keepalive
+#      - uses: actions/upload-artifact@v2
         with:
           name: Pytest-Report-${{ matrix.python-version }}
           path: ./reports
@@ -80,8 +80,8 @@ jobs:
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports test_files/svg
           docker-compose ps --all
-      - name: 'Measure workers and threads'
-        run: ./bin/run_test.sh workers_and_threads
+#      - name: 'Measure workers and threads'
+#        run: ./bin/run_test.sh workers_and_threads
       - uses: actions/upload-artifact@v3
         with:
           name: Pytest-Report-${{ matrix.python-version }}
