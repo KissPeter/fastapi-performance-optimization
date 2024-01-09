@@ -4,6 +4,7 @@ layout: template
 filename: workers_and_threads.md
 ---
 
+
 # Gunicorn Workers and Threads
 
 Not strictly FastAPI performance tuning, but performance improvement on runner environment naturally helps for the system. [Gunicorn](https://gunicorn.org/) is one straightforward option to run FastAPI in [production](https://www.uvicorn.org/deployment/#gunicorn) environment
