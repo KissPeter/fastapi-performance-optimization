@@ -1,4 +1,4 @@
-name: Update branch
+name: Enable auto merge
 
 on:
   pull_request
