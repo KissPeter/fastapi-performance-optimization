@@ -17,3 +17,4 @@ jobs:
           sort: 'created'
           direction: 'desc'
           require_auto_merge_enabled: true
+
