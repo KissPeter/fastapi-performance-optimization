@@ -50,7 +50,7 @@ jobs:
         run: ./bin/run_test.sh gunicorn_vs_uvicorn
       - name: 'Nginx socker vs socket + keepalive'
         run: ./bin/run_test.sh nginx_socker_keepalive
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: Pytest-Report-${{ matrix.python-version }}
           path: ./reports
