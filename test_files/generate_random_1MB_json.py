@@ -35,8 +35,13 @@ def generate_datetime():
 
 def generate_random_dict(size=10):
     _data = {}
-    value_options = [generate_random_array, generate_random_string, generate_random_int,
-                     generate_random_bool, generate_datetime]
+    value_options = [
+        generate_random_array,
+        generate_random_string,
+        generate_random_int,
+        generate_random_bool,
+        generate_datetime,
+    ]
     value_generator = choice(value_options)
     for i in range(size):
         value = value_generator()
@@ -46,7 +51,6 @@ def generate_random_dict(size=10):
 
 
 class TestJSON:
-
     def __init__(self, max_size_MB=1):
         self.testdata = {}
         self.max_size_bytes = max_size_MB * 1024 * 1024
@@ -63,7 +67,7 @@ class TestJSON:
         print(f"Test data generation ready, size: {size}")
 
     def save_to_file(self):
-        with open('../app_files/test_json_1MB.json', 'w') as f:
+        with open("../app_files/test_json_1MB.json", "w") as f:
             f.write(json.dumps(self.testdata, default=str))
 
 

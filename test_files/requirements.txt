@@ -3,3 +3,5 @@ dataclasses
 XlsxWriter
 pytest
 pytest-html
+compose_format
+svg.charts
