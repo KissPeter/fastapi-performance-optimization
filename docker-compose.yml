@@ -138,3 +138,22 @@ services:
       "WORKERS": 2
     "ports":
       - "8016:8000"
+  app_uvicorn_multiprocess_w1:
+    container_name: fastapi-performance-optimization-uvicorn-multiprocess
+    build:
+      context: app_files
+      dockerfile: Dockerfile_uvicorn_processmanager
+    image: fastapi-performance-optimization-uvicorn-multiprocess:latest
+    restart: always
+    "cpus": 2
+    "environment":
+      "WORKERS": 1
+    "ports":
+      - "8017:8000"
+  app_uvicorn_multiprocess_w2:
+      image: fastapi-performance-optimization-uvicorn-multiprocess:latest
+      "cpus": 2
+      "environment":
+        "WORKERS": 2
+      "ports":
+        - "8018:8000"

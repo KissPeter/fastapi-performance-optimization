@@ -1,0 +1,9 @@
+FROM python:3.10.8-bullseye
+RUN pip3 install fastapi=0.115.11 uvicorn==0.34.0 orjson==3.10.15 ujson==5.10.0
+WORKDIR /src
+COPY app.py .
+COPY start_uvicorn.sh .
+COPY test_json_1MB.json .
+EXPOSE 8000
+ENV WORKERS=2
+ENTRYPOINT /src/start_uvicorn_processmanager.sh
