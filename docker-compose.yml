@@ -1,10 +1,7 @@
 version: '3.8'
 services:
-  redis:
-    image: redis
-    cpus: 2
-    ports:
-      - "6379:6379"
+
+
   app:
     image: fastapi-performance-optimization:latest
     container_name: fastapi-performance-optimization
@@ -26,54 +23,11 @@ services:
           cpus: '2'
     environment:
       JSONRESPONSECLASS: JSONResponse
-  app_gunicorn_w1_t0:
-    image: fastapi-performance-optimization:latest
-    ports:
-    - 8010:8000
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-    environment:
-      THREADS: 0
-      WORKERS: 1
-  app_gunicorn_w1_t4:
-    image: fastapi-performance-optimization:latest
-    ports:
-    - 8012:8000
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-    environment:
-      THREADS: 4
-      WORKERS: 1
-  app_gunicorn_w2_t0:
-    image: fastapi-performance-optimization:latest
-    ports:
-    - 8011:8000
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-    environment:
-      THREADS: 0
-      WORKERS: 2
-  app_gunicorn_w2_t2:
-    image: fastapi-performance-optimization:latest
-    ports:
-    - 8014:8000
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-    environment:
-      THREADS: 2
-      WORKERS: 2
+
   app_nginx_port:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8008:8080
+    - "8008:8080"
     deploy:
       resources:
         limits:
@@ -84,7 +38,7 @@ services:
   app_nginx_socket:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8009:8081
+    - "8009:8081"
     deploy:
       resources:
         limits:
@@ -96,7 +50,7 @@ services:
   app_nginx_socket_keepalive:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8017:8082
+    - "8017:8082"
     deploy:
       resources:
         limits:
@@ -109,7 +63,7 @@ services:
   app_no_middleware:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8000:8000
+    - "8000:8000"
     deploy:
       resources:
         limits:
@@ -117,7 +71,7 @@ services:
   app_ojson_response_class:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8006:8000
+    - "8006:8000"
     deploy:
       resources:
         limits:
@@ -127,7 +81,7 @@ services:
   app_one_base_middleware:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8001:8000
+    - "8001:8000"
     deploy:
       resources:
         limits:
@@ -137,7 +91,7 @@ services:
   app_one_starlette_middleware:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8003:8000
+    - "8003:8000"
     deploy:
       resources:
         limits:
@@ -147,7 +101,7 @@ services:
   app_two_base_middlewares:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8002:8000
+    - "8002:8000"
     deploy:
       resources:
         limits:
@@ -158,7 +112,7 @@ services:
   app_two_starlette_middlewares:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8004:8000
+    - "8004:8000"
     deploy:
       resources:
         limits:
@@ -169,7 +123,7 @@ services:
   app_ujson_response_class:
     image: fastapi-performance-optimization:latest
     ports:
-    - 8007:8000
+    - "8007:8000"
     deploy:
       resources:
         limits:
@@ -183,22 +137,21 @@ services:
       context: app_files
       dockerfile: Dockerfile_uvicorn
     ports:
-    - 8015:8000
+    - "8015:8000"
     deploy:
       resources:
         limits:
           cpus: '2'
-    environment:
-      WORKERS: 1
+
     restart: always
-    "cpus": 2
     "environment":
       "WORKERS": 1
-    "ports":
-      - "8015:8000"
   app_uvicorn_w2:
     image: fastapi-performance-optimization-uvicorn:latest
-    "cpus": 2
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
     "environment":
       "WORKERS": 2
     "ports":
@@ -210,20 +163,18 @@ services:
       dockerfile: Dockerfile_uvicorn_processmanager
     image: fastapi-performance-optimization-uvicorn-multiprocess:latest
     restart: always
-    "cpus": 2
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
     "environment":
       "WORKERS": 1
     "ports":
       - "8017:8000"
   app_uvicorn_multiprocess_w2:
       image: fastapi-performance-optimization-uvicorn-multiprocess:latest
-      "cpus": 2
-      "environment":
-        "WORKERS": 2
-      "ports":
-        - "8018:8000"
     ports:
-    - 8016:8000
+    - "8018:8000"
     deploy:
       resources:
         limits:
