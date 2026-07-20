@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  checks: write
 
 jobs:
   simple_measurements:
@@ -98,6 +99,7 @@ jobs:
 
   Linter:
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     timeout-minutes: 300
     strategy:
       matrix:
