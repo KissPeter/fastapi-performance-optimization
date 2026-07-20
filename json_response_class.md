@@ -13,6 +13,8 @@ Both have their [benchmark](https://github.com/ultrajson/ultrajson#benchmarks) /
 
 # JSON response classes test
 
+> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
+
 ## Test environment
 * The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
 * 1MB test json has been generated with strings, floats, ints, arrays, dicts, booleans and dates in it using standard Python json
@@ -23,8 +25,8 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |              9.5 |             9.11 |             9.81 |        9.4733 |
-| Time per request [ms] |          10521.5 |         10979.8  |         10191.4  |    10564.2    |
+| Requests per second   |             19.51 |             19.64 |             19.62 |        19.59 |
+| Time per request [ms] |          5125.68 |          5091.15 |          5096.26 |    5104.36   |
 
 
 ## Orjson 
@@ -32,16 +34,16 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |             9.61 |            10.07 |             9.46 |        9.7133 | 2.53 %                   |
-| Time per request [ms] |         10401    |          9928.04 |         10572.4  |    10300.5    | 263.75 ms                |
+| Requests per second   |             21.29 |             20.2 |             21.62 |      21.0367 | +7.38 %                  |
+| Time per request [ms] |          4696.16 |          4951.17 |          4624.58 |     4757.3   | 347.06 ms                |
  
 ## UltraJSON 
 >Note: Just like orjson this has its own [speciality](https://github.com/ultrajson/ultrajson#using-an-external-or-system-copy-of-the-double-conversion-library)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |             9.42 |             9.95 |             9.19 |          9.52 | 0.49 %                   |
-| Time per request [ms] |         10620.7  |         10047.3  |         10878    |      10515.3  | 48.9 ms                  |
+| Requests per second   |             19.52 |             19.57 |             19.43 |      19.5067 | -0.43 %                  |
+| Time per request [ms] |          5122.47 |          5108.58 |          5145.63 |     5125.56  | -21.2 ms                 |
  
 # Verdict
 

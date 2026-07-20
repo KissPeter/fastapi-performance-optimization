@@ -34,47 +34,48 @@ https://en.wikipedia.org/wiki/HTTP_persistent_connection)
 
 ## Measurements
 
+> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest. Individual run data available in CI logs.
+
 ### Synchronous API endpoint with small request / response
 
 #### Nginx - APP connection, but no keepalive
 
-
-| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
-|-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |          900.11  |          844.94  |          846.34  |       863.797 |
-| Time per request [ms] |          111.098 |          118.351 |          118.156 |       115.868 |
+| **Test attribute**    |   **Average** |
+|-----------------------|---------------|
+| Requests per second   |       6957.84 |
+| Time per request [ms] |       — |
 
 
 #### Nginx - APP connection with keepalive
 
-| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
-|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |          948.01  |          955.86  |          941.48  |       948.45  | 9.8 %                    |
-| Time per request [ms] |          105.485 |          104.617 |          106.215 |       105.439 | 10.43 ms                 |
+| **Test attribute**    |   **Average** | Difference to baseline   |
+|-----------------------|---------------|--------------------------|
+| Requests per second   |       7082.61 | +1.79%                   |
+| Time per request [ms] |       —       | —                        |
 
 
 ### Observations
-* 9,8% improvement only because we reuse our existing connections
+* +1.79% improvement only because we reuse our existing connections
 
 ### Asynchronous API endpoint with small request / response
 
 #### Nginx - APP connection, but no keepalive
 
-| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
-|-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1495.79  |         1406.19  |         1441.5   |     1447.83   |
-| Time per request [ms] |           66.854 |           71.114 |           69.372 |       69.1133 |
+| **Test attribute**    |   **Average** |
+|-----------------------|---------------|
+| Requests per second   |       7204.52 |
+| Time per request [ms] |       — |
 
 
 #### Nginx - APP connection with keepalive
 
-| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
-|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1630.65  |         1680.86  |         1688.54  |     1666.68   | 15.12 %                  |
-| Time per request [ms] |           61.325 |           59.493 |           59.223 |       60.0137 | 9.1 ms                   |
+| **Test attribute**    |   **Average** | Difference to baseline   |
+|-----------------------|---------------|--------------------------|
+| Requests per second   |       7039.15 | -2.3%                    |
+| Time per request [ms] |       —       | —                        |
 
 ### Observations
-* 15% improvement by this simple change for async endpoint
+* -2.3% regression for the async endpoint with keepalive — needs further investigation
 
 ## Verdict
 

@@ -15,13 +15,15 @@ Unfortunately the most straightforward implementation has a drawback, it has maj
 
 ## Baseline measurement
 
+> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
+
 Sample application without any middleware.
 > Note: The test application is available [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/app.py) which is from the [FastAPI docs](https://fastapi.tiangolo.com/tutorial/middleware/)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1885.57  |         1924.34  |         1953.53  |      1921.15  |
-| Time per request [ms] |           53.034 |           51.966 |           51.189 |        52.063 |
+| Requests per second   |         2464.26  |         2671.44  |         2515.29  |      2550.33  |
+| Time per request [ms] |           40.58  |           37.433 |           39.757 |        39.2567 |
 
 ## FastAPI timing middleware
 
@@ -40,8 +42,8 @@ Sample application without any middleware.
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1346.22  |         1448.14  |         1423.86  |     1406.07   | -26.81 %                 |
-| Time per request [ms] |           74.282 |           69.054 |           70.232 |       71.1893 | -19.13 ms                |
+| Requests per second   |         1618.27  |         1672.64  |         1710.37  |     1667.09   | -34.63 %                 |
+| Time per request [ms] |           61.794 |           59.786 |           58.467 |       60.0157 | -20.76 ms                |
 
 ### Observations
 * Significant drop in the througtput of the container while the average latency raised by ~19ms 
@@ -63,8 +65,8 @@ app.add_middleware(CustomHeaderMiddleware)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1128.21  |         1121.99  |         1113.53  |      1121.24  | -41.64 %                 |
-| Time per request [ms] |           88.636 |           89.127 |           89.804 |        89.189 | -37.13 ms                |
+| Requests per second   |         1231.22  |         1202.6   |         1204.92  |      1212.91  | -52.44 %                 |
+| Time per request [ms] |           81.22  |           83.153 |           82.993 |       82.4553 | -43.2 ms                 |
 
 ### Observations
 * By adding another middleware there is significant drop again, the container throughput is around half than before
@@ -103,8 +105,8 @@ class STARLETTEProcessTimeMiddleware:
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1869.11  |         1891.52  |         1948.64  |     1903.09   | -0.94 %                  |
-| Time per request [ms] |           53.501 |           52.868 |           51.318 |       52.5623 | -0.5 ms                  |
+| Requests per second   |         2491.88  |         2448.96  |         2603.78  |     2514.87   | -1.39 %                  |
+| Time per request [ms] |           40.13  |           40.834 |           38.406 |        39.79  | -0.53 ms                 |
 
 ### Observations
 * Negligible change on performance
@@ -116,8 +118,8 @@ In order to see the performance difference if multiple middlewares are added, an
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |          1832.51 |         1871.4   |         1916.97  |     1873.63   | -2.47 %                  |
-| Time per request [ms] |            54.57 |           53.436 |           52.166 |       53.3907 | -1.33 ms                 |
+| Requests per second   |         2482.41  |         2406.58  |         2532.62  |     2473.87   | -3.0 %                   |
+| Time per request [ms] |           40.283 |           41.553 |           39.485 |       40.4403 | -1.18 ms                 |
 
 ### Observations
 * Still no significant difference, much better than BaseHTTPMiddleware 
