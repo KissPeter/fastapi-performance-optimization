@@ -33,43 +33,43 @@ Uvicorn natively supports the `--workers` flag to spawn multiple worker processe
 
 Both synchronous and asynchronous API endpoints were tested with 1 and 2 workers. The Gunicorn container is used as the baseline for comparison.
 
-> **Note:** FastAPI CLI and Uvicorn `--workers` containers failed to start in CI (connection refused on ports 8021-8024). Only Gunicorn and plain Uvicorn results are available. This is a known issue being investigated.
+> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Azure Linux, Ubuntu latest.
 
 ### Sync endpoint, 1 worker
 
 | Runner | RPS | Difference to Gunicorn |
 |--------|-----|----------------------|
-| Gunicorn (baseline) | 1509.96 | - |
-| Uvicorn | 1319.11 | -12.64 % |
-| FastAPI CLI | N/A | Container did not start |
-| Uvicorn --workers | N/A | Container did not start |
+| Gunicorn (baseline) | 1636.94 | - |
+| Uvicorn | 1445.94 | -11.67 % |
+| FastAPI CLI | 1587.70 | -3.01 % |
+| Uvicorn --workers | 1462.06 | -10.68 % |
 
 ### Async endpoint, 1 worker
 
 | Runner | RPS | Difference to Gunicorn |
 |--------|-----|----------------------|
-| Gunicorn (baseline) | 2335.72 | - |
-| Uvicorn | 1942.18 | -16.85 % |
-| FastAPI CLI | N/A | Container did not start |
-| Uvicorn --workers | N/A | Container did not start |
+| Gunicorn (baseline) | 2794.80 | - |
+| Uvicorn | 2168.70 | -22.40 % |
+| FastAPI CLI | 2674.32 | -4.31 % |
+| Uvicorn --workers | 2185.24 | -21.81 % |
 
 ### Sync endpoint, 2 workers
 
 | Runner | RPS | Difference to Gunicorn |
 |--------|-----|----------------------|
-| Gunicorn (baseline) | 2326.17 | - |
-| Uvicorn | 1949.99 | -16.17 % |
-| FastAPI CLI | N/A | Container did not start |
-| Uvicorn --workers | N/A | Container did not start |
+| Gunicorn (baseline) | 2189.33 | - |
+| Uvicorn | 1863.56 | -14.88 % |
+| FastAPI CLI | 2401.51 | +9.69 % |
+| Uvicorn --workers | 1848.68 | -15.56 % |
 
 ### Async endpoint, 2 workers
 
 | Runner | RPS | Difference to Gunicorn |
 |--------|-----|----------------------|
-| Gunicorn (baseline) | 3720.62 | - |
-| Uvicorn | 2975.88 | -20.02 % |
-| FastAPI CLI | N/A | Container did not start |
-| Uvicorn --workers | N/A | Container did not start |
+| Gunicorn (baseline) | 3879.92 | - |
+| Uvicorn | 3149.81 | -18.82 % |
+| FastAPI CLI | 4325.95 | +11.50 % |
+| Uvicorn --workers | 3411.15 | -12.08 % |
 
 See [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml) for the latest results.
 
@@ -86,9 +86,13 @@ See [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimizati
 
 ## Verdict
 
-Gunicorn with UvicornWorker consistently outperforms plain Uvicorn across all test configurations. The process management overhead of Gunicorn is more than offset by its stability and multi-process benefits. With 1 worker, Gunicorn achieves ~12-17% higher throughput than plain Uvicorn. With 2 workers, the gap widens to ~16-20%.
+**FastAPI CLI (`fastapi run --workers`) is the clear winner with 2 workers** — it outperforms Gunicorn by ~10-12% on multi-worker setups while matching it closely at 1 worker (-3 to -4%). This makes sense: FastAPI CLI uses Uvicorn internally but with a lighter process management layer than Gunicorn.
 
-FastAPI CLI and Uvicorn `--workers` could not be benchmarked due to container startup failures in CI.
+**Gunicorn remains the best choice for 1-worker deployments**, beating all alternatives. Its process management overhead is negligible at low worker counts.
+
+**Plain Uvicorn and Uvicorn `--workers`** consistently lag behind Gunicorn by 11-22%. The `--workers` flag does not close the gap — it performs similarly to plain Uvicorn, suggesting the bottleneck is in Uvicorn's core request handling, not process management.
+
+The key takeaway: for production multi-worker FastAPI deployments, `fastapi run --workers N` is the simplest and fastest option.
 
 Re-run the measurements yourself:
 ```shell
