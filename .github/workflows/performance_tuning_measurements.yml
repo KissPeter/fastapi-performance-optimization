@@ -8,7 +8,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   simple_measurements:
@@ -17,19 +17,19 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.12' ]
+        python-version: [ '3.14' ]
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: 'Docker Compose'
-        uses: isbang/compose-action@v1.4.1
+        uses: hoverkraft-tech/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose.yml"
           up-flags: "--build --force-recreate"
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -37,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports
-          docker-compose ps --all
+          docker compose ps --all
       - name: 'Measure middlewares'
         run: ./bin/run_test.sh middlewares
       - name: 'Measure sync vs async endpoints'
@@ -48,6 +48,8 @@ jobs:
         run: ./bin/run_test.sh nginx_port_vs_socket
       - name: 'Measure Gunicorn vs Uvicorn'
         run: ./bin/run_test.sh gunicorn_vs_uvicorn
+      - name: 'Measure Server Runners (Gunicorn vs Uvicorn vs FastAPI CLI vs Uvicorn --workers)'
+        run: ./bin/run_test.sh server_runners
       - name: 'Nginx socker vs socket + keepalive'
         run: ./bin/run_test.sh nginx_socker_keepalive
       - uses: actions/upload-artifact@v4
@@ -60,19 +62,19 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.12' ]
+        python-version: [ '3.14' ]
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: 'Docker Compose'
-        uses: isbang/compose-action@v1.4.1
+        uses: hoverkraft-tech/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose_workers_and_threads.yml"
           up-flags: "--build --force-recreate"
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -80,14 +82,14 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports test_files/svg
-          docker-compose ps --all
+          docker compose ps --all
       - name: 'Measure workers and threads'
         run: ./bin/run_test.sh workers_and_threads
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: Pytest-Report-${{ matrix.python-version }}
+          name: Pytest-Report-workers-${{ matrix.python-version }}
           path: ./reports
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: SVG-${{ matrix.python-version }}
           path: test_files/svg
@@ -100,10 +102,10 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.12' ]
+        python-version: [ '3.14' ]
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
       - name: Lint Code Base

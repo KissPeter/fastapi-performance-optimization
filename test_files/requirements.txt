@@ -1,5 +1,4 @@
 tabulate
-dataclasses
 XlsxWriter
 pytest
 pytest-html

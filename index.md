@@ -15,6 +15,7 @@ This document is intended to provide some tips and ideas to get the most out of 
 ## [Gunicorn workers and threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)
 ## [Nginx in front of FastAPI](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket)
 ## [Connection keepalive](https://kisspeter.github.io/fastapi-performance-optimization/keepalive)
+## [Server Runners: Gunicorn vs Uvicorn vs FastAPI CLI](https://kisspeter.github.io/fastapi-performance-optimization/server_runners)
 
 # Stay tuned for new ideas:
 ## Sync / async API endpoints

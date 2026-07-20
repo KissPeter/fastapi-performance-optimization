@@ -130,6 +130,28 @@ services:
           cpus: '2'
     environment:
       JSONRESPONSECLASS: UJSONResponse
+  app_gunicorn_w1_t0:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8010:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 0
+  app_gunicorn_w2_t0:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8011:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
   app_uvicorn_w1:
     image: fastapi-performance-optimization-uvicorn:latest
     container_name: fastapi-performance-optimization-uvicorn
@@ -170,11 +192,57 @@ services:
     "environment":
       "WORKERS": 1
     "ports":
-      - "8017:8000"
+      - "8019:8000"
   app_uvicorn_multiprocess_w2:
-      image: fastapi-performance-optimization-uvicorn-multiprocess:latest
+    image: fastapi-performance-optimization-uvicorn-multiprocess:latest
     ports:
-    - "8018:8000"
+    - "8020:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+  app_fastapi_cli_w1:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    build:
+      context: app_files
+      dockerfile: Dockerfile_fastapi_cli
+    ports:
+    - "8021:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+  app_fastapi_cli_w2:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports:
+    - "8022:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+  app_uvicorn_workers_w1:
+    image: fastapi-performance-optimization-uvicorn-workers:latest
+    build:
+      context: app_files
+      dockerfile: Dockerfile_uvicorn_workers
+    ports:
+    - "8023:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+  app_uvicorn_workers_w2:
+    image: fastapi-performance-optimization-uvicorn-workers:latest
+    ports:
+    - "8024:8000"
     deploy:
       resources:
         limits:
