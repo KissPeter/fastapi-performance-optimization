@@ -5,6 +5,7 @@ WORKDIR /src
 COPY app.py .
 COPY start_uvicorn_workers.sh .
 COPY test_json_1MB.json .
+RUN chmod +x /src/start_uvicorn_workers.sh
 EXPOSE 8000
 ENV WORKERS=1
 ENTRYPOINT /src/start_uvicorn_workers.sh
