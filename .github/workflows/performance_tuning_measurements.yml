@@ -42,7 +42,7 @@ jobs:
       - name: Wait for containers to be ready
         run: |
           echo "Waiting for containers to start..."
-          for port in 8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 8010 8011 8015 8016 8017 8019 8020 8021 8022 8023 8024; do
+          for port in 8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 8010 8011 8015 8016 8017 8019 8020 8021 8022 8023 8024 8030 8031 8032 8033; do
             timeout=30
             while [ $timeout -gt 0 ]; do
               if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$port/sync/items/ -d '{}' -H 'Content-Type: application/json' 2>/dev/null | grep -qE '200|422'; then
@@ -71,6 +71,8 @@ jobs:
         run: ./bin/run_test.sh server_runners
       - name: 'Nginx socker vs socket + keepalive'
         run: ./bin/run_test.sh nginx_socker_keepalive
+      - name: 'Measure Connection Pool (small vs large pool, sync vs async)'
+        run: ./bin/run_test.sh connection_pool
       - uses: actions/upload-artifact@v4
         with:
           name: Pytest-Report-${{ matrix.python-version }}

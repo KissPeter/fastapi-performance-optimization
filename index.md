@@ -16,10 +16,10 @@ This document is intended to provide some tips and ideas to get the most out of 
 ## [Nginx in front of FastAPI](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket)
 ## [Connection keepalive](https://kisspeter.github.io/fastapi-performance-optimization/keepalive)
 ## [Server Runners: Gunicorn vs Uvicorn vs FastAPI CLI](https://kisspeter.github.io/fastapi-performance-optimization/server_runners)
+## [Sync / Async API Endpoints](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async)
+## [Connection Pool Size of External Resources](https://kisspeter.github.io/fastapi-performance-optimization/connection_pool)
 
 # Stay tuned for new ideas:
-## Sync / async API endpoints
-## Connection pool size of external resources
 ## FastAPI application profiling
 ### Arbitrary place of code
 ### Profiling middleware

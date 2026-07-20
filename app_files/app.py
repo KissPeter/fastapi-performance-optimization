@@ -1,5 +1,6 @@
 import os
 import time
+from contextlib import asynccontextmanager
 from typing import Optional
 
 from fastapi import FastAPI, Request
@@ -9,6 +10,12 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from fastapi.responses import ORJSONResponse, UJSONResponse, JSONResponse
 import json
+
+try:
+    import httpx
+    HTTPX_AVAILABLE = True
+except ImportError:
+    HTTPX_AVAILABLE = False
 
 
 # from https://fastapi.tiangolo.com/tutorial/body/#import-pydantics-basemodel
@@ -146,3 +153,46 @@ if os.getenv("STARLETTECUSTOMHEADERMIDDLEWARE"):
     print("Load STARLETTECUSTOMHEADERMIDDLEWARE")
 
     app.add_middleware(STARLETTECustomHeaderMiddleware)
+
+
+EXTERNAL_API_HOST = os.getenv("EXTERNAL_API_HOST", "http://mock-api:8030")
+CONN_POOL_LIMIT = int(os.getenv("CONN_POOL_LIMIT", "100"))
+CONN_POOL_KEEPALIVE = int(os.getenv("CONN_POOL_KEEPALIVE", "20"))
+
+if HTTPX_AVAILABLE and EXTERNAL_API_HOST:
+    print(f"Loading connection pool endpoints (target: {EXTERNAL_API_HOST}, "
+          f"pool_limit: {CONN_POOL_LIMIT}, pool_keepalive: {CONN_POOL_KEEPALIVE})")
+
+    _sync_client = httpx.Client(
+        base_url=EXTERNAL_API_HOST,
+        limits=httpx.Limits(
+            max_connections=CONN_POOL_LIMIT,
+            max_keepalive_connections=CONN_POOL_KEEPALIVE,
+        ),
+    )
+
+    @asynccontextmanager
+    async def lifespan(application: FastAPI):
+        async with httpx.AsyncClient(
+            base_url=EXTERNAL_API_HOST,
+            limits=httpx.Limits(
+                max_connections=CONN_POOL_LIMIT,
+                max_keepalive_connections=CONN_POOL_KEEPALIVE,
+            ),
+        ) as client:
+            application.state.async_client = client
+            yield
+
+    app.router.lifespan_context = lifespan
+
+    @app.post("/sync_pool/items/")
+    def sync_pool_item(item: Item):
+        response = _sync_client.post("/mock/items/", json=item.model_dump())
+        return response.json()
+
+    @app.post("/async_pool/items/")
+    async def async_pool_item(item: Item):
+        response = await app.state.async_client.post(
+            "/mock/items/", json=item.model_dump()
+        )
+        return response.json()

@@ -256,3 +256,44 @@ services:
       resources:
         limits:
           cpus: '2'
+  mock-api:
+    image: fastapi-performance-optimization-mock-api:latest
+    build:
+      context: app_files
+      dockerfile: Dockerfile_mock_api
+    ports:
+    - "8030:8030"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+  app_conn_pool:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8031:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+  app_conn_pool_pool_2:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8032:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      CONN_POOL_LIMIT: 2
+      CONN_POOL_KEEPALIVE: 1
+  app_conn_pool_pool_100:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8033:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      CONN_POOL_LIMIT: 100
+      CONN_POOL_KEEPALIVE: 20

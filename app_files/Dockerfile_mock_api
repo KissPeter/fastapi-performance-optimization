@@ -1,0 +1,10 @@
+FROM python:3.14-slim-bookworm
+ENV PIP_NO_CACHE_DIR=yes
+ENV DEBIAN_FRONTEND=noninteractive
+RUN pip3 install fastapi==0.139.2 uvicorn==0.51.0
+WORKDIR /src
+COPY mock_api.py .
+COPY start_mock_api.sh .
+RUN chmod +x start_mock_api.sh
+EXPOSE 8030
+ENTRYPOINT ["/src/start_mock_api.sh"]

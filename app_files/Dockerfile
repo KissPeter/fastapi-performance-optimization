@@ -1,7 +1,7 @@
 FROM python:3.14-slim-bookworm
 ENV PIP_NO_CACHE_DIR=yes
 ENV DEBIAN_FRONTEND=noninteractive
-RUN pip3 install fastapi==0.139.2 uvicorn==0.51.0 gunicorn==26.0.0 orjson==3.11.9 ujson==5.13.0 starlette==1.3.1
+RUN pip3 install fastapi==0.139.2 uvicorn==0.51.0 gunicorn==26.0.0 orjson==3.11.9 ujson==5.13.0 starlette==1.3.1 httpx==0.28.1
 RUN apt update && apt install -y --no-install-recommends nginx-light
 WORKDIR /src
 RUN rm -rf /etc/nginx/nginx.conf
