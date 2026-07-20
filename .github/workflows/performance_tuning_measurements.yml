@@ -39,6 +39,24 @@ jobs:
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports
           docker compose ps --all
+      - name: Wait for containers to be ready
+        run: |
+          echo "Waiting for containers to start..."
+          for port in 8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 8010 8011 8015 8016 8017 8019 8020 8021 8022 8023 8024; do
+            timeout=30
+            while [ $timeout -gt 0 ]; do
+              if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$port/sync/items/ -d '{}' -H 'Content-Type: application/json' 2>/dev/null | grep -qE '200|422'; then
+                echo "Port $port is ready"
+                break
+              fi
+              sleep 2
+              timeout=$((timeout - 2))
+            done
+            if [ $timeout -le 0 ]; then
+              echo "Warning: Port $port not ready after 30s"
+            fi
+          done
+          echo "Container readiness check complete"
       - name: 'Measure middlewares'
         run: ./bin/run_test.sh middlewares
       - name: 'Measure sync vs async endpoints'
@@ -84,6 +102,23 @@ jobs:
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports test_files/svg
           docker compose ps --all
+      - name: Wait for containers to be ready
+        run: |
+          echo "Waiting for containers to start..."
+          timeout=60
+          while [ $timeout -gt 0 ]; do
+            ready=$(docker compose ps --format json 2>/dev/null | grep -c '"running"' || echo 0)
+            total=$(docker compose ps --format json 2>/dev/null | wc -l || echo 0)
+            echo "Running: $ready / $total containers"
+            if [ "$ready" -gt 0 ] && [ "$ready" -eq "$total" ]; then
+              echo "All containers running"
+              break
+            fi
+            sleep 3
+            timeout=$((timeout - 3))
+          done
+          sleep 5
+          echo "Container readiness check complete"
       - name: 'Measure workers and threads'
         run: ./bin/run_test.sh workers_and_threads
       - uses: actions/upload-artifact@v4
