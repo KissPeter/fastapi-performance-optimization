@@ -106,8 +106,6 @@ jobs:
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
       - name: Lint Code Base
         uses: super-linter/super-linter/slim@v5
         env:

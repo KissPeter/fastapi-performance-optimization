@@ -15,6 +15,7 @@ compose_out = {"version": "3.1", "services": {}}
 test_config = []
 sample = {
     "image": "fastapi-performance-optimization:latest",
+    "build": {"context": "app_files", "dockerfile": "Dockerfile"},
     "cpus": 2,
     "environment": {"WORKERS": 3, "THREADS": 2},
     "ports": ["8015:8000"],
