@@ -341,3 +341,325 @@ services:
     environment:
       CONN_POOL_LIMIT: 100
       CONN_POOL_KEEPALIVE: 20
+
+  # === Middleware cross-runner test containers ===
+  runner_w1t0_mw_base:
+    image: fastapi-performance-optimization:latest
+    ports: ["8040:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 0
+  runner_w1t0_mw_one:
+    image: fastapi-performance-optimization:latest
+    ports: ["8041:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 0
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_w2t0_mw_base:
+    image: fastapi-performance-optimization:latest
+    ports: ["8042:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
+  runner_w2t0_mw_one:
+    image: fastapi-performance-optimization:latest
+    ports: ["8043:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_w1t1_mw_base:
+    image: fastapi-performance-optimization:latest
+    ports: ["8044:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 1
+  runner_w1t1_mw_one:
+    image: fastapi-performance-optimization:latest
+    ports: ["8045:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 1
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_w2t1_mw_base:
+    image: fastapi-performance-optimization:latest
+    ports: ["8046:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 1
+  runner_w2t1_mw_one:
+    image: fastapi-performance-optimization:latest
+    ports: ["8047:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 1
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_w1t2_mw_base:
+    image: fastapi-performance-optimization:latest
+    ports: ["8048:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 2
+  runner_w1t2_mw_one:
+    image: fastapi-performance-optimization:latest
+    ports: ["8049:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 2
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_w2t2_mw_base:
+    image: fastapi-performance-optimization:latest
+    ports: ["8050:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 2
+  runner_w2t2_mw_one:
+    image: fastapi-performance-optimization:latest
+    ports: ["8051:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 2
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_uvicorn_w1_mw_base:
+    image: fastapi-performance-optimization-uvicorn:latest
+    build:
+      context: app_files
+      dockerfile: Dockerfile_uvicorn
+    ports: ["8052:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+  runner_uvicorn_w1_mw_one:
+    image: fastapi-performance-optimization-uvicorn:latest
+    ports: ["8053:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_uvicorn_w2_mw_base:
+    image: fastapi-performance-optimization-uvicorn:latest
+    ports: ["8054:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+  runner_uvicorn_w2_mw_one:
+    image: fastapi-performance-optimization-uvicorn:latest
+    ports: ["8055:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_fastapi_cli_w1_mw_base:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    build:
+      context: app_files
+      dockerfile: Dockerfile_fastapi_cli
+    ports: ["8056:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+  runner_fastapi_cli_w1_mw_one:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8057:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      PROCESSTIMEMIDDLEWARE: add
+
+  runner_fastapi_cli_w2_mw_base:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8058:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+  runner_fastapi_cli_w2_mw_one:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8059:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      PROCESSTIMEMIDDLEWARE: add
+
+  # === JSON response class cross-runner test containers ===
+  runner_w2t0_json_default:
+    image: fastapi-performance-optimization:latest
+    ports: ["8060:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
+      JSONRESPONSECLASS: JSONResponse
+  runner_w2t0_json_orjson:
+    image: fastapi-performance-optimization:latest
+    ports: ["8061:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
+      JSONRESPONSECLASS: ORJSONResponse
+  runner_w2t0_json_ujson:
+    image: fastapi-performance-optimization:latest
+    ports: ["8062:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
+      JSONRESPONSECLASS: UJSONResponse
+
+  runner_uvicorn_w1_json_default:
+    image: fastapi-performance-optimization-uvicorn:latest
+    build:
+      context: app_files
+      dockerfile: Dockerfile_uvicorn
+    ports: ["8063:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      JSONRESPONSECLASS: JSONResponse
+  runner_uvicorn_w1_json_orjson:
+    image: fastapi-performance-optimization-uvicorn:latest
+    ports: ["8064:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      JSONRESPONSECLASS: ORJSONResponse
+  runner_uvicorn_w1_json_ujson:
+    image: fastapi-performance-optimization-uvicorn:latest
+    ports: ["8065:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      JSONRESPONSECLASS: UJSONResponse
+
+  runner_fastapi_cli_w1_json_default:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    build:
+      context: app_files
+      dockerfile: Dockerfile_fastapi_cli
+    ports: ["8066:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      JSONRESPONSECLASS: JSONResponse
+  runner_fastapi_cli_w1_json_orjson:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8067:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      JSONRESPONSECLASS: ORJSONResponse
+  runner_fastapi_cli_w1_json_ujson:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8068:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      JSONRESPONSECLASS: UJSONResponse
