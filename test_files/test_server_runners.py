@@ -3,25 +3,29 @@ import pytest
 from compare_container_performance import CompareContainers
 from test_base import TestBase
 
-test_config_w1 = [
-    {"name": "app_gunicorn_w1_t0", "port": 8010, "baseline": True},
-    {"name": "app_uvicorn_w1", "port": 8015, "baseline": False},
-    {"name": "app_fastapi_cli_w1", "port": 8021, "baseline": False},
-    {"name": "app_uvicorn_workers_w1", "port": 8023, "baseline": False},
-]
-
-test_config_w2 = [
+# Runner configs: all 7 runners in one group, Gunicorn w2t0 is always baseline
+all_runners_w2 = [
     {"name": "app_gunicorn_w2_t0", "port": 8011, "baseline": True},
+    {"name": "app_gunicorn_w2_t1", "port": 8026, "baseline": False},
     {"name": "app_uvicorn_w2", "port": 8016, "baseline": False},
-    {"name": "app_fastapi_cli_w2", "port": 8022, "baseline": False},
     {"name": "app_uvicorn_workers_w2", "port": 8024, "baseline": False},
+    {"name": "app_fastapi_cli_w2", "port": 8022, "baseline": False},
 ]
 
-test_config_multiprocess_w1 = [
+# Thread impact: Gunicorn w2t0 vs w1t0 vs w1t1 vs w2t1
+gunicorn_threads = [
+    {"name": "app_gunicorn_w2_t0", "port": 8011, "baseline": True},
+    {"name": "app_gunicorn_w1_t0", "port": 8010, "baseline": False},
+    {"name": "app_gunicorn_w1_t1", "port": 8025, "baseline": False},
+    {"name": "app_gunicorn_w2_t1", "port": 8026, "baseline": False},
+]
+
+# Uvicorn multiprocess (standalone comparison)
+uvicorn_multiprocess_w1 = [
     {"name": "app_uvicorn_multiprocess_w1", "port": 8019, "baseline": True},
 ]
 
-test_config_multiprocess_w2 = [
+uvicorn_multiprocess_w2 = [
     {"name": "app_uvicorn_multiprocess_w2", "port": 8020, "baseline": True},
 ]
 
@@ -29,67 +33,53 @@ test_config_multiprocess_w2 = [
 class TestServerRunners(TestBase):
 
     @pytest.mark.server_runners
-    def test_server_runners_sync_w1(self):
-        p = CompareContainers(test_config_w1)
+    def test_all_runners_sync(self):
+        p = CompareContainers(all_runners_w2)
         p.run_test()
         p.sum_container_results()
 
     @pytest.mark.server_runners
-    def test_server_runners_async_w1(self):
-        async_test_config = []
-        for container in test_config_w1.copy():
-            container["uri"] = "/async/items"
-            async_test_config.append(container)
-        print(async_test_config)
-        p = CompareContainers(async_test_config)
+    def test_all_runners_async(self):
+        cfg = [{**c, "uri": "/async/items"} for c in all_runners_w2]
+        p = CompareContainers(cfg)
         p.run_test()
         p.sum_container_results()
 
     @pytest.mark.server_runners
-    def test_server_runners_sync_w2(self):
-        p = CompareContainers(test_config_w2)
+    def test_gunicorn_threads_sync(self):
+        p = CompareContainers(gunicorn_threads)
         p.run_test()
         p.sum_container_results()
 
     @pytest.mark.server_runners
-    def test_server_runners_async_w2(self):
-        async_test_config = []
-        for container in test_config_w2.copy():
-            container["uri"] = "/async/items"
-            async_test_config.append(container)
-        print(async_test_config)
-        p = CompareContainers(async_test_config)
+    def test_gunicorn_threads_async(self):
+        cfg = [{**c, "uri": "/async/items"} for c in gunicorn_threads]
+        p = CompareContainers(cfg)
         p.run_test()
         p.sum_container_results()
 
     @pytest.mark.server_runners
-    def test_server_runners_sync_multiprocess_w1(self):
-        p = CompareContainers(test_config_multiprocess_w1)
+    def test_uvicorn_multiprocess_sync_w1(self):
+        p = CompareContainers(uvicorn_multiprocess_w1)
         p.run_test()
         p.sum_container_results()
 
     @pytest.mark.server_runners
-    def test_server_runners_async_multiprocess_w1(self):
-        async_test_config = []
-        for container in test_config_multiprocess_w1.copy():
-            container["uri"] = "/async/items"
-            async_test_config.append(container)
-        p = CompareContainers(async_test_config)
+    def test_uvicorn_multiprocess_async_w1(self):
+        cfg = [{**c, "uri": "/async/items"} for c in uvicorn_multiprocess_w1]
+        p = CompareContainers(cfg)
         p.run_test()
         p.sum_container_results()
 
     @pytest.mark.server_runners
-    def test_server_runners_sync_multiprocess_w2(self):
-        p = CompareContainers(test_config_multiprocess_w2)
+    def test_uvicorn_multiprocess_sync_w2(self):
+        p = CompareContainers(uvicorn_multiprocess_w2)
         p.run_test()
         p.sum_container_results()
 
     @pytest.mark.server_runners
-    def test_server_runners_async_multiprocess_w2(self):
-        async_test_config = []
-        for container in test_config_multiprocess_w2.copy():
-            container["uri"] = "/async/items"
-            async_test_config.append(container)
-        p = CompareContainers(async_test_config)
+    def test_uvicorn_multiprocess_async_w2(self):
+        cfg = [{**c, "uri": "/async/items"} for c in uvicorn_multiprocess_w2]
+        p = CompareContainers(cfg)
         p.run_test()
         p.sum_container_results()

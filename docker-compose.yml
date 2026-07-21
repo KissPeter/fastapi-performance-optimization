@@ -151,6 +151,28 @@ services:
     environment:
       WORKERS: 2
       THREADS: 0
+  app_gunicorn_w1_t1:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8025:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 1
+  app_gunicorn_w2_t1:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8026:8000"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 1
   app_uvicorn_w1:
     image: fastapi-performance-optimization-uvicorn:latest
     container_name: fastapi-performance-optimization-uvicorn
