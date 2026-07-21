@@ -18,17 +18,19 @@ In a typical deployment with Gunicorn + UvicornWorker, each worker runs an async
 
 ### Synchronous endpoint (baseline)
 
+> CI run [29777348973](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29777348973) — Python 3.14, Ubuntu latest.
+
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
 |-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | -              | -              | -              | -           |
-| Time per request [ms] | -              | -              | -              | -           |
+| Requests per second   | 2414.1         | 2619.07        | 2359.54        | 2464.24     |
+| Time per request [ms] | 41.423         | 38.181         | 42.381         | 40.6617     |
 
 ### Asynchronous endpoint
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
 |-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | -              | -              | -              | -           | -                      |
-| Time per request [ms] | -              | -              | -              | -           | - ms                   |
+| Requests per second   | 3329.68        | 3405.91        | 2964.08        | 3233.22     | +31.21%                |
+| Time per request [ms] | 30.033         | 29.361         | 33.737         | 31.0437     | 9.62 ms                |
 
 ## Large response (1MB JSON)
 
@@ -36,15 +38,15 @@ In a typical deployment with Gunicorn + UvicornWorker, each worker runs an async
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
 |-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | -              | -              | -              | -           |
-| Time per request [ms] | -              | -              | -              | -           |
+| Requests per second   | 19.71          | 19.35          | 19.66          | 19.5733     |
+| Time per request [ms] | 5072.48        | 5169.15        | 5086.12        | 5109.25     |
 
 ### Asynchronous endpoint
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
 |-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | -              | -              | -              | -           | -                      |
-| Time per request [ms] | -              | -              | -              | -           | - ms                   |
+| Requests per second   | 19.76          | 19.27          | 19.26          | 19.43       | -0.73%                 |
+| Time per request [ms] | 5060.69        | 5188.56        | 5191.25        | 5146.83     | -37.58 ms              |
 
 ## Observations
 

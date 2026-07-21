@@ -44,19 +44,21 @@ httpx.Client(
 
 ## Synchronous endpoint with external API call
 
+> CI run [29777348973](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29777348973) — Python 3.14, Ubuntu latest.
+
 ### Small pool (baseline)
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
 |-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | -              | -              | -              | -           |
-| Time per request [ms] | -              | -              | -              | -           |
+| Requests per second   | 545.76         | 542.16         | 544.87         | 544.263     |
+| Time per request [ms] | 183.229        | 184.448        | 183.53         | 183.736     |
 
 ### Large pool
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
 |-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | -              | -              | -              | -           | -                      |
-| Time per request [ms] | -              | -              | -              | -           | - ms                   |
+| Requests per second   | 604.61         | 634.08         | 645.77         | 628.153     | +15.41%                |
+| Time per request [ms] | 165.395        | 157.709        | 154.855        | 159.32      | 24.42 ms               |
 
 ## Asynchronous endpoint with external API call
 
@@ -64,15 +66,15 @@ httpx.Client(
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
 |-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | -              | -              | -              | -           |
-| Time per request [ms] | -              | -              | -              | -           |
+| Requests per second   | 354.54         | 436.12         | 433.05         | 407.903     |
+| Time per request [ms] | 282.053        | 229.295        | 230.922        | 247.423     |
 
 ### Large pool
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
 |-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | -              | -              | -              | -           | -                      |
-| Time per request [ms] | -              | -              | -              | -           | - ms                   |
+| Requests per second   | 442.36         | 467.49         | 439.46         | 449.77      | +10.26%                |
+| Time per request [ms] | 226.062        | 213.907        | 227.554        | 222.508     | 24.92 ms               |
 
 ## No external call vs small pool (sync)
 
@@ -80,15 +82,15 @@ httpx.Client(
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
 |-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | -              | -              | -              | -           |
-| Time per request [ms] | -              | -              | -              | -           |
+| Requests per second   | 2654.92        | 2627.83        | 2650.98        | 2644.58     |
+| Time per request [ms] | 37.666         | 38.054         | 37.722         | 37.814      |
 
 ### Small pool with external call
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
 |-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | -              | -              | -              | -           | -                      |
-| Time per request [ms] | -              | -              | -              | -           | - ms                   |
+| Requests per second   | 539.27         | 558.8          | 554.17         | 550.747     | -79.17%                |
+| Time per request [ms] | 185.436        | 178.955        | 180.451        | 181.614     | -143.8 ms              |
 
 ## No external call vs small pool (async)
 
@@ -96,15 +98,15 @@ httpx.Client(
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
 |-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | -              | -              | -              | -           |
-| Time per request [ms] | -              | -              | -              | -           |
+| Requests per second   | 3392.69        | 3471.95        | 3395.62        | 3420.09     |
+| Time per request [ms] | 29.475         | 28.802         | 29.45          | 29.2423     |
 
 ### Small pool with external call
 
 | **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
 |-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | -              | -              | -              | -           | -                      |
-| Time per request [ms] | -              | -              | -              | -           | - ms                   |
+| Requests per second   | 273.37         | 308.35         | 431.5          | 337.74      | -90.12%                |
+| Time per request [ms] | 365.811        | 324.309        | 231.749        | 307.29      | -278.05 ms             |
 
 ## Observations
 
