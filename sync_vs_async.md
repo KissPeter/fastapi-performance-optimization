@@ -12,47 +12,32 @@ In a typical deployment with Gunicorn + UvicornWorker, each worker runs an async
 
 ## Test environment
 * The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
-* Gunicorn with UvicornWorker, 2 workers, 0 threads
+* Tested across all 10 server runner configurations
 
-> CI run [29815274014](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29815274014) — Python 3.14, Ubuntu latest.
+> CI run [29858316413](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29858316413) — Python 3.14, Ubuntu latest.
 
-## Small request / response
+## Cross-runner comparison (small request / response)
 
-### Synchronous endpoint (baseline)
+| Runner | Sync RPS | Async RPS | Improvement | Sync Latency | Async Latency |
+|--------|----------|-----------|-------------|-------------|---------------|
+| Gunicorn w1t0 | 1410.94 | 1767.42 | **+25.26%** | 70.89 ms | 56.58 ms |
+| Gunicorn w2t0 | 2171.56 | 2650.26 | **+22.04%** | 46.05 ms | 37.76 ms |
+| Gunicorn w1t1 | 1428.34 | 1775.63 | **+24.31%** | 70.02 ms | 56.32 ms |
+| Gunicorn w2t1 | 2147.73 | 2781.01 | **+29.49%** | 46.57 ms | 35.96 ms |
+| Gunicorn w1t2 | 1400.94 | 1741.95 | **+24.34%** | 71.41 ms | 57.41 ms |
+| Gunicorn w2t2 | 2116.36 | 2722.99 | **+28.66%** | 47.26 ms | 36.72 ms |
+| Uvicorn single | 1209.30 | 1458.78 | **+20.63%** | 82.71 ms | 68.55 ms |
+| Uvicorn --workers w2 | 1799.88 | 2224.70 | **+23.60%** | 55.59 ms | 44.97 ms |
+| FastAPI CLI w1 | 1448.24 | 1853.47 | **+27.98%** | 69.05 ms | 53.95 ms |
+| FastAPI CLI w2 | 2267.33 | 3004.70 | **+32.52%** | 44.15 ms | 33.38 ms |
 
-| **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
-|-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | 2632.75        | 2611.62        | 2481.24        | 2575.2      |
-| Time per request [ms] | 37.983         | 38.29          | 40.302         | 38.8583     |
+### Observations
 
-### Asynchronous endpoint
-
-| **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
-|-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | 3529.66        | 3334.75        | 3328.7         | 3397.7      | +31.94%                |
-| Time per request [ms] | 28.331         | 29.987         | 30.042         | 29.4533     | 9.41 ms                |
-
-## Large response (1MB JSON)
-
-### Synchronous endpoint (baseline)
-
-| **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
-|-----------------------|----------------|----------------|----------------|-------------|
-| Requests per second   | 18.84          | 19.19          | 19.6           | 19.21       |
-| Time per request [ms] | 5307.4         | 5209.97        | 5103.06        | 5206.81     |
-
-### Asynchronous endpoint
-
-| **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
-|-----------------------|----------------|----------------|----------------|-------------|------------------------|
-| Requests per second   | 19.65          | 20.03          | 20.15          | 19.9433     | +3.82%                 |
-| Time per request [ms] | 5090.03        | 4991.68        | 4963.7         | 5015.14     | 191.67 ms              |
-
-## Observations
-
-* **Small responses: async wins by ~32%.** The async endpoint handles 3398 RPS vs 2575 RPS for sync. The event loop can process other requests while waiting for I/O, effectively multiplexing work within each worker.
-* **Large responses: difference is negligible (~4%).** When the response is 1MB, the bottleneck shifts to serialization and network transfer. The event loop advantage disappears because the CPU is busy serializing the large payload.
-* **Latency improvement is consistent** — async reduces per-request latency by ~9ms for small responses and ~192ms for large responses, even though throughput barely changes for large payloads.
+* **Async consistently wins by 20-33%** across all runner configurations
+* **Largest async benefit: FastAPI CLI w2 (+32.52%) and Gunicorn w2t1 (+29.49%)** — runners with 2 workers benefit more from async because the event loop can handle more concurrent connections per worker
+* **Smallest async benefit: Uvicorn single-process (+20.63%)** — single worker limits concurrency gains
+* The improvement is **consistent regardless of threads** — adding threads to Gunicorn (t0 vs t1 vs t2) doesn't change the async advantage significantly
+* **Higher absolute throughput with 2 workers**: Gunicorn w2, FastAPI CLI w2, and Uvicorn --workers w2 all outperform their 1-worker counterparts for both sync and async
 
 ## Verdict
 

@@ -45,10 +45,40 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 | Requests per second   |             19.52 |             19.57 |             19.43 |      19.5067 | -0.43 %                  |
 | Time per request [ms] |          5122.47 |          5108.58 |          5145.63 |     5125.56  | -21.2 ms                 |
  
+# Cross-runner JSON response class comparison
+
+> CI run [29858316413](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29858316413) — Python 3.14, Ubuntu latest.
+
+The same JSON response class comparison was repeated across 3 key server runners (Gunicorn w2t0, Uvicorn single, FastAPI CLI w1) to see whether the choice of response class interacts with the runner type.
+
+### Sync endpoint (`/sync/big_json_response/` — 1MB payload)
+
+| Runner | JSONResponse (baseline) | ORJSONResponse | UJSONResponse |
+|--------|------------------------|----------------|---------------|
+| Gunicorn w2t0 | 17.65 RPS | 18.44 RPS (+4.46%) | 17.26 RPS (-2.19%) |
+| Uvicorn single | 9.15 RPS | 10.36 RPS (+13.26%) | 9.40 RPS (+2.81%) |
+| FastAPI CLI w1 | 9.45 RPS | 10.66 RPS (+12.81%) | 9.84 RPS (+4.13%) |
+
+### Async endpoint (`/async/big_json_response/` — 1MB payload)
+
+| Runner | JSONResponse (baseline) | ORJSONResponse | UJSONResponse |
+|--------|------------------------|----------------|---------------|
+| Gunicorn w2t0 | 17.06 RPS | 18.15 RPS (+6.39%) | 17.30 RPS (+1.41%) |
+| Uvicorn single | 9.16 RPS | 10.38 RPS (+13.35%) | 9.29 RPS (+1.42%) |
+| FastAPI CLI w1 | 9.48 RPS | 10.58 RPS (+11.64%) | 9.74 RPS (+2.74%) |
+
+### Observations
+* **ORJSONResponse consistently outperforms** the default JSONResponse across all runners (+4% to +13%)
+* **UJSONResponse shows marginal improvement** (+1% to +4%), less impactful than ORJSON
+* The **relative gain of ORJSON is larger on Uvicorn and FastAPI CLI** (~13%) compared to Gunicorn (~5%), suggesting ORJSON's serialization advantage is more visible when the server framework has less overhead
+* Gunicorn with 2 workers achieves higher absolute throughput (~17-18 RPS) than Uvicorn/FastAPI CLI single-process (~9-10 RPS) for large JSON serialization, as it can parallelize across workers
+
 # Verdict
 
 * You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
 * Having some gain by simply changing to other response class seems promissing isn't it?
+* **ORJSONResponse is the recommended choice** — it provides consistent +5-13% improvement across all runners with minimal code change
+* The response class benefit is **runner-independent** — ORJSON wins everywhere, but the margin varies
 
 
 Please note that you can have different JSON response class for each API endpoint as shown in the FastAPI [docs](https://fastapi.tiangolo.com/advanced/custom-response/#ujsonresponse):

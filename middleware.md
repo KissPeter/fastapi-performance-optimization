@@ -124,5 +124,47 @@ In order to see the performance difference if multiple middlewares are added, an
 ### Observations
 * Still no significant difference, much better than BaseHTTPMiddleware 
 
+# Cross-runner middleware overhead
+
+> CI run [29858316413](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29858316413) — Python 3.14, Ubuntu latest.
+
+The same middleware overhead measurement (no middleware baseline vs one FastAPI `@app.middleware("http")` timing middleware) was repeated across all 10 server runner configurations to see whether the overhead varies.
+
+### Sync endpoint (`/sync/items/`)
+
+| Runner | Baseline RPS | +Middleware RPS | Overhead | Baseline Latency | +Middleware Latency | Latency Δ |
+|--------|-------------|----------------|----------|------------------|--------------------|-----------|
+| Gunicorn w1t0 | 1408.86 | 895.98 | **-36.4%** | 70.99 ms | 111.62 ms | +40.63 ms |
+| Gunicorn w2t0 | 2102.94 | 1316.28 | **-37.41%** | 47.58 ms | 75.98 ms | +28.40 ms |
+| Gunicorn w1t1 | 1415.21 | 919.91 | **-35.0%** | 70.69 ms | 108.73 ms | +38.04 ms |
+| Gunicorn w2t1 | 2111.69 | 1334.62 | **-36.8%** | 47.37 ms | 74.95 ms | +27.59 ms |
+| Gunicorn w1t2 | 1392.29 | 879.00 | **-36.87%** | 71.84 ms | 113.78 ms | +41.94 ms |
+| Gunicorn w2t2 | 2068.54 | 1294.28 | **-37.43%** | 48.39 ms | 77.28 ms | +28.88 ms |
+| Uvicorn single | 1182.71 | 842.83 | **-28.74%** | 84.56 ms | 118.66 ms | +34.10 ms |
+| Uvicorn w2 | 1213.57 | 825.69 | **-31.96%** | 82.41 ms | 121.13 ms | +38.72 ms |
+| FastAPI CLI w1 | 1428.91 | 916.64 | **-35.85%** | 69.99 ms | 109.10 ms | +39.11 ms |
+| FastAPI CLI w2 | 2273.51 | 1460.57 | **-35.76%** | 44.04 ms | 68.57 ms | +24.53 ms |
+
+### Async endpoint (`/async/items/`)
+
+| Runner | Baseline RPS | +Middleware RPS | Overhead | Baseline Latency | +Middleware Latency | Latency Δ |
+|--------|-------------|----------------|----------|------------------|--------------------|-----------|
+| Gunicorn w1t0 | 1705.74 | 1045.71 | **-38.69%** | 58.74 ms | 95.66 ms | +36.93 ms |
+| Gunicorn w2t0 | 2664.84 | 1606.84 | **-39.70%** | 37.53 ms | 62.25 ms | +24.72 ms |
+| Gunicorn w1t1 | 1734.10 | 1041.17 | **-39.96%** | 57.67 ms | 96.10 ms | +38.43 ms |
+| Gunicorn w2t1 | 2659.98 | 1648.26 | **-38.03%** | 37.62 ms | 60.68 ms | +23.06 ms |
+| Gunicorn w1t2 | 1721.13 | 1034.53 | **-39.89%** | 58.10 ms | 96.68 ms | +38.58 ms |
+| Gunicorn w2t2 | 2682.76 | 1573.81 | **-41.34%** | 37.29 ms | 63.57 ms | +26.29 ms |
+| Uvicorn single | 1451.85 | 958.20 | **-34.0%** | 68.89 ms | 104.38 ms | +35.49 ms |
+| Uvicorn w2 | 1480.07 | 982.76 | **-33.6%** | 67.57 ms | 101.76 ms | +34.19 ms |
+| FastAPI CLI w1 | 1841.48 | 1061.92 | **-42.33%** | 54.31 ms | 94.17 ms | +39.86 ms |
+| FastAPI CLI w2 | 3034.90 | 1701.06 | **-43.95%** | 32.95 ms | 58.79 ms | +25.84 ms |
+
+### Observations
+* **Middleware overhead is consistent across runners**: ~35-44% throughput drop regardless of server configuration
+* **Uvicorn shows slightly lower overhead** (~29-34%) compared to Gunicorn and FastAPI CLI (~35-44%)
+* The absolute latency increase is 24-42 ms across all runners
+* Adding more workers/threads does not mitigate the middleware overhead — it's a per-request cost
+
 # Verdict
-Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can
+Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can. The overhead is **consistent across all server runners** — no runner configuration can compensate for the middleware cost.
