@@ -62,6 +62,32 @@ class TestServerRunners(TestBase):
         p.run_test()
         p.sum_container_results()
 
+    # --- Gunicorn 1w 2t ---
+    @pytest.mark.server_runners
+    def test_gunicorn_w1t2_sync(self):
+        p = CompareContainers(_cfg("gunicorn_w1t2", 8027))
+        p.run_test()
+        p.sum_container_results()
+
+    @pytest.mark.server_runners
+    def test_gunicorn_w1t2_async(self):
+        p = CompareContainers(_cfg("gunicorn_w1t2", 8027, "/async/items/"))
+        p.run_test()
+        p.sum_container_results()
+
+    # --- Gunicorn 2w 2t ---
+    @pytest.mark.server_runners
+    def test_gunicorn_w2t2_sync(self):
+        p = CompareContainers(_cfg("gunicorn_w2t2", 8028))
+        p.run_test()
+        p.sum_container_results()
+
+    @pytest.mark.server_runners
+    def test_gunicorn_w2t2_async(self):
+        p = CompareContainers(_cfg("gunicorn_w2t2", 8028, "/async/items/"))
+        p.run_test()
+        p.sum_container_results()
+
     # --- Uvicorn single-process ---
     @pytest.mark.server_runners
     def test_uvicorn_single_sync(self):
