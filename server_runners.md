@@ -7,11 +7,12 @@ filename: server_runners.md
 
 # Server Runners Comparison
 
-This benchmark compares four ways to run a FastAPI application in production, each tested with 1 and 2 workers:
-- **Gunicorn** with UvicornWorker — WSGI process manager spawning Uvicorn workers
+This benchmark compares five ways to run a FastAPI application in production:
+- **Gunicorn** with UvicornWorker — WSGI process manager spawning Uvicorn workers (tested with 0 and 1 threads)
 - **Uvicorn** — single-process ASGI server (no `--workers`)
 - **Uvicorn with `--workers`** — ASGI server with native multi-process mode
 - **FastAPI CLI** (`fastapi run --workers`) — official FastAPI CLI wrapping Uvicorn with `--workers`
+- **Uvicorn multiprocess** — Uvicorn spawned via multiprocessing (separate from `--workers`)
 
 All runners use the same underlying ASGI server (Uvicorn). The difference is in how they manage processes and handle startup.
 
@@ -31,47 +32,97 @@ Uvicorn natively supports the `--workers` flag to spawn multiple worker processe
 
 ## Measurements
 
-Both synchronous (`POST /sync/items/`) and asynchronous (`POST /async/items/`) endpoints were tested. The Gunicorn container is used as the baseline for comparison.
+> CI run [29812055044](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29812055044) — Python 3.14, Ubuntu latest.
 
-> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
+### All runners, 2 workers — Sync endpoint
 
-### Sync endpoint, 1 worker
+Gunicorn w2t0 used as baseline.
 
-| Runner | RPS | vs Gunicorn |
-|--------|-----|-------------|
-| Gunicorn 1w (baseline) | 1636.94 | - |
-| Uvicorn 1w | 1445.94 | -11.67 % |
-| Uvicorn --workers 1w | 1462.06 | -10.68 % |
-| FastAPI CLI --workers 1w | 1587.70 | -3.01 % |
+| Runner | Config | RPS | vs Gunicorn |
+|--------|--------|-----|-------------|
+| Gunicorn | 2w 0t (baseline) | 2242 | — |
+| Gunicorn | 2w 1t | 2204 | -1.71 % |
+| Uvicorn | 2w | 1265 | -43.56 % |
+| Uvicorn --workers | 2w | 1842 | -17.86 % |
+| FastAPI CLI | 2w | 2332 | +4.03 % |
 
-### Async endpoint, 1 worker
+### All runners, 2 workers — Async endpoint
 
-| Runner | RPS | vs Gunicorn |
-|--------|-----|-------------|
-| Gunicorn 1w (baseline) | 2794.80 | - |
-| Uvicorn 1w | 2168.70 | -22.40 % |
-| Uvicorn --workers 1w | 2185.24 | -21.81 % |
-| FastAPI CLI --workers 1w | 2674.32 | -4.31 % |
+| Runner | Config | RPS | vs Gunicorn |
+|--------|--------|-----|-------------|
+| Gunicorn | 2w 0t (baseline) | 3536 | — |
+| Gunicorn | 2w 1t | 3577 | +1.15 % |
+| Uvicorn | 2w | 1876 | -46.93 % |
+| Uvicorn --workers | 2w | 2808 | -20.58 % |
+| FastAPI CLI | 2w | 3891 | +10.05 % |
 
-### Sync endpoint, 2 workers
+### Gunicorn thread impact — Sync endpoint
 
-| Runner | RPS | vs Gunicorn |
-|--------|-----|-------------|
-| Gunicorn 2w (baseline) | 2189.33 | - |
-| Uvicorn 1w | 1863.56 | -14.88 % |
-| Uvicorn --workers 2w | 1848.68 | -15.56 % |
-| FastAPI CLI --workers 2w | 2401.51 | +9.69 % |
+Gunicorn w2t0 used as baseline.
 
-### Async endpoint, 2 workers
+| Runner | Config | RPS | vs w2t0 |
+|--------|--------|-----|---------|
+| Gunicorn | 2w 0t (baseline) | 2231 | — |
+| Gunicorn | 1w 0t | 1466 | -34.28 % |
+| Gunicorn | 1w 1t | 1442 | -35.36 % |
+| Gunicorn | 2w 1t | 2218 | -0.58 % |
 
-| Runner | RPS | vs Gunicorn |
-|--------|-----|-------------|
-| Gunicorn 2w (baseline) | 3879.92 | - |
-| Uvicorn 1w | 3149.81 | -18.82 % |
-| Uvicorn --workers 2w | 3411.15 | -12.08 % |
-| FastAPI CLI --workers 2w | 4325.95 | +11.50 % |
+### Gunicorn thread impact — Async endpoint
 
-See [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml) for the latest results.
+| Runner | Config | RPS | vs w2t0 |
+|--------|--------|-----|---------|
+| Gunicorn | 2w 0t (baseline) | 3560 | — |
+| Gunicorn | 1w 0t | 2315 | -34.98 % |
+| Gunicorn | 1w 1t | 2312 | -35.06 % |
+| Gunicorn | 2w 1t | 3593 | +0.91 % |
+
+### Uvicorn multiprocess
+
+| Runner | Config | Sync RPS | Async RPS |
+|--------|--------|----------|-----------|
+| Uvicorn multiprocess | 1w | 1267 | 1864 |
+| Uvicorn multiprocess | 2w | 1850 | 2803 |
+
+## Summary matrix
+
+| Runner | Config | Sync RPS | Async RPS |
+|--------|--------|----------|-----------|
+| Gunicorn | 2w 0t | 2242 | 3536 |
+| Gunicorn | 2w 1t | 2204 | 3577 |
+| Gunicorn | 1w 0t | 1466 | 2315 |
+| Gunicorn | 1w 1t | 1442 | 2312 |
+| Uvicorn single-process | 2w | 1265 | 1876 |
+| Uvicorn --workers | 2w | 1842 | 2808 |
+| FastAPI CLI | 2w | 2332 | 3891 |
+| Uvicorn multiprocess | 1w | 1267 | 1864 |
+| Uvicorn multiprocess | 2w | 1850 | 2803 |
+
+## Verdict
+
+| Workers | Best Runner | RPS (sync/async) | vs Gunicorn |
+|---------|-------------|-------------------|-------------|
+| 2 workers | FastAPI CLI | 2332 / 3891 | +4-10 % |
+
+**FastAPI CLI wins across the board.** With 2 workers it outperforms Gunicorn by 4% (sync) to 10% (async). Both use Uvicorn under the hood, but FastAPI CLI's startup path is more efficient.
+
+**Gunicorn with 0 vs 1 thread:** Thread count makes virtually no difference. Adding1 thread to 2 workers changes RPS by less than 2%, well within noise. The GIL prevents true parallelism for CPU-bound work, and for I/O-bound FastAPI endpoints the async event loop already handles concurrency within each worker.
+
+**Gunicorn 1w vs 2w:** Doubling workers from1→2 gives ~53% more sync RPS and ~53% more async RPS. Near-linear scaling.
+
+**Uvicorn single-process** is the slowest — roughly half the throughput of Gunicorn or FastAPI CLI with 2 workers. Single-process ASGI cannot utilize multiple CPU cores.
+
+**Uvicorn `--workers`** lags behind Gunicorn by 18-21%. Despite being pure ASGI without the WSGI bridge, its process management is less efficient than Gunicorn's.
+
+**Uvicorn multiprocess** performs similarly to Uvicorn `--workers` — expected since both spawn multiple Uvicorn processes.
+
+**Recommendation**: Use `fastapi run --workers N` for multi-worker deployments. Use Gunicorn with UvicornWorker when you need its operational features (graceful restarts, worker recycling, resource limits).
+
+Re-run the measurements yourself:
+```shell
+git clone git@github.com:KissPeter/fastapi-performance-optimization.git
+pip3 install -r test_files/requirements.txt
+pytest -vv -rP test_files/ -m server_runners
+```
 
 ## Versions
 
@@ -83,25 +134,3 @@ See [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimizati
 | Gunicorn | 26.0.0 |
 | orjson | 3.11.9 |
 | ujson | 5.13.0 |
-
-## Verdict
-
-| Workers | Best Runner | RPS (sync/async) | vs Gunicorn |
-|---------|-------------|-------------------|-------------|
-| 1 worker | Gunicorn | 1637 / 2795 | — |
-| 2 workers | FastAPI CLI | 2402 / 4326 | +10-12 % |
-
-**With 1 worker**, Gunicorn wins. Its process management overhead is negligible at low worker counts, and it consistently outperforms both Uvicorn variants and FastAPI CLI.
-
-**With 2 workers**, FastAPI CLI (`fastapi run --workers`) pulls ahead by 10-12%. Both FastAPI CLI and Uvicorn `--workers` use the same `uvicorn --workers` under the hood, but FastAPI CLI's startup path and process spawning may differ, resulting in better performance at higher worker counts.
-
-**Uvicorn `--workers`** consistently lags behind Gunicorn by 11-22%, even though it's pure ASGI without the WSGI-to-ASGI bridge overhead. This suggests Gunicorn's worker management is more efficient.
-
-**Recommendation**: Use `fastapi run --workers N` for multi-worker deployments. Use Gunicorn with UvicornWorker for single-worker setups or when you need Gunicorn's operational features (graceful restarts, worker recycling, resource limits).
-
-Re-run the measurements yourself:
-```shell
-git clone git@github.com:KissPeter/fastapi-performance-optimization.git
-pip3 install -r test_files/requirements.txt
-pytest -vv -rP test_files/ -m server_runners
-```
