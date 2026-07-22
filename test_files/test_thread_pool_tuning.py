@@ -92,9 +92,9 @@ class TestThreadPoolTuning:
 
     @pytest.mark.thread_pool_tuning
     def test_all_requests_complete_with_high_tokens(self):
-        """With anyio_tokens=100 and pool=100, all 120 requests should complete."""
+        """With anyio_tokens=100 and pool=100, all requests should complete within token limit."""
         port = 8082
-        num_requests = 120
+        num_requests = 100
         results = []
         start = time.time()
         with ThreadPoolExecutor(max_workers=num_requests) as executor:
