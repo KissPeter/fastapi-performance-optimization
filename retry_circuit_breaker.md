@@ -6,7 +6,9 @@ filename: retry_circuit_breaker.md
 
 # Retry and Circuit Breaker Patterns
 
-When your FastAPI application calls external services, failures are inevitable. Retry logic and circuit breakers protect your application from cascading failures and resource exhaustion.
+> **Note**: This is a **generic robustness pattern**, not a FastAPI-specific optimization. It applies to any Python web application that calls external services. It contributes to a robust and reliable application but does not directly improve FastAPI performance.
+
+When your application calls external services, failures are inevitable. Retry logic and circuit breakers protect your application from cascading failures and resource exhaustion.
 
 ## The problem
 
@@ -207,3 +209,21 @@ half_open_max_calls: 2
 | External API recovers | Gradual recovery as connections drain | Circuit closes, traffic resumes |
 
 The circuit breaker trades **availability of one endpoint** for **availability of the entire application**.
+
+## Test results
+
+> CI run pending — test infrastructure added in docker-compose.yml (port 8085, retry_cb_w2 service).
+
+### Test environment
+- Gunicorn 2 workers, pool=100, timeout=5s
+- Mock API with 30% fail rate (retry test) and 50% fail rate (circuit breaker test)
+- Circuit breaker: threshold=5, recovery_timeout=10s
+
+### Retry pattern
+- 50 concurrent requests with retry (max_retries=3, backoff_factor=0.1)
+- Expected: >80% success rate (P(all retries fail) = 0.3^4 = 0.81%)
+
+### Circuit breaker
+- 50 concurrent requests against flaky API
+- Circuit opens after 5 consecutive failures
+- After recovery timeout (10s), circuit transitions to half-open

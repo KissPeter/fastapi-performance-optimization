@@ -10,6 +10,8 @@ filename: index.md
 This document is intended to provide some tips and ideas to get the most out of it
 
 
+# FastAPI Performance Optimization
+
 ## [Fastapi Middleware performance tuning](https://kisspeter.github.io/fastapi-performance-optimization/middleware)
 ## [Fastapi JSON response classes comparison](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class)
 ## [Gunicorn workers and threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)
@@ -18,6 +20,15 @@ This document is intended to provide some tips and ideas to get the most out of 
 ## [Server Runners: Gunicorn vs Uvicorn vs FastAPI CLI](https://kisspeter.github.io/fastapi-performance-optimization/server_runners)
 ## [Sync / Async API Endpoints](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async)
 ## [Connection Pool Size of External Resources](https://kisspeter.github.io/fastapi-performance-optimization/connection_pool)
+## [Thread Pool Sizing (anyio tokens)](https://kisspeter.github.io/fastapi-performance-optimization/thread_pool_sizing)
+## [Per-Worker Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/per_worker_connection_pool)
+## [Pool Sizing Calculator](https://kisspeter.github.io/fastapi-performance-optimization/pool_sizing_calculator)
+
+# Robustness & Reliability (Generic, not FastAPI-specific)
+
+These patterns apply to any Python web application. They contribute to a robust and reliable application but are not FastAPI performance optimizations.
+
+## [Retry Patterns and Circuit Breaker](https://kisspeter.github.io/fastapi-performance-optimization/retry_circuit_breaker)
 
 # Stay tuned for new ideas:
 ## FastAPI application profiling

@@ -192,3 +192,45 @@ def on_checkout(dbapi_conn, connection_rec, connection_proxy):
 | Database (PostgreSQL/MySQL) | 5-15 | 5-10 |
 
 Always verify: `pool_size × workers ≤ external_service_max_connections`
+
+## Pool exhaustion behavior
+
+When all connections in the pool are busy and a new request arrives, it waits up to `timeout` seconds (default 5s) for a connection to become available.
+
+```python
+# httpx client with 5s timeout (default)
+client = httpx.Client(
+    limits=httpx.Limits(
+        max_connections=40,
+        max_keepalive_connections=20,
+        keepalive_expiry=5,
+    ),
+    timeout=5.0,  # <-- waits up to 5s for a pool slot
+)
+```
+
+### What happens when the pool is exhausted
+
+| Scenario | What happens | How to detect |
+|----------|-------------|---------------|
+| Pool full, timeout=5s | Request waits 5s, then returns `PoolTimeout` | `httpx.PoolTimeout` exception |
+| Pool full, timeout=0s | Request fails immediately with `PoolTimeout` | `httpx.PoolTimeout` exception |
+| Pool full, requests queue | Throughput drops, latency spikes | High p95/p99 latency in benchmarks |
+| Pool full, all workers blocked | All workers wait for pool slots, throughput = 0 | Complete stall |
+
+### Testing pool exhaustion
+
+We test this by sending 50 concurrent requests with pool=40 (exceeds pool capacity by 25%):
+- 40 requests get a connection immediately
+- 10 requests wait up to 5s for a slot
+- Requests that wait show high latency but succeed (pool drains as requests complete)
+
+### Key insight: handlers remain active during pool wait
+
+When a handler waits for a pool slot, the **handler thread remains active** — it's not released back to the pool. This means:
+- Handler concurrency ≠ connection concurrency
+- 50 handlers can be active with only 40 connections
+- Handlers that are waiting for pool slots are using a thread pool token
+- This is why pool sizing must consider both connection pool AND thread pool
+
+See [Thread Pool Sizing](thread_pool_sizing.md) for the full picture.

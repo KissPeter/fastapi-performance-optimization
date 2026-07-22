@@ -727,3 +727,89 @@ services:
       CONN_POOL_LIMIT: 80
       CONN_POOL_KEEPALIVE: 40
       EXTERNAL_API_HOST: "http://mock-api:8030"
+
+  # === Thread pool tuning containers ===
+  anyio_tokens_40_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8080:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 100
+      CONN_POOL_KEEPALIVE: 20
+      ANYIO_TOKENS: 40
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+  anyio_tokens_80_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8081:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 100
+      CONN_POOL_KEEPALIVE: 20
+      ANYIO_TOKENS: 80
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+  anyio_tokens_100_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8082:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 100
+      CONN_POOL_KEEPALIVE: 20
+      ANYIO_TOKENS: 100
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+
+  # === Pool exhaustion / timeout containers ===
+  pool_exhaust_timeout_5:
+    image: fastapi-performance-optimization:latest
+    ports: ["8083:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 2
+      CONN_POOL_KEEPALIVE: 1
+      CONN_POOL_TIMEOUT: 5
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+  pool_exhaust_timeout_60:
+    image: fastapi-performance-optimization:latest
+    ports: ["8084:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 2
+      CONN_POOL_KEEPALIVE: 1
+      CONN_POOL_TIMEOUT: 60
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+
+  # === Retry / circuit breaker containers ===
+  retry_cb_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8085:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 100
+      CONN_POOL_KEEPALIVE: 20
+      CONN_POOL_TIMEOUT: 5
+      CB_FAILURE_THRESHOLD: 5
+      CB_RECOVERY_TIMEOUT: 10
+      EXTERNAL_API_HOST: "http://mock-api:8030"

@@ -123,3 +123,17 @@ When using `gthread` worker class (not UvicornWorker), Gunicorn's `--threads` se
 | Sync endpoints with slow I/O (DB, APIs) | Match to connection pool size |
 
 The key insight: **tokens should match your connection pool size** for sync endpoints that make external calls. If your pool has 50 connections, you need at least 50 tokens to utilize them all.
+
+## Test results
+
+> CI run pending — test infrastructure added in docker-compose.yml.
+
+### Test environment
+- Gunicorn 2 workers, pool=100 (eliminates pool bottleneck)
+- Three configurations tested: anyio_tokens=40, 80, 100
+- Ports: 8080 (tokens=40), 8081 (tokens=80), 8082 (tokens=100)
+
+### What we're measuring
+- Handler concurrency (max concurrent requests per worker) with each token count
+- Throughput (RPS) with each token count
+- Whether increasing tokens beyond 40 improves throughput when pool is not the bottleneck
