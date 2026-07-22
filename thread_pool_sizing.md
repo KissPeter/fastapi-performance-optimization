@@ -63,6 +63,13 @@ Effective concurrency = min(40, N)
 If `N < 40`, the connection pool is the bottleneck — threads wait for connections.
 If `N > 40`, extra connections sit idle — wasted resources.
 
+**Important**: The connection pool limits *connection* concurrency, not *handler* concurrency. Handlers beyond the pool size queue for connections but remain "active" (holding a thread token). This means:
+
+- pool_size=2 with 20 concurrent requests → 10 handlers active per worker, 8 waiting for connections
+- pool_size=100 with 20 concurrent requests → 10 handlers active per worker, all get connections immediately
+
+**CI-verified** (run 29907570007): pool_size=2 showed max_concurrent=10 handlers per worker. The thread pool (40 tokens) is the actual concurrency ceiling, not the pool size.
+
 ## Tuning
 
 Increase the token count only if you have a genuine need for more concurrent sync threads:

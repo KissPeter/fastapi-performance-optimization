@@ -62,22 +62,24 @@ With 8 workers × pool_size=20 PostgreSQL connections = 160 connections × ~80 K
 
 ### Sync endpoints (httpx.Client, SQLAlchemy sync)
 
-Each sync request that makes an external call **holds a connection for the entire request duration**. The pool must be large enough to handle concurrent sync threads.
+Each sync request that makes an external call **holds a connection for the entire request duration**. The pool limits concurrent *connections*, not concurrent *handlers*. Handlers beyond the pool size queue for a connection slot but remain active.
 
 ```
 pool_size = min(
-    anyio_thread_tokens,      # default 40
-    max_concurrent_requests,  # your expected concurrency
+    anyio_thread_tokens,      # default 40 — this is the ACTUAL handler concurrency limit
+    max_concurrent_connections,  # how many simultaneous connections you need
     server_max_connections    # external service limit
 )
 ```
 
 **Practical approach:**
 ```
-pool_size = threads_per_worker + headroom (2-5)
+pool_size = expected_concurrent_connections + headroom (2-5)
 ```
 
 The `headroom` accounts for connections in transitional states (connecting, closing, keep-alive).
+
+**CI-verified**: Handler concurrency is limited by anyio thread pool (40 default), NOT by pool_size. A pool_size=2 still allows 10+ concurrent handlers — they just queue for connections.
 
 ### Async endpoints (httpx.AsyncClient, SQLAlchemy async)
 
@@ -138,7 +140,11 @@ pool_size=5, 10 concurrent sync requests
 → 5 requests get connections, 5 wait → increased latency
 ```
 
-**Fix:** Match pool size to expected concurrency, or use async endpoints.
+**Important distinction**: The pool limits *connection* concurrency, not *handler* concurrency. Handlers block waiting for a pool slot but remain "active" from the worker's perspective. Handler concurrency is limited by the anyio thread pool (default 40 tokens per worker).
+
+**CI-verified** (run 29907570007): With pool_size=2 and 2 workers, sending 20 concurrent requests showed max_concurrent=10 handlers per worker — the pool queued 8 requests waiting for connections, but all 10 were counted as active. The pool acts as a throttle, not a hard limit.
+
+**Fix:** Match pool size to expected concurrent *connections* (not handlers), or use async endpoints.
 
 ### 3. Connection leaks
 
