@@ -167,4 +167,4 @@ The same middleware overhead measurement (no middleware baseline vs one FastAPI 
 * Adding more workers/threads does not mitigate the middleware overhead — it's a per-request cost
 
 # Verdict
-Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can. The overhead is **consistent across all server runners** — no runner configuration can compensate for the middleware cost.
+Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can. The overhead is **consistent across all server runners** (~35-44% for Gunicorn/FastAPI CLI, ~29-34% for Uvicorn). Uvicorn's slightly lower overhead doesn't change the fundamental takeaway — no runner configuration can meaningfully compensate for the middleware cost.

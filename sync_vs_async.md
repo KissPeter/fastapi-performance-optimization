@@ -39,6 +39,31 @@ In a typical deployment with Gunicorn + UvicornWorker, each worker runs an async
 * The improvement is **consistent regardless of threads** — adding threads to Gunicorn (t0 vs t1 vs t2) doesn't change the async advantage significantly
 * **Higher absolute throughput with 2 workers**: Gunicorn w2, FastAPI CLI w2, and Uvicorn --workers w2 all outperform their 1-worker counterparts for both sync and async
 
+## Large response (1MB JSON)
+
+> CI run [29815274014](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29815274014) — Gunicorn w2t0 only.
+
+When the response payload is large (1MB), the bottleneck shifts to serialization and network transfer. The async event loop advantage largely disappears.
+
+### Synchronous endpoint (baseline)
+
+| **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** |
+|-----------------------|----------------|----------------|----------------|-------------|
+| Requests per second   | 18.84          | 19.19          | 19.6           | 19.21       |
+| Time per request [ms] | 5307.4         | 5209.97        | 5103.06        | 5206.81     |
+
+### Asynchronous endpoint
+
+| **Test attribute**    | **Test run 1** | **Test run 2** | **Test run 3** | **Average** | Difference to baseline |
+|-----------------------|----------------|----------------|----------------|-------------|------------------------|
+| Requests per second   | 19.65          | 20.03          | 20.15          | 19.9433     | +3.82%                 |
+| Time per request [ms] | 5090.03        | 4991.68        | 4963.7         | 5015.14     | 191.67 ms              |
+
+### Observations (large response)
+* **Async advantage drops to ~4%** — negligible compared to 20-33% for small responses
+* Serialization of the 1MB payload dominates the request time, masking the event loop efficiency gain
+* Latency still improves by ~192ms, but throughput barely changes
+
 ## Verdict
 
 Use **async endpoints** (`async def`) as the default for FastAPI applications. The performance benefit is significant for typical API workloads (small/medium responses) and zero cost for large payloads.
