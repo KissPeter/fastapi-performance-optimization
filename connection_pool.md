@@ -110,12 +110,24 @@ httpx.Client(
 
 ## Observations
 
-* To be filled after CI run completes
+* **External API calls reduce throughput by ~79-90%** compared to no-external-call baseline, regardless of pool size
+* **Sync endpoints outperform async for external calls** (~550 RPS vs ~340 RPS with small pool) — this is counterintuitive but explained by the fact that sync endpoints hold connections longer but the thread pool provides consistent concurrency
+* **Large pool improves sync throughput by ~15%** (544 → 628 RPS) by eliminating connection contention
+* **Large pool improves async throughput by ~10%** (408 → 450 RPS) — smaller gain because async multiplexes connections more efficiently
+* **Per-worker isolation**: Each Gunicorn worker has its own httpx client and connection pool. The `max_connections=2` limit applies per-worker, not per-app. With 2 workers, total connections to the mock API = 2 × 2 = 4
 
 ## Verdict
 
 Connection pool sizing is critical for applications making external API calls:
-- A **small pool** (2 connections) creates a bottleneck when handling concurrent requests, as workers block waiting for available connections
-- A **large pool** (100 connections) eliminates the connection bottleneck but uses more memory
+- A **small pool** (2 connections per worker) creates a bottleneck when handling concurrent sync requests, as worker threads block waiting for available connections
+- A **large pool** (100 connections per worker) eliminates the connection bottleneck but uses more memory
 - The impact is more pronounced with **synchronous** endpoints, where blocking the worker thread compounds the wait time
 - For **asynchronous** endpoints, the event loop can handle other requests while waiting for a connection, reducing the impact of pool exhaustion
+- **Remember**: pool_size is per-worker. Total connections = pool_size × workers. Size accordingly to stay within external service limits.
+
+## Further reading
+
+- [Per-Worker Connection Pool](per_worker_connection_pool.md) — deep dive on per-process pool architecture
+- [Thread Pool Sizing](thread_pool_sizing.md) — anyio thread pool and its interaction with connection pools
+- [Pool Sizing Calculator](pool_sizing_calculator.md) — practical formulas for sizing your pools
+- [Retry and Circuit Breaker](retry_circuit_breaker.md) — protecting your app when external services fail
