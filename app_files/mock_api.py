@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from typing import Optional
+import time
 
 app = FastAPI()
 
@@ -25,6 +26,13 @@ MOCK_RESPONSE = {
 
 @app.post("/mock/items/")
 def mock_item(item: Item):
+    return MOCK_RESPONSE
+
+
+@app.post("/mock/slow/items/")
+def mock_slow_item(item: Item, delay: float = Query(default=0.5)):
+    """Simulate slow external API. delay in seconds."""
+    time.sleep(delay)
     return MOCK_RESPONSE
 
 

@@ -663,3 +663,41 @@ services:
     environment:
       WORKERS: 1
       JSONRESPONSECLASS: UJSONResponse
+
+  # === Concurrency introspection test containers ===
+  concurrency_pool_2_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8070:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 2
+      CONN_POOL_KEEPALIVE: 1
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+  concurrency_pool_4_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8071:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 4
+      CONN_POOL_KEEPALIVE: 2
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+  concurrency_pool_100_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8072:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 100
+      CONN_POOL_KEEPALIVE: 20
+      EXTERNAL_API_HOST: "http://mock-api:8030"

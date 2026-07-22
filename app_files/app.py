@@ -1,5 +1,6 @@
 import os
 import time
+import threading
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -196,3 +197,88 @@ if HTTPX_AVAILABLE and EXTERNAL_API_HOST:
             "/mock/items/", json=item.model_dump()
         )
         return response.json()
+
+
+# === Concurrency introspection endpoints ===
+import os as _os
+import threading as _threading
+
+_concurrency_counter = _threading.Lock()
+_concurrent_requests = {"count": 0}
+_concurrent_lock = _threading.Lock()
+
+
+def _increment_concurrent():
+    with _concurrent_lock:
+        _concurrent_requests["count"] += 1
+        return _concurrent_requests["count"]
+
+
+def _decrement_concurrent():
+    with _concurrent_lock:
+        _concurrent_requests["count"] -= 1
+
+
+@app.get("/info/worker")
+def worker_info():
+    """Report worker identity and current concurrency."""
+    return {
+        "worker_pid": _os.getpid(),
+        "thread_id": _threading.current_thread().ident,
+        "thread_name": _threading.current_thread().name,
+        "concurrent_requests": _concurrent_requests["count"],
+    }
+
+
+@app.get("/info/slow_sync")
+def slow_sync_info(delay: float = 0.5):
+    """Sync endpoint that tracks concurrency while calling external API.
+    This proves how many sync threads are active simultaneously."""
+    count = _increment_concurrent()
+    try:
+        if HTTPX_AVAILABLE and EXTERNAL_API_HOST:
+            response = _sync_client.post(
+                "/mock/slow/items/",
+                json={"name": "test", "price": 1.0},
+                params={"delay": delay},
+            )
+            result = response.json()
+        else:
+            time.sleep(delay)
+            result = {"delayed": delay}
+        return {
+            "worker_pid": _os.getpid(),
+            "thread_id": _threading.current_thread().ident,
+            "concurrent_at_start": count,
+            "concurrent_at_end": _concurrent_requests["count"],
+            "result": result,
+        }
+    finally:
+        _decrement_concurrent()
+
+
+@app.get("/info/slow_async")
+async def slow_async_info(delay: float = 0.5):
+    """Async endpoint that tracks concurrency while calling external API."""
+    count = _increment_concurrent()
+    try:
+        if HTTPX_AVAILABLE and EXTERNAL_API_HOST:
+            response = await app.state.async_client.post(
+                "/mock/slow/items/",
+                json={"name": "test", "price": 1.0},
+                params={"delay": delay},
+            )
+            result = response.json()
+        else:
+            import asyncio
+            await asyncio.sleep(delay)
+            result = {"delayed": delay}
+        return {
+            "worker_pid": _os.getpid(),
+            "thread_id": _threading.current_thread().ident,
+            "concurrent_at_start": count,
+            "concurrent_at_end": _concurrent_requests["count"],
+            "result": result,
+        }
+    finally:
+        _decrement_concurrent()
