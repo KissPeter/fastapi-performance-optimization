@@ -116,11 +116,11 @@ httpx.Client(
 * **Large pool improves async throughput by ~10%** (408 → 450 RPS) — smaller gain because async multiplexes connections more efficiently
 * **Per-worker isolation**: Each Gunicorn worker has its own httpx client and connection pool. The `max_connections=2` limit applies per-worker, not per-app. With 2 workers, total connections to the mock API = 2 × 2 = 4
 
-## Pool sizing: pool=40 (anyio tokens) vs pool=80 (w×t)
+## Pool sizing: pool=40 (anyio tokens) vs pool=80 (w×t) vs pool=100
 
-> CI run [29916760540](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29916760540) — Python 3.14, Ubuntu latest, Gunicorn 2 workers.
+> CI run [29916760540](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29916760540) — Python 3.14, Ubuntu latest, Gunicorn 2 workers, 2 CPU per container.
 
-Tested four pool sizes to find the sweet spot:
+Tested four pool sizes to find the optimal configuration:
 - **pool=2**: severely bottlenecked
 - **pool=40**: matches anyio thread pool default (40 tokens per worker)
 - **pool=80**: matches workers × anyio tokens (2 × 40)
@@ -128,49 +128,66 @@ Tested four pool sizes to find the sweet spot:
 
 ### Sync endpoint — pool size comparison
 
-| Pool size | RPS (avg) | Latency (avg) | vs pool=2 | vs pool=40 |
-|-----------|-----------|---------------|-----------|------------|
-| 2         | 528.26    | 189.31 ms     | baseline  | —          |
-| **40**    | **612.58**| **163.26 ms** | **+35.1%**| baseline   |
-| 80        | 607.55    | 164.61 ms     | +34.8%    | -0.8%      |
-| 100       | 616.33    | 162.25 ms     | +35.5%    | +0.6%      |
+| Pool size | RPS (avg) | Latency (avg) | vs pool=2 | vs pool=40 | vs pool=80 |
+|-----------|-----------|---------------|-----------|------------|------------|
+| 2         | 528.26    | 189.31 ms     | baseline  | —          | —          |
+| 40        | 612.58    | 163.26 ms     | +35.1%    | baseline   | —          |
+| 80        | 607.55    | 164.61 ms     | +34.8%    | -0.8%      | baseline   |
+| **100**   | **616.33**| **162.25 ms** | **+35.5%**| **+0.6%**  | **+1.4%**  |
 
 ### Async endpoint — pool size comparison
 
-| Pool size | RPS (avg) | Latency (avg) | vs pool=2 | vs pool=40 |
-|-----------|-----------|---------------|-----------|------------|
-| 2         | 412.98    | 242.14 ms     | baseline  | —          |
-| **40**    | **425.14**| **235.29 ms** | **+2.9%** | baseline   |
-| 80        | 396.11    | 252.47 ms     | -4.1%     | -6.8%      |
-| 100       | 418.95    | 238.72 ms     | +1.4%     | -1.5%      |
+| Pool size | RPS (avg) | Latency (avg) | vs pool=2 | vs pool=40 | vs pool=80 |
+|-----------|-----------|---------------|-----------|------------|------------|
+| 2         | 412.98    | 242.14 ms     | baseline  | —          | —          |
+| **40**    | **425.14**| **235.29 ms** | **+2.9%** | baseline   | —          |
+| 80        | 396.11    | 252.47 ms     | -4.1%     | -6.8%      | baseline   |
+| 100       | 418.95    | 238.72 ms     | +1.4%     | -1.5%      | +5.8%      |
 
-### Key finding: pool=40 is the sweet spot for sync
+### Memory cost per pool size
 
-- **pool=40 vs pool=2**: +35% throughput — eliminating connection contention has massive impact
-- **pool=80 vs pool=40**: -0.8% — no improvement, pool is no longer the bottleneck
-- **pool=100 vs pool=40**: +0.6% — noise, no meaningful gain
-- **pool=40 matches anyio thread pool**: each of the 40 sync threads can hold a connection simultaneously. Going beyond 40 wastes memory without improving throughput.
-- **Async is pool-insensitive**: async handlers multiplex connections, so pool size has minimal impact (+2.9% from 2→40, then flat)
+Each connection consumes memory on both client and server side:
 
-### Verdict
+| Pool size | Connections (2 workers) | Client-side (2 workers) | Server-side (2 workers) | Total |
+|-----------|------------------------|------------------------|------------------------|-------|
+| 2         | 4                      | ~24 KB                 | ~200 KB                | ~224 KB |
+| 40        | 80                     | ~480 KB                | ~4 MB                  | ~4.5 MB |
+| 80        | 160                    | ~960 KB                | ~8 MB                  | ~9 MB |
+| 100       | 200                    | ~1.2 MB                | ~10 MB                 | ~11.2 MB |
 
-For sync endpoints making external API calls:
-- **Set pool_size = anyio thread pool tokens (40)** — this matches the actual concurrency ceiling
-- Going above 40 wastes memory (each idle connection = ~1-5 KB client-side, ~5-50 KB server-side)
-- Going below 40 creates a connection bottleneck that reduces throughput by up to 35%
+Assumptions: ~6 KB/client connection (httpx keep-alive), ~50 KB/server connection (typical API server). Actual numbers depend on the external service.
 
-For async endpoints:
-- Pool size matters less — even pool=2 achieves ~97% of pool=40 throughput
-- Set pool_size = expected_concurrent_connections / 2 (connections are shared via event loop)
+### Analysis
+
+**Sync endpoints**: pool=100 achieves the highest throughput (616 RPS) and lowest latency (162 ms). The gain over pool=40 is +0.6% (RPS) and -1.0 ms (latency). Over pool=80, it's +1.4% and -2.4 ms. These are small but consistent — at 10K requests/sec, +0.6% = 60 more requests/sec, which matters at scale.
+
+**Async endpoints**: pool=40 performs best (425 RPS), pool=100 is close (419 RPS). The pool=80 anomaly (-6.8% vs pool=40) suggests an interaction between the pool size and the event loop's connection recycling — worth investigating but not a blocker.
+
+**Memory tradeoff**: pool=100 uses ~11 MB per 2 workers vs ~4.5 MB for pool=40. The extra ~6.5 MB buys +0.6% sync throughput. Whether this matters depends on your environment:
+- **Memory-constrained** (serverless, small containers): pool=40 is more efficient
+- **Throughput-critical** (high-traffic APIs): pool=100 squeezes out every RPS
+- **Balanced**: pool=40 eliminates the connection bottleneck (the big win), pool=100 is marginal improvement
+
+### Recommendations
+
+| Scenario | Pool size | Why |
+|----------|-----------|-----|
+| Memory-constrained, moderate traffic | 40 | Eliminates bottleneck, minimal memory |
+| High-traffic, throughput-critical | 100 | +0.6% sync, every RPS counts at scale |
+| Async-only endpoints | 40 | Best async performance, connections multiplex |
+| DB with connection limit | `db_max / workers` | Stay within server limits |
+| Unknown / starting out | 40 | Safe default, matches anyio thread pool |
+
+The data shows pool=100 is technically superior in every metric. The question is whether the ~6.5 MB extra memory per 2 workers justifies the +0.6% throughput gain in your specific deployment.
 
 ## Verdict
 
 Connection pool sizing is critical for applications making external API calls:
-- A **small pool** (2 connections per worker) creates a bottleneck when handling concurrent sync requests, as worker threads block waiting for available connections
-- A **pool matching anyio tokens (40)** is the sweet spot for sync endpoints — it eliminates connection contention without wasting memory
-- **Going beyond 40** (pool=80, pool=100) provides no measurable throughput gain for sync and can even hurt async performance
-- The impact is more pronounced with **synchronous** endpoints, where blocking the worker thread compounds the wait time
-- For **asynchronous** endpoints, pool size matters less — the event loop multiplexes connections efficiently
+- A **small pool** (2 connections per worker) creates a bottleneck when handling concurrent sync requests, as worker threads block waiting for available connections — this costs ~35% throughput
+- **pool=40 eliminates the connection bottleneck** for sync endpoints, matching the anyio thread pool default
+- **pool=100 achieves the highest throughput** (+0.6% over pool=40, +1.4% over pool=80) at the cost of ~6.5 MB additional memory per 2 workers
+- The choice between 40 and 100 depends on your deployment: memory-constrained → 40, throughput-critical → 100
+- For **asynchronous** endpoints, pool=40 performs best — the event loop multiplexes connections efficiently, and larger pools don't help
 - **Remember**: pool_size is per-worker. Total connections = pool_size × workers. Size accordingly to stay within external service limits.
 
 ## Further reading

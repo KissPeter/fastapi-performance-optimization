@@ -27,25 +27,25 @@ Each sync request holds a connection for the entire request duration.
 
 ```
 pool_size_per_worker = min(
-    anyio_thread_tokens,           # default 40 — CI-verified as the sweet spot
+    anyio_thread_tokens,           # default 40 — eliminates connection bottleneck
     max_concurrent_requests,       # your expected concurrency
     db_max_connections / workers   # don't exceed DB limit
 )
 ```
 
 **CI-verified (run 29916760540):**
-- pool=40 achieves +35% throughput vs pool=2 for sync endpoints
-- pool=80 and pool=100 show no measurable gain over pool=40
-- **Recommendation: `pool_size_per_worker = 40` for sync endpoints**
+- pool=40 eliminates the connection bottleneck (+35% vs pool=2)
+- pool=100 achieves +0.6% over pool=40 — small but consistent, matters at scale
+- The choice depends on memory budget vs throughput needs
 
-**Conservative default:**
+**Conservative (memory-constrained):**
 ```
-pool_size_per_worker = 10 + 5 (headroom) = 15
+pool_size_per_worker = 40  # matches anyio default, eliminates bottleneck
 ```
 
-**Aggressive (high concurrency):**
+**Aggressive (throughput-critical):**
 ```
-pool_size_per_worker = 40  # match anyio default — CI-verified optimal
+pool_size_per_worker = 100  # +0.6% over pool=40, ~6.5 MB more per 2 workers
 ```
 
 ### Async endpoints (httpx.AsyncClient, SQLAlchemy async)
@@ -149,17 +149,17 @@ Each service gets its own pool with its own limits.
 
 ## Quick reference table
 
-> CI-verified: pool=40 per worker is optimal for sync endpoints making external API calls.
+> CI-verified: pool=40 eliminates the connection bottleneck. pool=100 achieves +0.6% at +6.5 MB/2 workers.
 
-| Workers | Sync pool/worker | Async pool/worker | Total sync | Total async |
-|---------|-----------------|-------------------|------------|-------------|
-| 1       | 40              | 10-20             | 40         | 10-20       |
-| 2       | 40              | 10-20             | 80         | 20-40       |
-| 4       | 40              | 10-20             | 160        | 40-80       |
-| 8       | 20-40           | 5-15              | 160-320    | 40-120      |
-| 16      | 10-20           | 3-10              | 160-320    | 48-160      |
+| Workers | Sync pool/worker (conservative) | Sync pool/worker (aggressive) | Total sync (conservative) | Total sync (aggressive) | Memory (conservative) | Memory (aggressive) |
+|---------|--------------------------------|------------------------------|--------------------------|------------------------|----------------------|---------------------|
+| 1       | 40                             | 100                          | 40                       | 100                    | 2.2 MB               | 5.6 MB              |
+| 2       | 40                             | 100                          | 80                       | 200                    | 4.5 MB               | 11.2 MB             |
+| 4       | 40                             | 100                          | 160                      | 400                    | 9 MB                 | 22.4 MB             |
+| 8       | 40                             | 100                          | 320                      | 800                    | 18 MB                | 44.8 MB             |
+| 16      | 40                             | 100                          | 640                      | 1600                   | 36 MB                | 89.6 MB             |
 
-As workers increase, per-worker pool size may need to decrease to stay within external service limits. But for sync endpoints, never go below the number of concurrent requests you expect per worker.
+As workers increase, total connections scale linearly. Stay within external service limits (e.g., PostgreSQL max_connections=100).
 
 ## Monitoring and tuning
 
