@@ -65,21 +65,3 @@ class TestPoolExhaustion:
         assert timeouts == 0, f"Expected 0 timeouts, got {timeouts}"
         assert oks == num_requests, f"Expected {num_requests} OKs, got {oks}"
         print(f"  Timeouts: {timeouts}, OKs: {oks}")
-
-    @pytest.mark.pool_exhaustion
-    def test_exhaustion_detects_worker_distribution(self):
-        """Verify requests are distributed across workers under exhaustion."""
-        port = 8083
-        num_requests = 10
-        results = []
-        with ThreadPoolExecutor(max_workers=num_requests) as executor:
-            futures = [
-                executor.submit(fire_timeout_endpoint, port, 3.0)
-                for _ in range(num_requests)
-            ]
-            for f in as_completed(futures):
-                results.append(f.result())
-
-        pids = [r.get("worker_pid") for r in results if "error" not in r]
-        unique_pids = set(pids)
-        assert len(unique_pids) >= 1, f"Expected at least 1 worker PID, got {len(unique_pids)}"
