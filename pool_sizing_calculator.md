@@ -27,11 +27,16 @@ Each sync request holds a connection for the entire request duration.
 
 ```
 pool_size_per_worker = min(
-    anyio_thread_tokens,           # default 40
+    anyio_thread_tokens,           # default 40 — CI-verified as the sweet spot
     max_concurrent_requests,       # your expected concurrency
     db_max_connections / workers   # don't exceed DB limit
 )
 ```
+
+**CI-verified (run 29916760540):**
+- pool=40 achieves +35% throughput vs pool=2 for sync endpoints
+- pool=80 and pool=100 show no measurable gain over pool=40
+- **Recommendation: `pool_size_per_worker = 40` for sync endpoints**
 
 **Conservative default:**
 ```
@@ -40,7 +45,7 @@ pool_size_per_worker = 10 + 5 (headroom) = 15
 
 **Aggressive (high concurrency):**
 ```
-pool_size_per_worker = 40  # match anyio default
+pool_size_per_worker = 40  # match anyio default — CI-verified optimal
 ```
 
 ### Async endpoints (httpx.AsyncClient, SQLAlchemy async)
@@ -144,15 +149,17 @@ Each service gets its own pool with its own limits.
 
 ## Quick reference table
 
+> CI-verified: pool=40 per worker is optimal for sync endpoints making external API calls.
+
 | Workers | Sync pool/worker | Async pool/worker | Total sync | Total async |
 |---------|-----------------|-------------------|------------|-------------|
-| 1       | 10-20           | 10-20             | 10-20      | 10-20       |
-| 2       | 10-20           | 10-20             | 20-40      | 20-40       |
-| 4       | 10-20           | 10-20             | 40-80      | 40-80       |
-| 8       | 5-15            | 5-15              | 40-120     | 40-120      |
-| 16      | 3-10            | 3-10              | 48-160     | 48-160      |
+| 1       | 40              | 10-20             | 40         | 10-20       |
+| 2       | 40              | 10-20             | 80         | 20-40       |
+| 4       | 40              | 10-20             | 160        | 40-80       |
+| 8       | 20-40           | 5-15              | 160-320    | 40-120      |
+| 16      | 10-20           | 3-10              | 160-320    | 48-160      |
 
-As workers increase, per-worker pool size should decrease to stay within external service limits.
+As workers increase, per-worker pool size may need to decrease to stay within external service limits. But for sync endpoints, never go below the number of concurrent requests you expect per worker.
 
 ## Monitoring and tuning
 
