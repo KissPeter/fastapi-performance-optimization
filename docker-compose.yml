@@ -701,3 +701,29 @@ services:
       CONN_POOL_LIMIT: 100
       CONN_POOL_KEEPALIVE: 20
       EXTERNAL_API_HOST: "http://mock-api:8030"
+
+  # === Pool sizing: pool=40 (anyio tokens) and pool=w*t (2*40=80) ===
+  concurrency_pool_40_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8073:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 40
+      CONN_POOL_KEEPALIVE: 20
+      EXTERNAL_API_HOST: "http://mock-api:8030"
+  concurrency_pool_80_w2:
+    image: fastapi-performance-optimization:latest
+    ports: ["8074:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      CONN_POOL_LIMIT: 80
+      CONN_POOL_KEEPALIVE: 40
+      EXTERNAL_API_HOST: "http://mock-api:8030"

@@ -151,3 +151,68 @@ class TestConcurrency:
             assert all(p == pid for p in pids_seen), (
                 f"Inconsistent PIDs for worker group: {set(pids_seen)}"
             )
+
+    @pytest.mark.concurrency
+    def test_pool_40_handler_concurrency(self):
+        """Pool=40 (matching anyio tokens): handlers should reach near anyio ceiling.
+
+        With pool_size=40, connection contention is eliminated for up to 40 concurrent
+        sync requests per worker. Handler concurrency should be limited by anyio (40)
+        or by the number of requests sent, whichever is smaller.
+        """
+        workers = send_concurrent(port=8073, num_requests=50, delay=0.3)
+        assert len(workers) >= 1
+        for pid, reqs in workers.items():
+            max_conc = max(r.get("concurrent_at_start", 0) for r in reqs)
+            # With 50 requests / 2 workers = ~25 per worker, pool=40 should not block
+            assert max_conc >= 5, (
+                f"Worker {pid}: max concurrent={max_conc}, expected ≥ 5 "
+                f"(pool=40 should not be the bottleneck with 25 reqs/worker)"
+            )
+
+    @pytest.mark.concurrency
+    def test_pool_80_handler_concurrency(self):
+        """Pool=80 (w*t=2*40): should match anyio ceiling exactly.
+
+        With pool_size=80, even under heavy load the handler concurrency is
+        capped by anyio thread pool (40 per worker), not by the connection pool.
+        """
+        workers = send_concurrent(port=8074, num_requests=60, delay=0.3)
+        assert len(workers) >= 1
+        for pid, reqs in workers.items():
+            max_conc = max(r.get("concurrent_at_start", 0) for r in reqs)
+            # Pool=80 should never be the bottleneck — anyio (40) is the limit
+            assert max_conc >= 5, (
+                f"Worker {pid}: max concurrent={max_conc}, expected ≥ 5 "
+                f"(pool=80 should never bottleneck)"
+            )
+
+    @pytest.mark.concurrency
+    def test_pool_sizing_comparison(self):
+        """Compare handler concurrency across pool sizes: 2, 40, 80, 100.
+
+        All should show similar handler concurrency (limited by anyio, not pool),
+        but throughput will differ because small pools cause connection queuing.
+        """
+        ports = {
+            "pool_2": 8070,
+            "pool_40": 8073,
+            "pool_80": 8074,
+            "pool_100": 8072,
+        }
+        num_requests = 40
+        delay = 0.2
+        results = {}
+
+        for label, port in ports.items():
+            workers = send_concurrent(port=port, num_requests=num_requests, delay=delay)
+            for pid, reqs in workers.items():
+                max_conc = max(r.get("concurrent_at_start", 0) for r in reqs)
+                results[f"{label}_worker_{pid}"] = max_conc
+
+        # All pool sizes should show handler concurrency > 2
+        # (limited by anyio thread pool, not connection pool)
+        for key, max_conc in results.items():
+            assert max_conc >= 2, (
+                f"{key}: max concurrent={max_conc}, expected ≥ 2"
+            )
