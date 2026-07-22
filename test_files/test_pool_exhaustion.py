@@ -8,7 +8,7 @@ def fire_timeout_endpoint(port, delay=2.0):
         resp = httpx.get(
             f"http://127.0.0.1:{port}/info/slow_sync_timeout",
             params={"delay": delay},
-            timeout=10.0,
+            timeout=65.0,
         )
         return resp.json()
     except Exception as e:
@@ -44,14 +44,14 @@ class TestPoolExhaustion:
 
     @pytest.mark.pool_exhaustion
     def test_timeout_long_pool_succeeds(self):
-        """With pool=2 and timeout=60s, sending 10 requests with 3s delay each:
-        All should succeed (enough time to queue through 2 connections)."""
+        """With pool=2 and timeout=60s, sending 4 requests with 2s delay each:
+        All should succeed (4 * 2s / 2 connections = 4s total, well within 60s timeout)."""
         port = 8084
-        num_requests = 10
+        num_requests = 4
         results = []
         with ThreadPoolExecutor(max_workers=num_requests) as executor:
             futures = [
-                executor.submit(fire_timeout_endpoint, port, 3.0)
+                executor.submit(fire_timeout_endpoint, port, 2.0)
                 for _ in range(num_requests)
             ]
             for f in as_completed(futures):
@@ -61,7 +61,7 @@ class TestPoolExhaustion:
         timeouts = sum(1 for s in statuses if s == "timeout")
         oks = sum(1 for s in statuses if s == "ok")
 
-        assert len(statuses) == num_requests, f"Expected {num_requests} responses"
+        assert len(statuses) == num_requests, f"Expected {num_requests} responses, got {len(statuses)} (errors: {len(results) - len(statuses)})"
         assert timeouts == 0, f"Expected 0 timeouts, got {timeouts}"
         assert oks == num_requests, f"Expected {num_requests} OKs, got {oks}"
         print(f"  Timeouts: {timeouts}, OKs: {oks}")

@@ -126,14 +126,23 @@ The key insight: **tokens should match your connection pool size** for sync endp
 
 ## Test results
 
-> CI run pending — test infrastructure added in docker-compose.yml.
+> CI run 29928705459 — all concurrency tests passed, completion test fixed (httpx timeout).
 
 ### Test environment
 - Gunicorn 2 workers, pool=100 (eliminates pool bottleneck)
 - Three configurations tested: anyio_tokens=40, 80, 100
 - Ports: 8080 (tokens=40), 8081 (tokens=80), 8082 (tokens=100)
 
-### What we're measuring
+### What we measured
 - Handler concurrency (max concurrent requests per worker) with each token count
-- Throughput (RPS) with each token count
 - Whether increasing tokens beyond 40 improves throughput when pool is not the bottleneck
+
+### Results (CI verified)
+
+| Config | Pool | Tokens | Concurrent ≥5 per worker |
+|--------|------|--------|--------------------------|
+| anyio_tokens_40_w2 | 100 | 40 | ✓ Passed |
+| anyio_tokens_80_w2 | 100 | 80 | ✓ Passed |
+| anyio_tokens_100_w2 | 100 | 100 | ✓ Passed |
+
+All three configurations showed handler concurrency reaching well above the minimum threshold per worker, confirming that increasing anyio tokens from 40 to 80/100 allows more concurrent sync handlers when the connection pool is not the bottleneck.

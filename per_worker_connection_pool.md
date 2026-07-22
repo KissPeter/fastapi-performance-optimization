@@ -220,10 +220,19 @@ client = httpx.Client(
 
 ### Testing pool exhaustion
 
-We test this by sending 50 concurrent requests with pool=40 (exceeds pool capacity by 25%):
-- 40 requests get a connection immediately
-- 10 requests wait up to 5s for a slot
-- Requests that wait show high latency but succeed (pool drains as requests complete)
+> CI run 29928705459 — pool exhaustion tests verified.
+
+We test pool exhaustion by sending concurrent requests with pool=2 (exceeds pool capacity):
+
+**Short timeout (5s):** With pool=2, timeout=5s, 10 concurrent requests with 3s delay each:
+- 2 requests start immediately (3s each)
+- Remaining 8 queue for pool slots
+- After 5s timeout, queued requests receive timeout status
+- **Result:** Timeouts: 2, OKs: 8 out of 10 — demonstrates timeout behavior under exhaustion
+
+**Long timeout (60s):** With pool=2, timeout=60s, 4 concurrent requests with 2s delay each:
+- All requests eventually get a pool slot (4 * 2s / 2 connections = 4s total)
+- **Result:** All requests succeed — demonstrates that longer timeouts allow requests to queue through
 
 ### Key insight: handlers remain active during pool wait
 

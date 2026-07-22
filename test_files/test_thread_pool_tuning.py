@@ -9,7 +9,7 @@ def fire_slow_sync(port, delay=0.2):
         resp = httpx.get(
             f"http://127.0.0.1:{port}/info/slow_sync",
             params={"delay": delay},
-            timeout=10.0,
+            timeout=30.0,
         )
         return resp.json()
     except Exception as e:
