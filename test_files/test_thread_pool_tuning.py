@@ -1,3 +1,4 @@
+import logging
 import pytest
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import httpx
@@ -37,7 +38,7 @@ class TestThreadPoolTuning:
 
         for pid, reqs in workers.items():
             max_conc = max(r.get("concurrent_at_start", 0) for r in reqs)
-            print(f"  Worker {pid}: max_concurrent={max_conc}, total_requests={len(reqs)}")
+            logging.warning(f"  Worker {pid}: max_concurrent={max_conc}, total_requests={len(reqs)}")
             assert max_conc >= 5, (
                 f"anyio_tokens=40: worker {pid} max concurrent={max_conc}, expected ≥ 5"
             )
@@ -62,7 +63,7 @@ class TestThreadPoolTuning:
 
         for pid, reqs in workers.items():
             max_conc = max(r.get("concurrent_at_start", 0) for r in reqs)
-            print(f"  Worker {pid}: max_concurrent={max_conc}, total_requests={len(reqs)}")
+            logging.warning(f"  Worker {pid}: max_concurrent={max_conc}, total_requests={len(reqs)}")
             assert max_conc >= 5, (
                 f"anyio_tokens=80: worker {pid} max concurrent={max_conc}, expected ≥ 5"
             )
@@ -87,7 +88,7 @@ class TestThreadPoolTuning:
 
         for pid, reqs in workers.items():
             max_conc = max(r.get("concurrent_at_start", 0) for r in reqs)
-            print(f"  Worker {pid}: max_concurrent={max_conc}, total_requests={len(reqs)}")
+            logging.warning(f"  Worker {pid}: max_concurrent={max_conc}, total_requests={len(reqs)}")
             assert max_conc >= 5, (
                 f"anyio_tokens=100: worker {pid} max concurrent={max_conc}, expected ≥ 5"
             )
