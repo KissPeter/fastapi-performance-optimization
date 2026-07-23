@@ -220,9 +220,14 @@ client = httpx.Client(
 
 ### Testing pool exhaustion
 
-> CI run 29928705459 — pool exhaustion tests verified.
+> CI run 30011520066 — pool exhaustion tests verified.
 
 We test pool exhaustion by sending concurrent requests with pool=2 (exceeds pool capacity):
+
+| Test | Pool | Timeout | Delay | Requests | Timeouts | OKs | Behavior |
+|------|------|---------|-------|----------|----------|-----|----------|
+| Short timeout | 2 | 5s | 3s | 10 | **2** | **8** | Queued requests timeout after 5s |
+| Long timeout | 2 | 60s | 2s | 4 | **0** | **4** | All requests queue through successfully |
 
 **Short timeout (5s):** With pool=2, timeout=5s, 10 concurrent requests with 3s delay each:
 - 2 requests start immediately (3s each)
