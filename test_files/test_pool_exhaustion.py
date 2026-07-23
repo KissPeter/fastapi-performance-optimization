@@ -1,3 +1,4 @@
+import logging
 import pytest
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import httpx
@@ -40,7 +41,7 @@ class TestPoolExhaustion:
         assert timeouts > 0 or oks > 0, f"Unexpected statuses: {statuses}"
         # With pool=2, timeout=5s, 10 requests * 3s delay:
         # First 2 start immediately, rest queue. After 5s, queued ones timeout.
-        print(f"  Timeouts: {timeouts}, OKs: {oks} out of {len(statuses)}")
+        logging.warning(f"  Timeouts: {timeouts}, OKs: {oks} out of {len(statuses)}")
 
     @pytest.mark.pool_exhaustion
     def test_timeout_long_pool_succeeds(self):
