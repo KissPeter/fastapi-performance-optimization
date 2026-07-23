@@ -42,7 +42,7 @@ jobs:
       - name: Wait for containers to be ready
         run: |
           echo "Waiting for containers to start..."
-          for port in 8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 8010 8011 8015 8016 8017 8019 8020 8021 8022 8023 8024 8025 8026 8027 8028 8030 8031 8032 8033 8040 8041 8042 8043 8044 8045 8046 8047 8048 8049 8050 8051 8052 8053 8054 8055 8056 8057 8058 8059 8060 8061 8062 8063 8064 8065 8066 8067 8068 8070 8071 8072 8073 8074 8080 8081 8082 8083 8084 8085; do
+          for port in 8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 8010 8011 8015 8016 8017 8019 8020 8021 8022 8023 8024 8025 8026 8027 8028 8030 8031 8032 8033 8040 8041 8042 8043 8044 8045 8046 8047 8048 8049 8050 8051 8052 8053 8054 8055 8056 8057 8058 8059 8060 8061 8062 8063 8064 8065 8066 8067 8068 8070 8071 8072 8073 8074 8080 8081 8082 8083 8084 8085 8090 8092 8094 8096 8098 8100 8102 8104 8106 8108 8130 8131; do
             timeout=30
             while [ $timeout -gt 0 ]; do
               if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$port/sync/items/ -d '{}' -H 'Content-Type: application/json' 2>/dev/null | grep -qE '200|422'; then
@@ -79,6 +79,8 @@ jobs:
         run: ./bin/run_test.sh thread_pool_tuning
       - name: 'Measure Pool Exhaustion (timeout behavior)'
         run: ./bin/run_test.sh pool_exhaustion
+      - name: 'Best vs Worst configuration combo'
+        run: ./bin/run_test.sh combo
       - uses: actions/upload-artifact@v4
         with:
           name: Pytest-Report-${{ matrix.python-version }}

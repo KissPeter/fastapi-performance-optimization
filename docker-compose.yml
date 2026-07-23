@@ -813,3 +813,146 @@ services:
       CB_FAILURE_THRESHOLD: 5
       CB_RECOVERY_TIMEOUT: 10
       EXTERNAL_API_HOST: "http://mock-api:8030"
+
+  # === Starlette ASGI middleware cross-runner test containers ===
+  runner_w1t0_starlette_mw:
+    image: fastapi-performance-optimization:latest
+    ports: ["8090:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 0
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_w2t0_starlette_mw:
+    image: fastapi-performance-optimization:latest
+    ports: ["8092:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_w1t1_starlette_mw:
+    image: fastapi-performance-optimization:latest
+    ports: ["8094:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 1
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_w2t1_starlette_mw:
+    image: fastapi-performance-optimization:latest
+    ports: ["8096:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 1
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_w1t2_starlette_mw:
+    image: fastapi-performance-optimization:latest
+    ports: ["8098:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 2
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_w2t2_starlette_mw:
+    image: fastapi-performance-optimization:latest
+    ports: ["8100:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 2
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_uvicorn_w1_starlette_mw:
+    image: fastapi-performance-optimization-uvicorn:latest
+    ports: ["8102:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_uvicorn_w2_starlette_mw:
+    image: fastapi-performance-optimization-uvicorn:latest
+    ports: ["8104:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_fastapi_cli_w1_starlette_mw:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8106:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  runner_fastapi_cli_w2_starlette_mw:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8108:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  # === Best vs worst combo containers ===
+  combo_best_async_orjson:
+    image: fastapi-performance-optimization-fastapi-cli:latest
+    ports: ["8130:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      JSONRESPONSECLASS: ORJSONResponse
+      STARLETTEPROCESSTIMEIDDLEWARE: add
+
+  combo_worst_sync_json:
+    image: fastapi-performance-optimization:latest
+    ports: ["8131:8000"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 0
+      PROCESSTIMEMIDDLEWARE: add
+      JSONRESPONSECLASS: JSONResponse
