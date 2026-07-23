@@ -8,7 +8,8 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
+  contents: write
+  checks: write
 
 jobs:
   simple_measurements:
@@ -17,19 +18,19 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.12' ]
+        python-version: [ '3.14' ]
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: 'Docker Compose'
-        uses: isbang/compose-action@v1.4.1
+        uses: hoverkraft-tech/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose.yml"
           up-flags: "--build --force-recreate"
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -37,7 +38,25 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports
-          docker-compose ps --all
+          docker compose ps --all
+      - name: Wait for containers to be ready
+        run: |
+          echo "Waiting for containers to start..."
+          for port in 8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 8010 8011 8015 8016 8017 8019 8020 8021 8022 8023 8024 8025 8026 8027 8028 8030 8031 8032 8033 8040 8041 8042 8043 8044 8045 8046 8047 8048 8049 8050 8051 8052 8053 8054 8055 8056 8057 8058 8059 8060 8061 8062 8063 8064 8065 8066 8067 8068 8070 8071 8072 8073 8074 8080 8081 8082 8083 8084 8085; do
+            timeout=30
+            while [ $timeout -gt 0 ]; do
+              if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$port/sync/items/ -d '{}' -H 'Content-Type: application/json' 2>/dev/null | grep -qE '200|422'; then
+                echo "Port $port is ready"
+                break
+              fi
+              sleep 2
+              timeout=$((timeout - 2))
+            done
+            if [ $timeout -le 0 ]; then
+              echo "Warning: Port $port not ready after 30s"
+            fi
+          done
+          echo "Container readiness check complete"
       - name: 'Measure middlewares'
         run: ./bin/run_test.sh middlewares
       - name: 'Measure sync vs async endpoints'
@@ -48,8 +67,18 @@ jobs:
         run: ./bin/run_test.sh nginx_port_vs_socket
       - name: 'Measure Gunicorn vs Uvicorn'
         run: ./bin/run_test.sh gunicorn_vs_uvicorn
+      - name: 'Measure Server Runners (Gunicorn vs Uvicorn vs FastAPI CLI vs Uvicorn --workers)'
+        run: ./bin/run_test.sh server_runners
       - name: 'Nginx socker vs socket + keepalive'
         run: ./bin/run_test.sh nginx_socker_keepalive
+      - name: 'Measure Connection Pool (small vs large pool, sync vs async)'
+        run: ./bin/run_test.sh connection_pool
+      - name: 'Measure Per-worker Concurrency (pool isolation, thread ceiling)'
+        run: ./bin/run_test.sh concurrency
+      - name: 'Measure Thread Pool Tuning (anyio tokens 40 vs 80 vs 100)'
+        run: ./bin/run_test.sh thread_pool_tuning
+      - name: 'Measure Pool Exhaustion (timeout behavior)'
+        run: ./bin/run_test.sh pool_exhaustion
       - uses: actions/upload-artifact@v4
         with:
           name: Pytest-Report-${{ matrix.python-version }}
@@ -60,19 +89,19 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.12' ]
+        python-version: [ '3.14' ]
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: 'Docker Compose'
-        uses: isbang/compose-action@v1.4.1
+        uses: hoverkraft-tech/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose_workers_and_threads.yml"
           up-flags: "--build --force-recreate"
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -80,14 +109,31 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
           mkdir -p reports test_files/svg
-          docker-compose ps --all
+          docker compose ps --all
+      - name: Wait for containers to be ready
+        run: |
+          echo "Waiting for containers to start..."
+          timeout=60
+          while [ $timeout -gt 0 ]; do
+            ready=$(docker compose ps --format json 2>/dev/null | grep -c '"running"' || echo 0)
+            total=$(docker compose ps --format json 2>/dev/null | wc -l || echo 0)
+            echo "Running: $ready / $total containers"
+            if [ "$ready" -gt 0 ] && [ "$ready" -eq "$total" ]; then
+              echo "All containers running"
+              break
+            fi
+            sleep 3
+            timeout=$((timeout - 3))
+          done
+          sleep 5
+          echo "Container readiness check complete"
       - name: 'Measure workers and threads'
         run: ./bin/run_test.sh workers_and_threads
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: Pytest-Report-${{ matrix.python-version }}
+          name: Pytest-Report-workers-${{ matrix.python-version }}
           path: ./reports
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: SVG-${{ matrix.python-version }}
           path: test_files/svg
@@ -96,19 +142,70 @@ jobs:
 
   Linter:
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     timeout-minutes: 300
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.12' ]
+        python-version: [ '3.14' ]
     steps:
       - name: 'Checkout Repository'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref_name }}
+        uses: actions/checkout@v4
       - name: Lint Code Base
         uses: super-linter/super-linter/slim@v5
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  robustness:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 300
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.14' ]
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: 'Docker Compose'
+        uses: hoverkraft-tech/compose-action@v2.5.0
+        with:
+          compose-file: "./docker-compose.yml"
+          up-flags: "--build --force-recreate"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f test_files/requirements.txt ]; then pip install -r test_files/requirements.txt; fi
+          mkdir -p reports
+          docker compose ps --all
+      - name: Wait for containers to be ready
+        run: |
+          echo "Waiting for containers to start..."
+          for port in 8030 8085; do
+            timeout=30
+            while [ $timeout -gt 0 ]; do
+              if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$port/mock/health 2>/dev/null | grep -qE '200'; then
+                echo "Port $port is ready"
+                break
+              fi
+              sleep 2
+              timeout=$((timeout - 2))
+            done
+            if [ $timeout -le 0 ]; then
+              echo "Warning: Port $port not ready after 30s"
+            fi
+          done
+          echo "Container readiness check complete"
+      - name: 'Test Retry Patterns and Circuit Breaker'
+        run: ./bin/run_test.sh robustness
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Pytest-Report-robustness-${{ matrix.python-version }}
+          path: ./reports

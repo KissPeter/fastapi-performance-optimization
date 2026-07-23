@@ -3,8 +3,9 @@ ENV PIP_NO_CACHE_DIR=yes
 RUN pip3 install fastapi==0.139.2 uvicorn==0.51.0 orjson==3.11.9 ujson==5.13.0
 WORKDIR /src
 COPY app.py .
-COPY start_uvicorn_processmanager.sh .
+COPY start_uvicorn_workers.sh .
 COPY test_json_1MB.json .
+RUN chmod +x /src/start_uvicorn_workers.sh
 EXPOSE 8000
-ENV WORKERS=2
-ENTRYPOINT /src/start_uvicorn_processmanager.sh
+ENV WORKERS=1
+ENTRYPOINT /src/start_uvicorn_workers.sh

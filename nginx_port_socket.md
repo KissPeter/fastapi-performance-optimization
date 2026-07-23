@@ -19,22 +19,24 @@ The most secure option is dedicating a group to this communication, making nginx
 
 ## Measurements
 
+> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
+
 ### Synchronous API endpoint with small request / response
 
 #### Nginx - APP via port
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1375.63  |         1349.77  |         1305.75  |      1343.72  |
-| Time per request [ms] |           72.694 |           74.087 |           76.584 |        74.455 |
+| Requests per second   |         1936.66  |         1868.64  |         1915.02  |      1906.77  |
+| Time per request [ms] |           51.635 |           53.515 |           52.219 |        52.4563 |
 
 
 #### Nginx - APP via socket
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1321.34  |         1357.39  |         1367.66  |     1348.8    | 0.38 %                   |
-| Time per request [ms] |           75.681 |           73.671 |           73.118 |       74.1567 | 0.3 ms                   |
+| Requests per second   |         7476.71  |          6645.0  |         7434.42  |      7185.38  | +276.83%                  |
+| Time per request [ms] |           13.375 |           15.049 |           13.451 |        13.9583 | 38.5 ms                  |
 
 ### Asynchronous API endpoint with small request / response
 
@@ -42,16 +44,16 @@ The most secure option is dedicating a group to this communication, making nginx
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1852.67  |         1918.59  |         1817.32  |      1862.86  |
-| Time per request [ms] |           53.976 |           52.122 |           55.026 |        53.708 |
+| Requests per second   |         2780.52  |         2764.32  |         2777.57  |      2774.14  |
+| Time per request [ms] |           35.964 |           36.175 |           36.003 |        36.0473 |
 
 #### Nginx - APP via socket
 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1943.55  |         1919.56  |         1923.68  |     1928.93   | 3.55 %                   |
-| Time per request [ms] |           51.452 |           52.095 |           51.984 |       51.8437 | 1.86 ms                  |
+| Requests per second   |         7315.44  |         6159.01  |         7347.77  |      6940.74  | +150.19%                  |
+| Time per request [ms] |            13.67 |           16.236 |            13.61 |        14.5053 | 21.54 ms                 |
 
 ### Observations
 * FastAPI queries per second is 1923 which is slightly better than using ports
@@ -63,16 +65,16 @@ The most secure option is dedicating a group to this communication, making nginx
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1863.81  |          818.1   |         1980.61  |     1554.17   |
-| Time per request [ms] |           53.654 |          122.235 |           50.489 |       75.4593 |
+| Requests per second   |         2885.82  |         2758.47  |         2368.75  |      2671.01  |
+| Time per request [ms] |           34.652 |           36.252 |           42.216 |        37.7067 |
 
 #### Nginx - APP via socket
 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1941.33  |         2197.9   |         1884.56  |      2007.93  | 29.2 %                   |
-| Time per request [ms] |           51.511 |           45.498 |           53.063 |        50.024 | 25.44 ms                 |
+| Requests per second   |         6454.11  |         6795.05  |         6942.52  |      6730.56  | +151.99%                  |
+| Time per request [ms] |           15.494 |           14.717 |           14.404 |        14.8717 | 22.83 ms                 |
 
 ### Observations
 * FastAPI requests per second was above 2000 
@@ -85,16 +87,16 @@ The most secure option is dedicating a group to this communication, making nginx
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |          803.7   |         1927.06  |          967.89  |     1232.88   |
-| Time per request [ms] |          124.425 |           51.893 |          103.317 |       93.2117 |
+| Requests per second   |         2713.03  |         2819.41  |         2761.47  |      2764.64  |
+| Time per request [ms] |           36.859 |           35.468 |           36.213 |         36.18 |
 
 #### Nginx - APP via socket
 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1804.45  |         1829.6   |         1799.19  |     1811.08   | 46.9 %                   |
-| Time per request [ms] |           55.418 |           54.657 |           55.581 |       55.2187 | 37.99 ms                 |
+| Requests per second   |         6855.33  |         6831.25  |         7037.45  |      6908.01  | +149.87%                  |
+| Time per request [ms] |           14.587 |           14.639 |            14.21 |        14.4787 | 21.7 ms                  |
 
 ## Verdict
 

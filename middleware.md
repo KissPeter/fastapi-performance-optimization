@@ -15,13 +15,15 @@ Unfortunately the most straightforward implementation has a drawback, it has maj
 
 ## Baseline measurement
 
+> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
+
 Sample application without any middleware.
 > Note: The test application is available [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/app.py) which is from the [FastAPI docs](https://fastapi.tiangolo.com/tutorial/middleware/)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1885.57  |         1924.34  |         1953.53  |      1921.15  |
-| Time per request [ms] |           53.034 |           51.966 |           51.189 |        52.063 |
+| Requests per second   |         2464.26  |         2671.44  |         2515.29  |      2550.33  |
+| Time per request [ms] |           40.58  |           37.433 |           39.757 |        39.2567 |
 
 ## FastAPI timing middleware
 
@@ -40,8 +42,8 @@ Sample application without any middleware.
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1346.22  |         1448.14  |         1423.86  |     1406.07   | -26.81 %                 |
-| Time per request [ms] |           74.282 |           69.054 |           70.232 |       71.1893 | -19.13 ms                |
+| Requests per second   |         1618.27  |         1672.64  |         1710.37  |     1667.09   | -34.63 %                 |
+| Time per request [ms] |           61.794 |           59.786 |           58.467 |       60.0157 | -20.76 ms                |
 
 ### Observations
 * Significant drop in the througtput of the container while the average latency raised by ~19ms 
@@ -63,8 +65,8 @@ app.add_middleware(CustomHeaderMiddleware)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1128.21  |         1121.99  |         1113.53  |      1121.24  | -41.64 %                 |
-| Time per request [ms] |           88.636 |           89.127 |           89.804 |        89.189 | -37.13 ms                |
+| Requests per second   |         1231.22  |         1202.6   |         1204.92  |      1212.91  | -52.44 %                 |
+| Time per request [ms] |           81.22  |           83.153 |           82.993 |       82.4553 | -43.2 ms                 |
 
 ### Observations
 * By adding another middleware there is significant drop again, the container throughput is around half than before
@@ -103,8 +105,8 @@ class STARLETTEProcessTimeMiddleware:
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         1869.11  |         1891.52  |         1948.64  |     1903.09   | -0.94 %                  |
-| Time per request [ms] |           53.501 |           52.868 |           51.318 |       52.5623 | -0.5 ms                  |
+| Requests per second   |         2491.88  |         2448.96  |         2603.78  |     2514.87   | -1.39 %                  |
+| Time per request [ms] |           40.13  |           40.834 |           38.406 |        39.79  | -0.53 ms                 |
 
 ### Observations
 * Negligible change on performance
@@ -116,11 +118,53 @@ In order to see the performance difference if multiple middlewares are added, an
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |          1832.51 |         1871.4   |         1916.97  |     1873.63   | -2.47 %                  |
-| Time per request [ms] |            54.57 |           53.436 |           52.166 |       53.3907 | -1.33 ms                 |
+| Requests per second   |         2482.41  |         2406.58  |         2532.62  |     2473.87   | -3.0 %                   |
+| Time per request [ms] |           40.283 |           41.553 |           39.485 |       40.4403 | -1.18 ms                 |
 
 ### Observations
 * Still no significant difference, much better than BaseHTTPMiddleware 
 
+# Cross-runner middleware overhead
+
+> CI run [29858316413](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29858316413) — Python 3.14, Ubuntu latest.
+
+The same middleware overhead measurement (no middleware baseline vs one FastAPI `@app.middleware("http")` timing middleware) was repeated across all 10 server runner configurations to see whether the overhead varies.
+
+### Sync endpoint (`/sync/items/`)
+
+| Runner | Baseline RPS | +Middleware RPS | Overhead | Baseline Latency | +Middleware Latency | Latency Δ |
+|--------|-------------|----------------|----------|------------------|--------------------|-----------|
+| Gunicorn w1t0 | 1408.86 | 895.98 | **-36.4%** | 70.99 ms | 111.62 ms | +40.63 ms |
+| Gunicorn w2t0 | 2102.94 | 1316.28 | **-37.41%** | 47.58 ms | 75.98 ms | +28.40 ms |
+| Gunicorn w1t1 | 1415.21 | 919.91 | **-35.0%** | 70.69 ms | 108.73 ms | +38.04 ms |
+| Gunicorn w2t1 | 2111.69 | 1334.62 | **-36.8%** | 47.37 ms | 74.95 ms | +27.59 ms |
+| Gunicorn w1t2 | 1392.29 | 879.00 | **-36.87%** | 71.84 ms | 113.78 ms | +41.94 ms |
+| Gunicorn w2t2 | 2068.54 | 1294.28 | **-37.43%** | 48.39 ms | 77.28 ms | +28.88 ms |
+| Uvicorn single | 1182.71 | 842.83 | **-28.74%** | 84.56 ms | 118.66 ms | +34.10 ms |
+| Uvicorn w2 | 1213.57 | 825.69 | **-31.96%** | 82.41 ms | 121.13 ms | +38.72 ms |
+| FastAPI CLI w1 | 1428.91 | 916.64 | **-35.85%** | 69.99 ms | 109.10 ms | +39.11 ms |
+| FastAPI CLI w2 | 2273.51 | 1460.57 | **-35.76%** | 44.04 ms | 68.57 ms | +24.53 ms |
+
+### Async endpoint (`/async/items/`)
+
+| Runner | Baseline RPS | +Middleware RPS | Overhead | Baseline Latency | +Middleware Latency | Latency Δ |
+|--------|-------------|----------------|----------|------------------|--------------------|-----------|
+| Gunicorn w1t0 | 1705.74 | 1045.71 | **-38.69%** | 58.74 ms | 95.66 ms | +36.93 ms |
+| Gunicorn w2t0 | 2664.84 | 1606.84 | **-39.70%** | 37.53 ms | 62.25 ms | +24.72 ms |
+| Gunicorn w1t1 | 1734.10 | 1041.17 | **-39.96%** | 57.67 ms | 96.10 ms | +38.43 ms |
+| Gunicorn w2t1 | 2659.98 | 1648.26 | **-38.03%** | 37.62 ms | 60.68 ms | +23.06 ms |
+| Gunicorn w1t2 | 1721.13 | 1034.53 | **-39.89%** | 58.10 ms | 96.68 ms | +38.58 ms |
+| Gunicorn w2t2 | 2682.76 | 1573.81 | **-41.34%** | 37.29 ms | 63.57 ms | +26.29 ms |
+| Uvicorn single | 1451.85 | 958.20 | **-34.0%** | 68.89 ms | 104.38 ms | +35.49 ms |
+| Uvicorn w2 | 1480.07 | 982.76 | **-33.6%** | 67.57 ms | 101.76 ms | +34.19 ms |
+| FastAPI CLI w1 | 1841.48 | 1061.92 | **-42.33%** | 54.31 ms | 94.17 ms | +39.86 ms |
+| FastAPI CLI w2 | 3034.90 | 1701.06 | **-43.95%** | 32.95 ms | 58.79 ms | +25.84 ms |
+
+### Observations
+* **Middleware overhead is consistent across runners**: ~35-44% throughput drop regardless of server configuration
+* **Uvicorn shows slightly lower overhead** (~29-34%) compared to Gunicorn and FastAPI CLI (~35-44%)
+* The absolute latency increase is 24-42 ms across all runners
+* Adding more workers/threads does not mitigate the middleware overhead — it's a per-request cost
+
 # Verdict
-Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can
+Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can. The overhead is **consistent across all server runners** (~35-44% for Gunicorn/FastAPI CLI, ~29-34% for Uvicorn). Uvicorn's slightly lower overhead doesn't change the fundamental takeaway — no runner configuration can meaningfully compensate for the middleware cost.

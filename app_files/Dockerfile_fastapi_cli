@@ -1,0 +1,11 @@
+FROM python:3.14-slim-bookworm
+ENV PIP_NO_CACHE_DIR=yes
+RUN pip3 install "fastapi[standard]==0.139.2" orjson==3.11.9 ujson==5.13.0
+WORKDIR /src
+COPY app.py .
+COPY start_fastapi_cli.sh .
+COPY test_json_1MB.json .
+RUN chmod +x /src/start_fastapi_cli.sh
+EXPOSE 8000
+ENV WORKERS=1
+ENTRYPOINT /src/start_fastapi_cli.sh

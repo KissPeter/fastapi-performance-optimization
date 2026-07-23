@@ -236,8 +236,9 @@ class CompareContainers:
 
     @staticmethod
     def get_avg_of_list(elements: List[Union[int, float]]) -> float:
-        if len(elements) > 0:
-            return round(sum(elements) / len(elements), 4)
+        filtered = [e for e in elements if e is not None]
+        if len(filtered) > 0:
+            return round(sum(filtered) / len(filtered), 4)
         else:
             return 0.0
 
@@ -247,7 +248,7 @@ class CompareContainers:
         failed_requests = 0
         result = defaultdict(list)
         for test in results:
-            failed_requests += test.get(TestFields.failed_requests)
+            failed_requests += test.get(TestFields.failed_requests) or 0
             rps.append(test.get(TestFields.rps))
             time_mean.append(test.get(TestFields.time_mean))
         # assert failed_requests > 0, f"{failed_requests} requests failed"

@@ -1,0 +1,207 @@
+---
+title: Pool Sizing Calculator
+layout: template
+filename: pool_sizing_calculator.md
+---
+
+# Connection Pool Sizing Calculator
+
+A practical guide to calculating the right connection pool size for your FastAPI deployment.
+
+## Inputs you need
+
+| Parameter | How to determine |
+|-----------|-----------------|
+| `workers` | Gunicorn/Uvicorn worker count |
+| `threads` | Threads per worker (for `gthread` worker class) |
+| `async_pool` | Whether using async endpoints |
+| `max_concurrent_requests` | Expected peak concurrent requests |
+| `db_max_connections` | Database server connection limit |
+| `external_services` | Number of external APIs/DBs you call |
+
+## Formulas
+
+### Sync endpoints (httpx.Client, SQLAlchemy sync)
+
+Each sync request holds a connection for the entire request duration.
+
+```
+pool_size_per_worker = min(
+    anyio_thread_tokens,           # default 40 — eliminates connection bottleneck
+    max_concurrent_requests,       # your expected concurrency
+    db_max_connections / workers   # don't exceed DB limit
+)
+```
+
+**CI-verified (run 29916760540):**
+- pool=40 eliminates the connection bottleneck (+35% vs pool=2)
+- pool=100 achieves +0.6% over pool=40 — small but consistent, matters at scale
+- The choice depends on memory budget vs throughput needs
+
+**Conservative (memory-constrained):**
+```
+pool_size_per_worker = 40  # matches anyio default, eliminates bottleneck
+```
+
+**Aggressive (throughput-critical):**
+```
+pool_size_per_worker = 100  # +0.6% over pool=40, ~6.5 MB more per 2 workers
+```
+
+### Async endpoints (httpx.AsyncClient, SQLAlchemy async)
+
+Connections are shared across coroutines. Multiple coroutines can use the same connection (not simultaneously, but sequentially during awaits).
+
+```
+pool_size_per_worker = concurrent_requests / 2
+```
+
+Async pools can be smaller because:
+1. Connections are not held during `await`
+2. Connections are returned to the pool when the coroutine yields
+3. The event loop multiplexes connections efficiently
+
+### Total connections to external service
+
+```
+total = pool_size_per_worker × workers
+```
+
+**Constraint:**
+```
+total ≤ external_service_max_connections
+```
+
+## Worked examples
+
+### Example 1: Small API (2 workers, async endpoints)
+
+```
+workers: 2
+endpoint_type: async
+concurrent_requests: 50
+db_max_connections: 100
+
+pool_size_per_worker = 50 / 2 = 25
+total = 25 × 2 = 50 ≤ 100 ✓
+```
+
+**Recommendation:** `max_connections=25, max_keepalive=10`
+
+### Example 2: Medium API (4 workers, sync endpoints)
+
+```
+workers: 4
+endpoint_type: sync
+concurrent_requests: 100
+db_max_connections: 200
+
+pool_size_per_worker = min(40, 100, 200/4) = 40
+total = 40 × 4 = 160 ≤ 200 ✓
+```
+
+**Recommendation:** `max_connections=40, max_keepalive=15`
+
+### Example 3: High-traffic API (8 workers, mixed sync/async)
+
+```
+workers: 8
+endpoint_type: mixed (60% async, 40% sync)
+concurrent_requests: 500
+db_max_connections: 300
+
+# Async endpoints
+async_pool = 300 / 2 = 150 per worker → too high
+async_pool = min(150, 500/8) = 62 per worker
+
+# Sync endpoints
+sync_pool = min(40, 500×0.4/8) = min(40, 25) = 25 per worker
+
+# DB constraint
+total_sync = 25 × 8 = 200
+total_async = 62 × 8 = 496 → exceeds DB limit!
+```
+
+**Fix:** Reduce async pool to `300/8 = 37` per worker.
+
+**Recommendation:** `max_connections=37, max_keepalive=15`
+
+### Example 4: Multiple external services
+
+```
+workers: 4
+services:
+  - PostgreSQL: max_connections=100
+  - Redis: max_connections=512
+  - External API: no limit (but rate-limited)
+
+# PostgreSQL
+pg_pool = 100 / 4 = 25 per worker
+
+# Redis (connection is lightweight)
+redis_pool = 50 per worker
+
+# External API (rate-limited at 1000 RPS)
+api_pool = 20 per worker
+```
+
+Each service gets its own pool with its own limits.
+
+## Quick reference table
+
+> CI-verified: pool=40 eliminates the connection bottleneck. pool=100 achieves +0.6% at +6.5 MB/2 workers.
+
+| Workers | Sync pool/worker (conservative) | Sync pool/worker (aggressive) | Total sync (conservative) | Total sync (aggressive) | Memory (conservative) | Memory (aggressive) |
+|---------|--------------------------------|------------------------------|--------------------------|------------------------|----------------------|---------------------|
+| 1       | 40                             | 100                          | 40                       | 100                    | 2.2 MB               | 5.6 MB              |
+| 2       | 40                             | 100                          | 80                       | 200                    | 4.5 MB               | 11.2 MB             |
+| 4       | 40                             | 100                          | 160                      | 400                    | 9 MB                 | 22.4 MB             |
+| 8       | 40                             | 100                          | 320                      | 800                    | 18 MB                | 44.8 MB             |
+| 16      | 40                             | 100                          | 640                      | 1600                   | 36 MB                | 89.6 MB             |
+
+As workers increase, total connections scale linearly. Stay within external service limits (e.g., PostgreSQL max_connections=100).
+
+## Monitoring and tuning
+
+### Signs your pool is too small
+
+- `httpx.PoolTimeout` exceptions
+- Increased latency under load
+- `connection pool exhausted` errors in logs
+- Requests queuing in thread pool
+
+### Signs your pool is too large
+
+- High memory usage per worker
+- External service reporting too many connections
+- Idle connections being closed by server (keepalive timeout)
+- No performance improvement when increasing pool size
+
+### How to tune
+
+1. Start with conservative values (10-15 per worker)
+2. Load test with expected peak traffic
+3. Monitor: connection usage, latency, error rates
+4. Increase pool size if connections are the bottleneck
+5. Decrease if memory or DB connections are the bottleneck
+
+```python
+# Monitor httpx pool
+import httpx
+client = httpx.Client()
+# After load test:
+print(f"Pool connections: {client._pool._connections}")
+print(f"Pool available: {client._pool._available}")
+```
+
+## The formula cheat sheet
+
+```
+sync_pool  = min(40, concurrent_requests, db_max/workers) + headroom
+async_pool = concurrent_requests / 2
+total      = pool × workers ≤ db_max_connections
+
+headroom = 2-5 (for connection state transitions)
+```
+
+When in doubt, start small and scale up based on measured performance.
