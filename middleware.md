@@ -209,6 +209,8 @@ The same test repeated with Starlette ASGI middleware instead of BaseHTTPMiddlew
 
 # Verdict
 
+> **Individual impact: +35-44% throughput** by using Starlette ASGI middleware instead of BaseHTTPMiddleware.
+
 **Use Starlette ASGI middleware instead of BaseHTTPMiddleware.** The performance difference is dramatic:
 
 | Middleware Type | Avg Throughput Drop | Consistency |

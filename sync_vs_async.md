@@ -66,6 +66,8 @@ When the response payload is large (1MB), the bottleneck shifts to serialization
 
 ## Verdict
 
+> **Individual impact: +20-33% throughput** by switching from sync to async endpoints.
+
 Use **async endpoints** (`async def`) as the default for FastAPI applications. The performance benefit is significant for typical API workloads (small/medium responses) and zero cost for large payloads.
 
 The advantage is most pronounced when endpoints perform I/O operations (database queries, external API calls, file reads). For purely CPU-bound endpoints (image processing, heavy computation), the difference narrows.

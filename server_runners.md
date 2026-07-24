@@ -68,6 +68,8 @@ Doubling workers from 1→2 gives ~46% more sync RPS and ~54% more async RPS.
 
 ## Verdict
 
+> **Individual impact: +50-65% throughput** by switching from Gunicorn w1t0 to FastAPI CLI w2 (or Gunicorn w2t0).
+
 | Config | Best Runner | Sync RPS | Async RPS |
 |--------|-------------|----------|-----------|
 | 1 worker | Gunicorn 1w0t | 1819 | 2228 |

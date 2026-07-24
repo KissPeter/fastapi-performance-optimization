@@ -18,14 +18,24 @@ This document is intended to provide some tips and ideas to get the most out of 
 
 Each optimization below has a measurable, compounding effect. When applied together, the total improvement is multiplicative, not additive.
 
-| Optimization | Individual Impact | CI-verified |
-|-------------|-------------------|-------------|
-| **Sync → Async endpoints** | +20-33% throughput | [Details](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async) |
-| **JSON → ORJSON response class** | +4-13% throughput | [Details](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class) |
-| **BaseHTTPMiddleware → Starlette ASGI middleware** | +35-44% throughput (avoiding BaseHTTPMiddleware cost) | [Details](https://kisspeter.github.io/fastapi-performance-optimization/middleware) |
-| **Gunicorn w1t0 → FastAPI CLI w2** | +50-65% throughput (proper worker scaling) | [Details](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
-| **Nginx TCP port → Unix socket** | +150-276% throughput (nginx-to-app communication) | [Details](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket) |
-| **Best vs Worst combo (CI verified)** | **+100-297% throughput** | [Details](#measured-best-vs-worst-configurations) |
+### Sync endpoints
+
+| Optimization | Impact | Details |
+|-------------|--------|---------|
+| **Gunicorn w1t0 → FastAPI CLI w2** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
+| **JSON → ORJSON response class** | +4-13% throughput | [JSON response classes](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class) |
+| **BaseHTTPMiddleware → Starlette ASGI** | +35-44% throughput (avoiding BaseHTTPMiddleware cost) | [Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware) |
+| **Best vs Worst combo** | **+100% throughput** | [Measured below](#sync-endpoint-syncbig_json_response) |
+
+### Async endpoints
+
+| Optimization | Impact | Details |
+|-------------|--------|---------|
+| **Sync → Async endpoints** | +20-33% throughput | [Sync vs Async](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async) |
+| **Gunicorn w1t0 → FastAPI CLI w2** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
+| **JSON → ORJSON response class** | +4-13% throughput | [JSON response classes](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class) |
+| **BaseHTTPMiddleware → Starlette ASGI** | +35-44% throughput (avoiding BaseHTTPMiddleware cost) | [Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware) |
+| **Best vs Worst combo** | **+297% throughput** | [Measured below](#async-endpoint-asyncbig_json_response) |
 
 ## Measured best vs worst configurations
 

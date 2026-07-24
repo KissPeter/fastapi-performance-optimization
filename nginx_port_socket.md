@@ -112,6 +112,8 @@ The most secure option is dedicating a group to this communication, making nginx
 
 ## Verdict
 
+> **Individual impact: +150-276% throughput** by switching from TCP port to Unix socket communication between nginx and the app.
+
 Numbers talk by themselves. Almost any case it well worth changing to socket communication
 Sample config is [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/nginx.conf#L31)
 

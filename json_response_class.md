@@ -75,6 +75,8 @@ The same JSON response class comparison was repeated across 3 key server runners
 
 # Verdict
 
+> **Individual impact: +4-13% throughput** by switching from JSONResponse to ORJSONResponse.
+
 * You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
 * Having some gain by simply changing to other response class seems promissing isn't it?
 * **ORJSONResponse is the recommended choice** — it provides consistent +5-13% improvement across all runners with minimal code change
