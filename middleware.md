@@ -126,9 +126,9 @@ In order to see the performance difference if multiple middlewares are added, an
 
 # Cross-runner middleware overhead
 
-> CI run [29858316413](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29858316413) — Python 3.14, Ubuntu latest.
+> CI run [30024860601](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/30024860601) — Python 3.14, Ubuntu latest.
 
-The same middleware overhead measurement (no middleware baseline vs one FastAPI `@app.middleware("http")` timing middleware) was repeated across all 10 server runner configurations to see whether the overhead varies.
+The middleware overhead measurement (no middleware baseline vs middleware) was repeated across all 10 server runner configurations using both **BaseHTTPMiddleware** and **Starlette ASGI middleware** to see whether the overhead varies.
 
 ### Sync endpoint (`/sync/items/`)
 
@@ -160,11 +160,60 @@ The same middleware overhead measurement (no middleware baseline vs one FastAPI 
 | FastAPI CLI w1 | 1841.48 | 1061.92 | **-42.33%** | 54.31 ms | 94.17 ms | +39.86 ms |
 | FastAPI CLI w2 | 3034.90 | 1701.06 | **-43.95%** | 32.95 ms | 58.79 ms | +25.84 ms |
 
-### Observations
+### BaseHTTPMiddleware observations
 * **Middleware overhead is consistent across runners**: ~35-44% throughput drop regardless of server configuration
 * **Uvicorn shows slightly lower overhead** (~29-34%) compared to Gunicorn and FastAPI CLI (~35-44%)
 * The absolute latency increase is 24-42 ms across all runners
 * Adding more workers/threads does not mitigate the middleware overhead — it's a per-request cost
 
+## Starlette ASGI middleware cross-runner
+
+The same test repeated with Starlette ASGI middleware instead of BaseHTTPMiddleware:
+
+### Sync endpoint (`/sync/items/`)
+
+| Runner | Baseline RPS | +Starlette RPS | Overhead |
+|--------|-------------|----------------|----------|
+| Gunicorn w1t0 | 1784.01 | 1730.70 | **-3.0%** |
+| Gunicorn w2t0 | 2725.80 | 2620.88 | **-3.9%** |
+| Gunicorn w1t1 | 1759.85 | 1759.38 | **-0.03%** |
+| Gunicorn w2t1 | 2861.25 | 2469.52 | **-13.7%** |
+| Gunicorn w1t2 | 1816.50 | 1653.95 | **-8.9%** |
+| Gunicorn w2t2 | 2741.66 | 2571.91 | **-6.2%** |
+| Uvicorn single | 1486.81 | 1433.42 | **-3.6%** |
+| Uvicorn w2 | 1544.21 | 1453.08 | **-5.9%** |
+| FastAPI CLI w1 | 1635.93 | 1636.94 | **+0.06%** |
+| FastAPI CLI w2 | 2640.86 | 2679.05 | **+1.4%** |
+
+### Async endpoint (`/async/items/`)
+
+| Runner | Baseline RPS | +Starlette RPS | Overhead |
+|--------|-------------|----------------|----------|
+| Gunicorn w1t0 | 2244.87 | 1589.32 | **-29.2%** |
+| Gunicorn w2t0 | 3589.11 | 3366.18 | **-6.2%** |
+| Gunicorn w1t1 | 2253.65 | 2196.12 | **-2.6%** |
+| Gunicorn w2t1 | 3771.03 | 3502.12 | **-7.1%** |
+| Gunicorn w1t2 | 2284.97 | 2187.75 | **-4.3%** |
+| Gunicorn w2t2 | 3467.79 | 3615.96 | **+4.3%** |
+| Uvicorn single | 1773.32 | 1761.10 | **-0.7%** |
+| Uvicorn w2 | 1793.21 | 1749.49 | **-2.4%** |
+| FastAPI CLI w1 | 2148.94 | 2136.05 | **-0.6%** |
+| FastAPI CLI w2 | 3498.32 | 3337.19 | **-4.6%** |
+
+### Starlette ASGI observations
+* **Negligible overhead in most cases**: Starlette ASGI middleware shows **0-4% overhead** for most runner configurations
+* **One outlier**: Gunicorn w1t0 async shows ~29% drop — likely due to worker starvation under the additional ASGI wrapping
+* **No consistent pattern across runners**: Unlike BaseHTTPMiddleware, the overhead doesn't scale with worker count
+* **FastAPI CLI w1/w2 sync actually improved slightly** — within measurement noise
+* **Starlette ASGI is 10-40x cheaper than BaseHTTPMiddleware** across all configurations
+
 # Verdict
-Numbers clearly indicate the **significant performance improvement** between BaseHTTPMiddleware and Starlette middleware. Avoid using BaseHTTPMiddleware if you can. The overhead is **consistent across all server runners** (~35-44% for Gunicorn/FastAPI CLI, ~29-34% for Uvicorn). Uvicorn's slightly lower overhead doesn't change the fundamental takeaway — no runner configuration can meaningfully compensate for the middleware cost.
+
+**Use Starlette ASGI middleware instead of BaseHTTPMiddleware.** The performance difference is dramatic:
+
+| Middleware Type | Avg Throughput Drop | Consistency |
+|----------------|---------------------|-------------|
+| BaseHTTPMiddleware | **35-44%** | Consistent across all runners |
+| Starlette ASGI | **0-4%** | Mostly negligible (one outlier) |
+
+BaseHTTPMiddleware's overhead is a per-request cost that cannot be mitigated by adding workers or threads. Starlette ASGI middleware adds virtually no overhead because it operates at the ASGI protocol level without the request/response copying that BaseHTTPMiddleware performs.

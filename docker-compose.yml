@@ -956,3 +956,143 @@ services:
       THREADS: 0
       PROCESSTIMEMIDDLEWARE: add
       JSONRESPONSECLASS: JSONResponse
+
+  # === Nginx port vs socket cross-runner test containers ===
+  nginx_gunicorn_w1t0_port:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8140:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 0
+  nginx_gunicorn_w1t0_socket:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8141:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      SOCKET: 1
+      WORKERS: 1
+      THREADS: 0
+  nginx_gunicorn_w2t0_port:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8142:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 0
+  nginx_gunicorn_w2t0_socket:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8143:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      SOCKET: 1
+      WORKERS: 2
+      THREADS: 0
+  nginx_gunicorn_w1t1_port:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8144:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 1
+  nginx_gunicorn_w1t1_socket:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8145:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      SOCKET: 1
+      WORKERS: 1
+      THREADS: 1
+  nginx_gunicorn_w2t1_port:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8146:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 1
+  nginx_gunicorn_w2t1_socket:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8147:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      SOCKET: 1
+      WORKERS: 2
+      THREADS: 1
+  nginx_gunicorn_w1t2_port:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8148:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 1
+      THREADS: 2
+  nginx_gunicorn_w1t2_socket:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8149:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      SOCKET: 1
+      WORKERS: 1
+      THREADS: 2
+  nginx_gunicorn_w2t2_port:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8150:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      WORKERS: 2
+      THREADS: 2
+  nginx_gunicorn_w2t2_socket:
+    image: fastapi-performance-optimization:latest
+    ports:
+    - "8151:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    environment:
+      SOCKET: 1
+      WORKERS: 2
+      THREADS: 2
