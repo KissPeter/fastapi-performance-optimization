@@ -108,12 +108,8 @@ These patterns apply to any Python web application. They contribute to a robust 
 
 ## [Retry Patterns and Circuit Breaker](https://kisspeter.github.io/fastapi-performance-optimization/retry_circuit_breaker)
 
-# Stay tuned for new ideas:
-## FastAPI application profiling
-### Arbitrary place of code
-### Profiling middleware
+# Test environment
 
-### Test environment
 * All the tests were run on  [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml)
 * Application is built into a container, you can build it like this:
 ```shell
@@ -141,3 +137,8 @@ docker-compose build
   pip3 install -r test_files/requirements.txt 
   pytest -vv -rP test_files/
 ```
+
+# Stay tuned for new ideas:
+## FastAPI application profiling
+### Arbitrary place of code
+### Profiling middleware
