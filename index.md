@@ -10,7 +10,7 @@ filename: index.md
 This document is intended to provide some tips and ideas to get the most out of it
 
 
-# Use these techniques to achieve 80-100% performance increase from your FastAPI application
+# Use these techniques to achieve 100-300% performance increase from your FastAPI application
 
 > All tested on the same sized Docker containers (2 CPU cores). The performance numbers below represent real CI-verified measurements.
 
