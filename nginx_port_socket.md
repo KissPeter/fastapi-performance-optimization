@@ -21,6 +21,18 @@ The most secure option is dedicating a group to this communication, making nginx
 
 > CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
 
+### Runner configurations tested
+
+| **Runner**       | **Workers** | **Threads** | **Port service**       | **Port** | **Socket service**         | **Port** |
+|------------------|-------------|-------------|------------------------|----------|----------------------------|----------|
+| Gunicorn w3t1    | 3           | 1           | app_nginx_port         | 8008     | app_nginx_socket           | 8009     |
+| Gunicorn w1t0    | 1           | 0           | nginx_gunicorn_w1t0_port | 8140   | nginx_gunicorn_w1t0_socket | 8141     |
+| Gunicorn w2t0    | 2           | 0           | nginx_gunicorn_w2t0_port | 8142   | nginx_gunicorn_w2t0_socket | 8143     |
+| Gunicorn w1t1    | 1           | 1           | nginx_gunicorn_w1t1_port | 8144   | nginx_gunicorn_w1t1_socket | 8145     |
+| Gunicorn w2t1    | 2           | 1           | nginx_gunicorn_w2t1_port | 8146   | nginx_gunicorn_w2t1_socket | 8147     |
+| Gunicorn w1t2    | 1           | 2           | nginx_gunicorn_w1t2_port | 8148   | nginx_gunicorn_w1t2_socket | 8149     |
+| Gunicorn w2t2    | 2           | 2           | nginx_gunicorn_w2t2_port | 8150   | nginx_gunicorn_w2t2_socket | 8151     |
+
 ### Synchronous API endpoint with small request / response
 
 #### Nginx - APP via port

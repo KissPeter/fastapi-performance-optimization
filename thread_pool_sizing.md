@@ -126,23 +126,28 @@ The key insight: **tokens should match your connection pool size** for sync endp
 
 ## Test results
 
-> CI run 29928705459 — all concurrency tests passed, completion test fixed (httpx timeout).
+> CI runs [29928705459](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29928705459) and [30024860601](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/30024860601) — all concurrency tests passed.
 
 ### Test environment
 - Gunicorn 2 workers, pool=100 (eliminates pool bottleneck)
 - Three configurations tested: anyio_tokens=40, 80, 100
 - Ports: 8080 (tokens=40), 8081 (tokens=80), 8082 (tokens=100)
+- 60-120 concurrent slow sync requests (0.3s delay each) to measure handler concurrency
 
 ### What we measured
 - Handler concurrency (max concurrent requests per worker) with each token count
 - Whether increasing tokens beyond 40 improves throughput when pool is not the bottleneck
+- Each request reports `worker_pid` and `concurrent_at_start` (how many handlers were active when it started)
 
 ### Results (CI verified)
 
-| Config | Pool | Tokens | Concurrent ≥5 per worker |
-|--------|------|--------|--------------------------|
-| anyio_tokens_40_w2 | 100 | 40 | ✓ Passed |
-| anyio_tokens_80_w2 | 100 | 80 | ✓ Passed |
-| anyio_tokens_100_w2 | 100 | 100 | ✓ Passed |
+| Config | Pool | Tokens | Requests | Concurrent ≥5 per worker |
+|--------|------|--------|----------|--------------------------|
+| anyio_tokens_40_w2 | 100 | 40 | 60 | ✓ Passed |
+| anyio_tokens_80_w2 | 100 | 80 | 100 | ✓ Passed |
+| anyio_tokens_100_w2 | 100 | 100 | 120 | ✓ Passed |
 
 All three configurations showed handler concurrency reaching well above the minimum threshold per worker, confirming that increasing anyio tokens from 40 to 80/100 allows more concurrent sync handlers when the connection pool is not the bottleneck.
+
+### Key takeaway
+The anyio token limit is the **true concurrency ceiling** for sync endpoints, not the connection pool size. With pool=100 and tokens=40, only ~40 sync handlers can run concurrently per worker — the remaining 60 pool connections sit idle.

@@ -212,7 +212,7 @@ The circuit breaker trades **availability of one endpoint** for **availability o
 
 ## Test results
 
-> CI run 29928705459 — all 5 robustness tests passed.
+> CI runs [29928705459](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29928705459) and [30024860601](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/30024860601) — all robustness tests passed.
 
 ### Test environment
 - Gunicorn 2 workers, pool=100, timeout=5s
