@@ -52,12 +52,12 @@ Doubling workers from 1→2 gives ~46% more sync RPS and ~54% more async RPS.
 
 | Runner | Config | Sync RPS | Async RPS |
 |--------|--------|----------|-----------|
-| Gunicorn | 1w 0t | 1819 | 2228 |
-| Gunicorn | 2w 0t | 2654 | 3415 |
+| Gunicorn | 1 worker, 0 threads | 1819 | 2228 |
+| Gunicorn | 2 workers, 0 threads | 2654 | 3415 |
 | Uvicorn single-process | — | 1485 | 1760 |
-| Uvicorn --workers | 2w | 2203 | 2739 |
-| FastAPI CLI | 1w | 1594 | 2039 |
-| FastAPI CLI | 2w | 2457 | 3338 |
+| Uvicorn --workers | 2 workers | 2203 | 2739 |
+| FastAPI CLI | 1 worker | 1594 | 2039 |
+| FastAPI CLI | 2 workers | 2457 | 3338 |
 
 ### Uvicorn multiprocess
 
@@ -68,16 +68,16 @@ Doubling workers from 1→2 gives ~46% more sync RPS and ~54% more async RPS.
 
 ## Verdict
 
-> **Individual impact: +50-65% throughput** by switching from Gunicorn w1t0 to FastAPI CLI w2 (or Gunicorn w2t0).
+> **Individual impact: +50-65% throughput** by switching from Gunicorn (1 worker, 0 threads) to FastAPI CLI (2 workers) or Gunicorn (2 workers, 0 threads).
 
 | Config | Best Runner | Sync RPS | Async RPS |
 |--------|-------------|----------|-----------|
-| 1 worker | Gunicorn 1w0t | 1819 | 2228 |
-| 2 workers | Gunicorn 2w0t | 2654 | 3415 |
+| 1 worker, 0 threads | Gunicorn | 1819 | 2228 |
+| 2 workers, 0 threads | Gunicorn | 2654 | 3415 |
 
-**Gunicorn wins at both 1w and 2w.** Its process management overhead is negligible and it consistently outperforms all alternatives.
+**Gunicorn wins at both 1 and 2 workers.** Its process management overhead is negligible and it consistently outperforms all alternatives.
 
-**FastAPI CLI** is the closest competitor — within 12% of Gunicorn at 1w and 6% at 2w.
+**FastAPI CLI** is the closest competitor — within 12% of Gunicorn at 1 worker and 6% at 2 workers.
 
 **Uvicorn single-process** is the slowest — roughly half the throughput of multi-worker setups.
 

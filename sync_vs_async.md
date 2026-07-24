@@ -20,28 +20,28 @@ In a typical deployment with Gunicorn + UvicornWorker, each worker runs an async
 
 | Runner | Sync RPS | Async RPS | Improvement | Sync Latency | Async Latency |
 |--------|----------|-----------|-------------|-------------|---------------|
-| Gunicorn w1t0 | 1410.94 | 1767.42 | **+25.26%** | 70.89 ms | 56.58 ms |
-| Gunicorn w2t0 | 2171.56 | 2650.26 | **+22.04%** | 46.05 ms | 37.76 ms |
-| Gunicorn w1t1 | 1428.34 | 1775.63 | **+24.31%** | 70.02 ms | 56.32 ms |
-| Gunicorn w2t1 | 2147.73 | 2781.01 | **+29.49%** | 46.57 ms | 35.96 ms |
-| Gunicorn w1t2 | 1400.94 | 1741.95 | **+24.34%** | 71.41 ms | 57.41 ms |
-| Gunicorn w2t2 | 2116.36 | 2722.99 | **+28.66%** | 47.26 ms | 36.72 ms |
-| Uvicorn single | 1209.30 | 1458.78 | **+20.63%** | 82.71 ms | 68.55 ms |
-| Uvicorn --workers w2 | 1799.88 | 2224.70 | **+23.60%** | 55.59 ms | 44.97 ms |
-| FastAPI CLI w1 | 1448.24 | 1853.47 | **+27.98%** | 69.05 ms | 53.95 ms |
-| FastAPI CLI w2 | 2267.33 | 3004.70 | **+32.52%** | 44.15 ms | 33.38 ms |
+| Gunicorn (1 worker, 0 threads) | 1410.94 | 1767.42 | **+25.26%** | 70.89 ms | 56.58 ms |
+| Gunicorn (2 workers, 0 threads) | 2171.56 | 2650.26 | **+22.04%** | 46.05 ms | 37.76 ms |
+| Gunicorn (1 worker, 1 thread) | 1428.34 | 1775.63 | **+24.31%** | 70.02 ms | 56.32 ms |
+| Gunicorn (2 workers, 1 thread) | 2147.73 | 2781.01 | **+29.49%** | 46.57 ms | 35.96 ms |
+| Gunicorn (1 worker, 2 threads) | 1400.94 | 1741.95 | **+24.34%** | 71.41 ms | 57.41 ms |
+| Gunicorn (2 workers, 2 threads) | 2116.36 | 2722.99 | **+28.66%** | 47.26 ms | 36.72 ms |
+| Uvicorn single-process | 1209.30 | 1458.78 | **+20.63%** | 82.71 ms | 68.55 ms |
+| Uvicorn --workers (2 workers) | 1799.88 | 2224.70 | **+23.60%** | 55.59 ms | 44.97 ms |
+| FastAPI CLI (1 worker) | 1448.24 | 1853.47 | **+27.98%** | 69.05 ms | 53.95 ms |
+| FastAPI CLI (2 workers) | 2267.33 | 3004.70 | **+32.52%** | 44.15 ms | 33.38 ms |
 
 ### Observations
 
 * **Async consistently wins by 20-33%** across all runner configurations
-* **Largest async benefit: FastAPI CLI w2 (+32.52%) and Gunicorn w2t1 (+29.49%)** — runners with 2 workers benefit more from async because the event loop can handle more concurrent connections per worker
+* **Largest async benefit: FastAPI CLI 2 workers (+32.52%) and Gunicorn 2 workers, 1 thread (+29.49%)** — runners with 2 workers benefit more from async because the event loop can handle more concurrent connections per worker
 * **Smallest async benefit: Uvicorn single-process (+20.63%)** — single worker limits concurrency gains
 * The improvement is **consistent regardless of threads** — adding threads to Gunicorn (t0 vs t1 vs t2) doesn't change the async advantage significantly
-* **Higher absolute throughput with 2 workers**: Gunicorn w2, FastAPI CLI w2, and Uvicorn --workers w2 all outperform their 1-worker counterparts for both sync and async
+* **Higher absolute throughput with 2 workers**: Gunicorn (2 workers), FastAPI CLI (2 workers), and Uvicorn --workers (2 workers) all outperform their 1-worker counterparts for both sync and async
 
 ## Large response (1MB JSON)
 
-> CI run [29815274014](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29815274014) — Gunicorn w2t0 only.
+> CI run [29815274014](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29815274014) — Gunicorn (2 workers, 0 threads) only.
 
 When the response payload is large (1MB), the bottleneck shifts to serialization and network transfer. The async event loop advantage largely disappears.
 

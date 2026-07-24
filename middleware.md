@@ -134,31 +134,31 @@ The middleware overhead measurement (no middleware baseline vs middleware) was r
 
 | Runner | Baseline RPS | +Middleware RPS | Overhead | Baseline Latency | +Middleware Latency | Latency Δ |
 |--------|-------------|----------------|----------|------------------|--------------------|-----------|
-| Gunicorn w1t0 | 1408.86 | 895.98 | **-36.4%** | 70.99 ms | 111.62 ms | +40.63 ms |
-| Gunicorn w2t0 | 2102.94 | 1316.28 | **-37.41%** | 47.58 ms | 75.98 ms | +28.40 ms |
-| Gunicorn w1t1 | 1415.21 | 919.91 | **-35.0%** | 70.69 ms | 108.73 ms | +38.04 ms |
-| Gunicorn w2t1 | 2111.69 | 1334.62 | **-36.8%** | 47.37 ms | 74.95 ms | +27.59 ms |
-| Gunicorn w1t2 | 1392.29 | 879.00 | **-36.87%** | 71.84 ms | 113.78 ms | +41.94 ms |
-| Gunicorn w2t2 | 2068.54 | 1294.28 | **-37.43%** | 48.39 ms | 77.28 ms | +28.88 ms |
+| Gunicorn (1 worker, 0 threads) | 1408.86 | 895.98 | **-36.4%** | 70.99 ms | 111.62 ms | +40.63 ms |
+| Gunicorn (2 workers, 0 threads) | 2102.94 | 1316.28 | **-37.41%** | 47.58 ms | 75.98 ms | +28.40 ms |
+| Gunicorn (1 worker, 1 thread) | 1415.21 | 919.91 | **-35.0%** | 70.69 ms | 108.73 ms | +38.04 ms |
+| Gunicorn (2 workers, 1 thread) | 2111.69 | 1334.62 | **-36.8%** | 47.37 ms | 74.95 ms | +27.59 ms |
+| Gunicorn (1 worker, 2 threads) | 1392.29 | 879.00 | **-36.87%** | 71.84 ms | 113.78 ms | +41.94 ms |
+| Gunicorn (2 workers, 2 threads) | 2068.54 | 1294.28 | **-37.43%** | 48.39 ms | 77.28 ms | +28.88 ms |
 | Uvicorn single | 1182.71 | 842.83 | **-28.74%** | 84.56 ms | 118.66 ms | +34.10 ms |
-| Uvicorn w2 | 1213.57 | 825.69 | **-31.96%** | 82.41 ms | 121.13 ms | +38.72 ms |
-| FastAPI CLI w1 | 1428.91 | 916.64 | **-35.85%** | 69.99 ms | 109.10 ms | +39.11 ms |
-| FastAPI CLI w2 | 2273.51 | 1460.57 | **-35.76%** | 44.04 ms | 68.57 ms | +24.53 ms |
+| Uvicorn (2 workers) | 1213.57 | 825.69 | **-31.96%** | 82.41 ms | 121.13 ms | +38.72 ms |
+| FastAPI CLI (1 worker) | 1428.91 | 916.64 | **-35.85%** | 69.99 ms | 109.10 ms | +39.11 ms |
+| FastAPI CLI (2 workers) | 2273.51 | 1460.57 | **-35.76%** | 44.04 ms | 68.57 ms | +24.53 ms |
 
 ### Async endpoint (`/async/items/`)
 
 | Runner | Baseline RPS | +Middleware RPS | Overhead | Baseline Latency | +Middleware Latency | Latency Δ |
 |--------|-------------|----------------|----------|------------------|--------------------|-----------|
-| Gunicorn w1t0 | 1705.74 | 1045.71 | **-38.69%** | 58.74 ms | 95.66 ms | +36.93 ms |
-| Gunicorn w2t0 | 2664.84 | 1606.84 | **-39.70%** | 37.53 ms | 62.25 ms | +24.72 ms |
-| Gunicorn w1t1 | 1734.10 | 1041.17 | **-39.96%** | 57.67 ms | 96.10 ms | +38.43 ms |
-| Gunicorn w2t1 | 2659.98 | 1648.26 | **-38.03%** | 37.62 ms | 60.68 ms | +23.06 ms |
-| Gunicorn w1t2 | 1721.13 | 1034.53 | **-39.89%** | 58.10 ms | 96.68 ms | +38.58 ms |
-| Gunicorn w2t2 | 2682.76 | 1573.81 | **-41.34%** | 37.29 ms | 63.57 ms | +26.29 ms |
+| Gunicorn (1 worker, 0 threads) | 1705.74 | 1045.71 | **-38.69%** | 58.74 ms | 95.66 ms | +36.93 ms |
+| Gunicorn (2 workers, 0 threads) | 2664.84 | 1606.84 | **-39.70%** | 37.53 ms | 62.25 ms | +24.72 ms |
+| Gunicorn (1 worker, 1 thread) | 1734.10 | 1041.17 | **-39.96%** | 57.67 ms | 96.10 ms | +38.43 ms |
+| Gunicorn (2 workers, 1 thread) | 2659.98 | 1648.26 | **-38.03%** | 37.62 ms | 60.68 ms | +23.06 ms |
+| Gunicorn (1 worker, 2 threads) | 1721.13 | 1034.53 | **-39.89%** | 58.10 ms | 96.68 ms | +38.58 ms |
+| Gunicorn (2 workers, 2 threads) | 2682.76 | 1573.81 | **-41.34%** | 37.29 ms | 63.57 ms | +26.29 ms |
 | Uvicorn single | 1451.85 | 958.20 | **-34.0%** | 68.89 ms | 104.38 ms | +35.49 ms |
-| Uvicorn w2 | 1480.07 | 982.76 | **-33.6%** | 67.57 ms | 101.76 ms | +34.19 ms |
-| FastAPI CLI w1 | 1841.48 | 1061.92 | **-42.33%** | 54.31 ms | 94.17 ms | +39.86 ms |
-| FastAPI CLI w2 | 3034.90 | 1701.06 | **-43.95%** | 32.95 ms | 58.79 ms | +25.84 ms |
+| Uvicorn (2 workers) | 1480.07 | 982.76 | **-33.6%** | 67.57 ms | 101.76 ms | +34.19 ms |
+| FastAPI CLI (1 worker) | 1841.48 | 1061.92 | **-42.33%** | 54.31 ms | 94.17 ms | +39.86 ms |
+| FastAPI CLI (2 workers) | 3034.90 | 1701.06 | **-43.95%** | 32.95 ms | 58.79 ms | +25.84 ms |
 
 ### BaseHTTPMiddleware observations
 * **Middleware overhead is consistent across runners**: ~35-44% throughput drop regardless of server configuration
@@ -174,37 +174,37 @@ The same test repeated with Starlette ASGI middleware instead of BaseHTTPMiddlew
 
 | Runner | Baseline RPS | +Starlette RPS | Overhead |
 |--------|-------------|----------------|----------|
-| Gunicorn w1t0 | 1784.01 | 1730.70 | **-3.0%** |
-| Gunicorn w2t0 | 2725.80 | 2620.88 | **-3.9%** |
-| Gunicorn w1t1 | 1759.85 | 1759.38 | **-0.03%** |
-| Gunicorn w2t1 | 2861.25 | 2469.52 | **-13.7%** |
-| Gunicorn w1t2 | 1816.50 | 1653.95 | **-8.9%** |
-| Gunicorn w2t2 | 2741.66 | 2571.91 | **-6.2%** |
+| Gunicorn (1 worker, 0 threads) | 1784.01 | 1730.70 | **-3.0%** |
+| Gunicorn (2 workers, 0 threads) | 2725.80 | 2620.88 | **-3.9%** |
+| Gunicorn (1 worker, 1 thread) | 1759.85 | 1759.38 | **-0.03%** |
+| Gunicorn (2 workers, 1 thread) | 2861.25 | 2469.52 | **-13.7%** |
+| Gunicorn (1 worker, 2 threads) | 1816.50 | 1653.95 | **-8.9%** |
+| Gunicorn (2 workers, 2 threads) | 2741.66 | 2571.91 | **-6.2%** |
 | Uvicorn single | 1486.81 | 1433.42 | **-3.6%** |
-| Uvicorn w2 | 1544.21 | 1453.08 | **-5.9%** |
-| FastAPI CLI w1 | 1635.93 | 1636.94 | **+0.06%** |
-| FastAPI CLI w2 | 2640.86 | 2679.05 | **+1.4%** |
+| Uvicorn (2 workers) | 1544.21 | 1453.08 | **-5.9%** |
+| FastAPI CLI (1 worker) | 1635.93 | 1636.94 | **+0.06%** |
+| FastAPI CLI (2 workers) | 2640.86 | 2679.05 | **+1.4%** |
 
 ### Async endpoint (`/async/items/`)
 
 | Runner | Baseline RPS | +Starlette RPS | Overhead |
 |--------|-------------|----------------|----------|
-| Gunicorn w1t0 | 2244.87 | 1589.32 | **-29.2%** |
-| Gunicorn w2t0 | 3589.11 | 3366.18 | **-6.2%** |
-| Gunicorn w1t1 | 2253.65 | 2196.12 | **-2.6%** |
-| Gunicorn w2t1 | 3771.03 | 3502.12 | **-7.1%** |
-| Gunicorn w1t2 | 2284.97 | 2187.75 | **-4.3%** |
-| Gunicorn w2t2 | 3467.79 | 3615.96 | **+4.3%** |
+| Gunicorn (1 worker, 0 threads) | 2244.87 | 1589.32 | **-29.2%** |
+| Gunicorn (2 workers, 0 threads) | 3589.11 | 3366.18 | **-6.2%** |
+| Gunicorn (1 worker, 1 thread) | 2253.65 | 2196.12 | **-2.6%** |
+| Gunicorn (2 workers, 1 thread) | 3771.03 | 3502.12 | **-7.1%** |
+| Gunicorn (1 worker, 2 threads) | 2284.97 | 2187.75 | **-4.3%** |
+| Gunicorn (2 workers, 2 threads) | 3467.79 | 3615.96 | **+4.3%** |
 | Uvicorn single | 1773.32 | 1761.10 | **-0.7%** |
-| Uvicorn w2 | 1793.21 | 1749.49 | **-2.4%** |
-| FastAPI CLI w1 | 2148.94 | 2136.05 | **-0.6%** |
-| FastAPI CLI w2 | 3498.32 | 3337.19 | **-4.6%** |
+| Uvicorn (2 workers) | 1793.21 | 1749.49 | **-2.4%** |
+| FastAPI CLI (1 worker) | 2148.94 | 2136.05 | **-0.6%** |
+| FastAPI CLI (2 workers) | 3498.32 | 3337.19 | **-4.6%** |
 
 ### Starlette ASGI observations
 * **Negligible overhead in most cases**: Starlette ASGI middleware shows **0-4% overhead** for most runner configurations
-* **One outlier**: Gunicorn w1t0 async shows ~29% drop — likely due to worker starvation under the additional ASGI wrapping
+* **One outlier**: Gunicorn (1 worker, 0 threads) async shows ~29% drop — likely due to worker starvation under the additional ASGI wrapping
 * **No consistent pattern across runners**: Unlike BaseHTTPMiddleware, the overhead doesn't scale with worker count
-* **FastAPI CLI w1/w2 sync actually improved slightly** — within measurement noise
+* **FastAPI CLI (1 worker)/w2 sync actually improved slightly** — within measurement noise
 * **Starlette ASGI is 10-40x cheaper than BaseHTTPMiddleware** across all configurations
 
 # Verdict

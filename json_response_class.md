@@ -49,23 +49,23 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 
 > CI run [29858316413](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29858316413) — Python 3.14, Ubuntu latest.
 
-The same JSON response class comparison was repeated across 3 key server runners (Gunicorn w2t0, Uvicorn single, FastAPI CLI w1) to see whether the choice of response class interacts with the runner type.
+The same JSON response class comparison was repeated across 3 key server runners (Gunicorn 2 workers 0 threads, Uvicorn single-process, FastAPI CLI 1 worker) to see whether the choice of response class interacts with the runner type.
 
 ### Sync endpoint (`/sync/big_json_response/` — 1MB payload)
 
 | Runner | JSONResponse (baseline) | ORJSONResponse | UJSONResponse |
 |--------|------------------------|----------------|---------------|
-| Gunicorn w2t0 | 17.65 RPS | 18.44 RPS (+4.46%) | 17.26 RPS (-2.19%) |
+| Gunicorn (2 workers, 0 threads) | 17.65 RPS | 18.44 RPS (+4.46%) | 17.26 RPS (-2.19%) |
 | Uvicorn single | 9.15 RPS | 10.36 RPS (+13.26%) | 9.40 RPS (+2.81%) |
-| FastAPI CLI w1 | 9.45 RPS | 10.66 RPS (+12.81%) | 9.84 RPS (+4.13%) |
+| FastAPI CLI (1 worker) | 9.45 RPS | 10.66 RPS (+12.81%) | 9.84 RPS (+4.13%) |
 
 ### Async endpoint (`/async/big_json_response/` — 1MB payload)
 
 | Runner | JSONResponse (baseline) | ORJSONResponse | UJSONResponse |
 |--------|------------------------|----------------|---------------|
-| Gunicorn w2t0 | 17.06 RPS | 18.15 RPS (+6.39%) | 17.30 RPS (+1.41%) |
+| Gunicorn (2 workers, 0 threads) | 17.06 RPS | 18.15 RPS (+6.39%) | 17.30 RPS (+1.41%) |
 | Uvicorn single | 9.16 RPS | 10.38 RPS (+13.35%) | 9.29 RPS (+1.42%) |
-| FastAPI CLI w1 | 9.48 RPS | 10.58 RPS (+11.64%) | 9.74 RPS (+2.74%) |
+| FastAPI CLI (1 worker) | 9.48 RPS | 10.58 RPS (+11.64%) | 9.74 RPS (+2.74%) |
 
 ### Observations
 * **ORJSONResponse consistently outperforms** the default JSONResponse across all runners (+4% to +13%)

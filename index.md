@@ -22,7 +22,7 @@ Each optimization below has a measurable, compounding effect. When applied toget
 
 | Optimization | Impact | Details |
 |-------------|--------|---------|
-| **Gunicorn w1t0 → FastAPI CLI w2** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
+| **Gunicorn (1 worker) → FastAPI CLI (2 workers)** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
 | **JSON → ORJSON response class** | +4-13% throughput | [JSON response classes](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class) |
 | **BaseHTTPMiddleware → Starlette ASGI** | +35-44% throughput (avoiding BaseHTTPMiddleware cost) | [Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware) |
 | **Best vs Worst combo** | **+100% throughput** | [Measured below](#sync-endpoint-syncbig_json_response) |
@@ -32,7 +32,7 @@ Each optimization below has a measurable, compounding effect. When applied toget
 | Optimization | Impact | Details |
 |-------------|--------|---------|
 | **Sync → Async endpoints** | +20-33% throughput | [Sync vs Async](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async) |
-| **Gunicorn w1t0 → FastAPI CLI w2** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
+| **Gunicorn (1 worker) → FastAPI CLI (2 workers)** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
 | **JSON → ORJSON response class** | +4-13% throughput | [JSON response classes](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class) |
 | **BaseHTTPMiddleware → Starlette ASGI** | +35-44% throughput (avoiding BaseHTTPMiddleware cost) | [Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware) |
 | **Best vs Worst combo** | **+297% throughput** | [Measured below](#async-endpoint-asyncbig_json_response) |
@@ -43,20 +43,26 @@ Each optimization below has a measurable, compounding effect. When applied toget
 
 Using the big JSON response endpoint (1MB payload) across all tested combinations:
 
+> **Configuration key**: `w{N}` = N worker processes, `t{N}` = N threads per worker.
+> - **Gunicorn w1t0**: Gunicorn with 1 worker process, 0 threads (single-process baseline)
+> - **FastAPI CLI w2**: FastAPI CLI (`fastapi run --workers 2`) with 2 worker processes
+> - **ORJSON**: ORJSONResponse (fast JSON serialization via [orjson](https://github.com/ijl/orjson))
+> - **Starlette ASGI**: Starlette native ASGI middleware (not BaseHTTPMiddleware)
+
 ### Sync endpoint (`/sync/big_json_response`)
 
 | Configuration | RPS | Latency |
 |--------------|-----|---------|
-| **Best**: FastAPI CLI w2 + async + ORJSON + Starlette ASGI | 3405 | 29.4 ms |
-| **Worst**: Gunicorn w1t0 + sync + JSON + BaseHTTPMiddleware | 1695 | 59.1 ms |
+| **Best**: FastAPI CLI (2 workers) + async + ORJSON + Starlette ASGI | 3405 | 29.4 ms |
+| **Worst**: Gunicorn (1 worker, 0 threads) + sync + JSON + BaseHTTPMiddleware | 1695 | 59.1 ms |
 | **Improvement** | **+100.85%** | **-29.7 ms** |
 
 ### Async endpoint (`/async/big_json_response`)
 
 | Configuration | RPS | Latency |
 |--------------|-----|---------|
-| **Best**: FastAPI CLI w2 + async + ORJSON + Starlette ASGI | 3433 | 29.4 ms |
-| **Worst**: Gunicorn w1t0 + sync + JSON + BaseHTTPMiddleware | 864 | 180.1 ms |
+| **Best**: FastAPI CLI (2 workers) + async + ORJSON + Starlette ASGI | 3433 | 29.4 ms |
+| **Worst**: Gunicorn (1 worker, 0 threads) + sync + JSON + BaseHTTPMiddleware | 864 | 180.1 ms |
 | **Improvement** | **+297%** | **-150.7 ms** |
 
 ### Small payload endpoints
@@ -72,7 +78,7 @@ When you combine ALL optimizations:
 
 | Factor | Worst config | Best config |
 |--------|-------------|-------------|
-| Server runner | Gunicorn w1t0 | FastAPI CLI w2 |
+| Server runner | Gunicorn (1 worker, 0 threads) | FastAPI CLI (2 workers) |
 | Endpoint type | Sync | Async |
 | Response class | JSON | ORJSON |
 | Middleware | BaseHTTPMiddleware | Starlette ASGI (or none) |

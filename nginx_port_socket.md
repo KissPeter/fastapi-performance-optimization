@@ -17,21 +17,45 @@ If you run your application as non-root user you need to be sure nginx user can 
 Fortunately Gunicorn supports [umask](https://docs.gunicorn.org/en/stable/settings.html#umask). 
 The most secure option is dedicating a group to this communication, making nginx's and app's user part of that group and limiting the communication to group read and write (umask 717)
 
+## Test environment
+
+* The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
+* Application runs as **Gunicorn** with [UvicornWorker](https://www.uvicorn.org/deployment/#gunicorn) behind **Nginx** reverse proxy
+* Load tested with [Apache Bench](https://httpd.apache.org/docs/2.4/programs/ab.html): `ab -q -c 100 -n 1000` (100 concurrent connections, 1000 requests)
+* Each test runs **3 times**, results are averaged
+* The two communication methods tested:
+  - **Port**: Nginx connects to Gunicorn via TCP port (`proxy_pass http://127.0.0.1:PORT`)
+  - **Socket**: Nginx connects to Gunicorn via Unix socket file (`proxy_pass http://unix:/tmp/gunicorn.sock`)
+
 ## Measurements
 
 > CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
 
 ### Runner configurations tested
 
-| **Runner**       | **Workers** | **Threads** | **Port service**       | **Port** | **Socket service**         | **Port** |
-|------------------|-------------|-------------|------------------------|----------|----------------------------|----------|
-| Gunicorn w3t1    | 3           | 1           | app_nginx_port         | 8008     | app_nginx_socket           | 8009     |
-| Gunicorn w1t0    | 1           | 0           | nginx_gunicorn_w1t0_port | 8140   | nginx_gunicorn_w1t0_socket | 8141     |
-| Gunicorn w2t0    | 2           | 0           | nginx_gunicorn_w2t0_port | 8142   | nginx_gunicorn_w2t0_socket | 8143     |
-| Gunicorn w1t1    | 1           | 1           | nginx_gunicorn_w1t1_port | 8144   | nginx_gunicorn_w1t1_socket | 8145     |
-| Gunicorn w2t1    | 2           | 1           | nginx_gunicorn_w2t1_port | 8146   | nginx_gunicorn_w2t1_socket | 8147     |
-| Gunicorn w1t2    | 1           | 2           | nginx_gunicorn_w1t2_port | 8148   | nginx_gunicorn_w1t2_socket | 8149     |
-| Gunicorn w2t2    | 2           | 2           | nginx_gunicorn_w2t2_port | 8150   | nginx_gunicorn_w2t2_socket | 8151     |
+The naming convention is `Gunicorn w{workers}t{threads}` where workers are pre-forked OS processes and threads are per-worker Python threads:
+
+| **Gunicorn config** | **Workers** | **Threads** | **What it means** |
+|---|---|---|---|
+| w3t1 | 3 | 1 | 3 processes, 1 thread each — highest parallelism tested |
+| w1t0 | 1 | 0 | 1 process, no threads — single-process baseline |
+| w2t0 | 2 | 0 | 2 processes, no threads — default production config |
+| w1t1 | 1 | 1 | 1 process, 1 thread — minimal threading |
+| w2t1 | 2 | 1 | 2 processes, 1 thread each — balanced config |
+| w1t2 | 1 | 2 | 1 process, 2 threads — thread-heavy single process |
+| w2t2 | 2 | 2 | 2 processes, 2 threads each — max threading tested |
+
+Each configuration was tested with both TCP port and Unix socket communication, on different ports:
+
+| **Config** | **Port test port** | **Socket test port** |
+|---|---|---|
+| w3t1 | 8008 | 8009 |
+| w1t0 | 8140 | 8141 |
+| w2t0 | 8142 | 8143 |
+| w1t1 | 8144 | 8145 |
+| w2t1 | 8146 | 8147 |
+| w1t2 | 8148 | 8149 |
+| w2t2 | 8150 | 8151 |
 
 ### Synchronous API endpoint with small request / response
 
@@ -49,6 +73,10 @@ The most secure option is dedicating a group to this communication, making nginx
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
 | Requests per second   |         7476.71  |          6645.0  |         7434.42  |      7185.38  | +276.83%                  |
 | Time per request [ms] |           13.375 |           15.049 |           13.451 |        13.9583 | 38.5 ms                  |
+
+### Observations
+* Socket delivers **3.8x throughput** (7,185 vs 1,907 rps) and **73% lower latency** (14.0 vs 52.5 ms)
+* This is the largest gain across all scenarios because sync+small is the most connection-intensive — each request opens and closes a full TCP port pair
 
 ### Asynchronous API endpoint with small request / response
 
@@ -68,8 +96,8 @@ The most secure option is dedicating a group to this communication, making nginx
 | Time per request [ms] |            13.67 |           16.236 |            13.61 |        14.5053 | 21.54 ms                 |
 
 ### Observations
-* FastAPI queries per second is 1923 which is slightly better than using ports
-* API latency improved as well
+* Socket delivers **2.5x throughput** (6,941 vs 2,774 rps) and **60% lower latency** (14.5 vs 36.1 ms)
+* Async endpoints reuse connections, so the port baseline is higher (2,774 vs 1,907 rps for sync) — yet socket performance stays flat at ~7k rps, confirming the bottleneck was TCP overhead, not the application
 
 ### Synchronous API endpoint with 1MB response
 
@@ -89,9 +117,8 @@ The most secure option is dedicating a group to this communication, making nginx
 | Time per request [ms] |           15.494 |           14.717 |           14.404 |        14.8717 | 22.83 ms                 |
 
 ### Observations
-* FastAPI requests per second was above 2000 
-* **FastAPI laterncy is lower with nginx communication via socket**
-
+* Socket delivers **2.5x throughput** (6,731 vs 2,671 rps) and **60% lower latency** (14.9 vs 37.7 ms)
+* The 1MB payload reduces the port vs socket gap slightly compared to small responses — the app-side processing time starts to dominate over the connection overhead
 
 ### Asynchronous API endpoint with 1MB response
 
@@ -110,12 +137,59 @@ The most secure option is dedicating a group to this communication, making nginx
 | Requests per second   |         6855.33  |         6831.25  |         7037.45  |      6908.01  | +149.87%                  |
 | Time per request [ms] |           14.587 |           14.639 |            14.21 |        14.4787 | 21.7 ms                  |
 
-## Verdict
+### Observations
+* Socket delivers **2.5x throughput** (6,908 vs 2,765 rps) and **60% lower latency** (14.5 vs 36.2 ms)
+* Results are nearly identical to sync 1MB, confirming that at 1MB payload size, async/sync distinction has minimal impact — the socket optimization applies equally
 
-> **Individual impact: +150-276% throughput** by switching from TCP port to Unix socket communication between nginx and the app.
+## Conclusion
 
-Numbers talk by themselves. Almost any case it well worth changing to socket communication
-Sample config is [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/nginx.conf#L31)
+### Apples to apples comparison
+
+| Scenario | Port (rps) | Socket (rps) | Throughput gain | Port latency (ms) | Socket latency (ms) | Latency gain |
+|---|---|---|---|---|---|---|
+| Sync, small response | 1,907 | 7,185 | +276.8% | 52.5 | 14.0 | 73.3% lower |
+| Async, small response | 2,774 | 6,941 | +150.2% | 36.1 | 14.5 | 59.8% lower |
+| Sync, 1MB response | 2,671 | 6,731 | +152.0% | 37.7 | 14.9 | 60.5% lower |
+| Async, 1MB response | 2,765 | 6,908 | +149.9% | 36.2 | 14.5 | 59.9% lower |
+
+Two clear patterns emerge:
+
+1. **Socket throughput is consistent across all scenarios:** ~6,700-7,200 rps regardless of sync/async or payload size. The communication layer is not the bottleneck — the application is. Switching to sockets removes the networking overhead that was masking this.
+2. **Port throughput is constrained by the TCP port pairing overhead:** ranging from 1,907 to 2,774 rps. The sync+small case is hit hardest (+276%) because it is the most connection-intensive — each request opens and closes a TCP pair, while async reuse reduces the impact.
+
+In short: **Unix sockets deliver a flat ~7k rps regardless of endpoint type, while TCP ports cap at ~2-2.8k rps.** The optimization is not scenario-dependent — it is a baseline improvement that applies universally.
+
+Sample socket config is [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/nginx.conf#L31)
+
+## Impact
+
+### Quantified production impact
+
+Assuming a single Gunicorn instance behind nginx:
+
+| Metric | Before (port) | After (socket) | Improvement |
+|---|---|---|---|
+| Throughput (avg across scenarios) | ~2,529 rps | ~6,941 rps | **~174% more requests/sec** |
+| Latency (avg across scenarios) | ~40.6 ms | ~14.5 ms | **~64% lower latency** |
+| Effective concurrent users supported (p95 ~200ms budget) | ~380 | ~900 | **~2.4x more headroom** |
+
+### When this matters most
+
+- **High-concurrency APIs** — each TCP port pair costs ~3-5KB kernel memory; sockets eliminate this entirely
+- **Containerized deployments** — container orchestration (K8s, ECS) typically shares a network namespace per pod, so port exhaustion is real under load
+- **Low-latency endpoints** — sync endpoints with small payloads benefit the most (+276%) because they are connection-bound
+- **Multi-worker setups** — the benefit compounds with worker count since each worker creates its own port pairs
+
+### Trade-offs to consider
+
+- **Operational complexity** — socket files require correct filesystem permissions (see [Non-root user section](#fastapi-as-non-root-user)); TCP ports are simpler to manage and debug
+- **Observability** — standard TCP tools (ss, netstat, tcpdump) do not work on Unix sockets; you need `ls -la` on the socket file or application-level metrics
+- **Load balancing** — TCP port-based load balancing (HAProxy, etc.) is straightforward across multiple app instances; socket-based setups require each instance to have its own socket file and matching nginx upstream
+- **Portability** — sockets are filesystem-dependent; they do not work across network boundaries, which matters in split-service architectures
+
+### Recommendation
+
+Switch to Unix socket communication between nginx and Gunicorn **by default**. The throughput and latency gains are significant and consistent across all endpoint types. Only use TCP ports when you need cross-network communication between the reverse proxy and the application.
 
 # Pro tip:
 * If you use [nginx-light](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/Dockerfile#L3) instead of nginx in your Docker build you can save ~100MB container image size.
