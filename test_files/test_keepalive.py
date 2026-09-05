@@ -20,7 +20,7 @@ class TestNginxKeepalive(TestBase):
     def test_nginx_socker_keepalive_async(self):
         async_test_config = []
         for container in test_config.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -31,7 +31,7 @@ class TestNginxKeepalive(TestBase):
     def test_nginx_socker_keepalive_sync_big_json_response(self):
         async_test_config = []
         for container in test_config.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -43,7 +43,7 @@ class TestNginxKeepalive(TestBase):
     def test_nginx_socker_keepalive_async_big_json_response(self):
         async_test_config = []
         for container in test_config.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
