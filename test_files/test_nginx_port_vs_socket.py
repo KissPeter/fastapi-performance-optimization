@@ -52,7 +52,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async(self):
         async_test_config = []
         for container in test_config.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -63,7 +63,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_sync_big_json_response(self):
         async_test_config = []
         for container in test_config.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -75,7 +75,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_big_json_response(self):
         async_test_config = []
         for container in test_config.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -94,7 +94,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_gunicorn_w1t0(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t0.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -105,7 +105,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_sync_big_json_response_gunicorn_w1t0(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t0.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -117,7 +117,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_big_json_response_gunicorn_w1t0(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t0.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -136,7 +136,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_gunicorn_w2t0(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t0.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -147,7 +147,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_sync_big_json_response_gunicorn_w2t0(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t0.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -159,7 +159,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_big_json_response_gunicorn_w2t0(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t0.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -178,7 +178,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_gunicorn_w1t1(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t1.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -189,7 +189,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_sync_big_json_response_gunicorn_w1t1(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t1.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -201,7 +201,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_big_json_response_gunicorn_w1t1(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t1.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -220,7 +220,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_gunicorn_w2t1(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t1.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -231,7 +231,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_sync_big_json_response_gunicorn_w2t1(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t1.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -243,7 +243,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_big_json_response_gunicorn_w2t1(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t1.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -262,7 +262,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_gunicorn_w1t2(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t2.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -273,7 +273,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_sync_big_json_response_gunicorn_w1t2(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t2.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -285,7 +285,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_big_json_response_gunicorn_w1t2(self):
         async_test_config = []
         for container in test_config_gunicorn_w1t2.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -304,7 +304,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_gunicorn_w2t2(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t2.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -315,7 +315,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_sync_big_json_response_gunicorn_w2t2(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t2.copy():
-            container["uri"] = "/sync/big_json_response"
+            container["uri"] = "/sync/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)
@@ -327,7 +327,7 @@ class TestNginxPortvsSocket(TestBase):
     def test_nginx_port_vs_socket_async_big_json_response_gunicorn_w2t2(self):
         async_test_config = []
         for container in test_config_gunicorn_w2t2.copy():
-            container["uri"] = "/async/big_json_response"
+            container["uri"] = "/async/big_json_response/"
             container["request_count"] = 1000
             async_test_config.append(container)
         print(async_test_config)

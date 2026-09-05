@@ -26,7 +26,7 @@ class TestGunicornUvicorn(TestBase):
     def test_gunicorn_vs_uvicorn_async_w1(self):
         async_test_config = []
         for container in test_config_w1.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
@@ -43,7 +43,7 @@ class TestGunicornUvicorn(TestBase):
     def test_gunicorn_vs_uvicorn_async_w2(self):
         async_test_config = []
         for container in test_config_w2.copy():
-            container["uri"] = "/async/items"
+            container["uri"] = "/async/items/"
             async_test_config.append(container)
         print(async_test_config)
         p = CompareContainers(async_test_config)
