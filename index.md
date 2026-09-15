@@ -101,6 +101,7 @@ When you combine ALL optimizations:
 ## [Thread Pool Sizing (anyio tokens)](https://kisspeter.github.io/fastapi-performance-optimization/thread_pool_sizing)
 ## [Per-Worker Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/per_worker_connection_pool)
 ## [Pool Sizing Calculator](https://kisspeter.github.io/fastapi-performance-optimization/pool_sizing_calculator)
+## [Profiling: why BaseHTTPMiddleware is slow](https://kisspeter.github.io/fastapi-performance-optimization/profiling)
 
 # Robustness & Reliability (Generic, not FastAPI-specific)
 
@@ -138,7 +139,3 @@ docker-compose build
   pytest -vv -rP test_files/
 ```
 
-# Stay tuned for new ideas:
-## FastAPI application profiling
-### Arbitrary place of code
-### Profiling middleware

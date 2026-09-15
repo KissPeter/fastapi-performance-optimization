@@ -211,3 +211,60 @@ jobs:
         with:
           name: Pytest-Report-robustness-${{ matrix.python-version }}
           path: ./reports
+
+  profiling:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.14' ]
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi==0.139.2 starlette==1.3.1 httpx==0.28.1
+          mkdir -p reports/profiling
+      - name: 'cProfile: baseline (no middleware)'
+        env:
+          MODE: baseline
+          SORT: tottime
+          PSTATS_OUT: reports/profiling/baseline.pstats
+        run: python3 test_files/profile_middleware.py | tee reports/profiling/baseline_tottime.txt
+      - name: 'cProfile: baseline, sorted by cumulative time'
+        env:
+          MODE: baseline
+          SORT: cumulative
+        run: python3 test_files/profile_middleware.py | tee reports/profiling/baseline_cumulative.txt
+      - name: 'cProfile: BaseHTTPMiddleware'
+        env:
+          MODE: base_http
+          SORT: tottime
+          PSTATS_OUT: reports/profiling/base_http.pstats
+        run: python3 test_files/profile_middleware.py | tee reports/profiling/base_http_tottime.txt
+      - name: 'cProfile: BaseHTTPMiddleware, sorted by cumulative time'
+        env:
+          MODE: base_http
+          SORT: cumulative
+        run: python3 test_files/profile_middleware.py | tee reports/profiling/base_http_cumulative.txt
+      - name: 'cProfile: Starlette ASGI middleware'
+        env:
+          MODE: starlette
+          SORT: tottime
+          PSTATS_OUT: reports/profiling/starlette.pstats
+        run: python3 test_files/profile_middleware.py | tee reports/profiling/starlette_tottime.txt
+      - name: 'cProfile: Starlette ASGI middleware, sorted by cumulative time'
+        env:
+          MODE: starlette
+          SORT: cumulative
+        run: python3 test_files/profile_middleware.py | tee reports/profiling/starlette_cumulative.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Profiling-${{ matrix.python-version }}
+          path: ./reports/profiling
