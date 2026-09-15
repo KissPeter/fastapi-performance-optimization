@@ -20,14 +20,18 @@ Every other page in this project answers "how much faster" with `ab` load-test n
 `tottime` tells you what's actually slow; `cumtime` tells you which call path is expensive. When a load test shows a regression, cProfile shows the extra frames responsible for it.
 
 ## Test environment
-* Same dependency versions as the [Dockerfile](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/Dockerfile): Python 3.14, FastAPI 0.139.2, Starlette 1.3.1, httpx 0.28.1
-* Profiling was run locally (not in CI) against `app_files/app.py`'s ASGI callable directly, bypassing the HTTP client/server entirely, so the profile isolates middleware overhead from network and test-tooling overhead
-* Script: [`test_files/profile_middleware.py`](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/profile_middleware.py) — reproduce with:
+
+> CI run [35014905057](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/35014905057) — Python 3.14, Ubuntu latest, `profiling` job.
+
+* Same dependency pins as this CI run: FastAPI 0.139.2, Starlette 1.3.1, httpx 0.28.1
+* The profiler is pointed at `app_files/app.py`'s ASGI callable directly, bypassing the HTTP client/server entirely, so it isolates middleware overhead from network and test-tooling overhead
+* Script: [`test_files/profile_middleware.py`](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/profile_middleware.py) — reproduce locally with:
 ```shell
 MODE=baseline  python3 test_files/profile_middleware.py   # no middleware
 MODE=base_http python3 test_files/profile_middleware.py   # BaseHTTPMiddleware
 MODE=starlette python3 test_files/profile_middleware.py   # Starlette ASGI middleware
 ```
+* The same three runs execute in CI on every push (job `profiling` in [`performance_tuning_measurements.yml`](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/.github/workflows/performance_tuning_measurements.yml)), each uploaded as a `Profiling-<python-version>` artifact containing both the `pstats` dumps and the `print_stats()` text output — the tables below are the text output from that artifact, unedited
 
 ## Profiling the app directly
 
@@ -58,57 +62,56 @@ Since FastAPI request handling is async, `profiler.enable()` / `disable()` must 
 ## Baseline: no middleware
 
 ```
-1408000 function calls (1374000 primitive calls) in 0.720 seconds
+1413940 function calls (1379943 primitive calls) in 0.782 seconds
 
 Ordered by: internal time
 
   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-    8000    0.101    0.000    0.101    0.000 {method 'control' of 'select.kqueue' objects}
-20000/2000 0.029    0.000    0.053    0.000 encoders.py:129(jsonable_encoder)
-8001/8000  0.029    0.000    0.663    0.000 base_events.py:1976(_run_once)
-    8000    0.028    0.000    0.357    0.000 routing.py:399(app)
-   13999    0.018    0.000    0.017    0.000 {method 'acquire' of '_thread.lock' objects}
-    8000    0.015    0.000    0.106    0.000 _asyncio.py:2649(run_sync_in_worker_thread)
-    2000    0.014    0.000    0.061    0.000 utils.py:598(solve_dependencies)
+20000/2000 0.035    0.000    0.070    0.000 encoders.py:129(jsonable_encoder)
+    8000    0.035    0.000    0.446    0.000 routing.py:399(app)
+8001/8000  0.033    0.000    0.715    0.000 base_events.py:1977(_run_once)
+  142000    0.022    0.000    0.025    0.000 {built-in method builtins.isinstance}
+    8000    0.018    0.000    0.130    0.000 _asyncio.py:2649(run_sync_in_worker_thread)
+    8000    0.018    0.000    0.018    0.000 {method 'poll' of 'select.epoll' objects}
+    2000    0.017    0.000    0.073    0.000 utils.py:598(solve_dependencies)
 ```
 
-2000 requests cost **1.41M function calls** and **0.72s**. The event loop woke up **8000** times (`select.kqueue`) — 4 per request, which lines up with a normal request: read the socket, run the sync endpoint in the thread pool, write the response, and one bookkeeping cycle.
+2000 requests cost **1.41M function calls** and **0.78s**. The event loop woke up **8000** times (`select.epoll` on the Ubuntu CI runner) — 4 per request, which lines up with a normal request: read the socket, run the sync endpoint in the thread pool, write the response, and one bookkeeping cycle.
 
 ## BaseHTTPMiddleware: one `dispatch()` that adds a header
 
 Same endpoint, same payload, with the [`CustomHeaderMiddleware`](middleware#with-two-middlewares) from the middleware page added (`app.add_middleware(CustomHeaderMiddleware)`, a `BaseHTTPMiddleware` subclass):
 
 ```
-3428000 function calls (3374000 primitive calls) in 1.950 seconds
+3434000 function calls (3380000 primitive calls) in 1.950 seconds
 
 Ordered by: internal time
 
   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-   30000    0.408    0.000    0.408    0.000 {method 'control' of 'select.kqueue' objects}
-30001/30000 0.089   0.000    1.889    0.000 base_events.py:1976(_run_once)
-54000/52000 0.035   0.000    1.314    0.000 {method 'run' of '_contextvars.Context' objects}
-   10000    0.031    0.000    0.610    0.000 routing.py:399(app)
-20000/2000 0.031    0.000    0.057    0.000 encoders.py:129(jsonable_encoder)
-   16000    0.028    0.000    0.045    0.000 _asyncio.py:422(__enter__)
-   16000    0.028    0.000    0.063    0.000 _asyncio.py:453(__exit__)
-   42000    0.026    0.000    0.051    0.000 base_events.py:846(_call_soon)
-    4000    0.023    0.000    0.082    0.000 _asyncio.py:862(_spawn)
-   10000    0.017    0.000    0.267    0.000 base.py:101(__call__)
-    6000    0.016    0.000    0.106    0.000 base.py:119(wrap)
+30001/30000 0.103   0.000    1.878    0.000 base_events.py:1977(_run_once)
+54000/52000 0.047   0.000    1.647    0.000 {method 'run' of '_contextvars.Context' objects}
+   10000    0.043    0.000    0.776    0.000 routing.py:399(app)
+   30000    0.040    0.000    0.040    0.000 {method 'poll' of 'select.epoll' objects}
+20000/2000 0.039    0.000    0.076    0.000 encoders.py:129(jsonable_encoder)
+  176000    0.031    0.000    0.038    0.000 {built-in method builtins.isinstance}
+   42000    0.031    0.000    0.058    0.000 base_events.py:847(_call_soon)
+    4000    0.027    0.000    0.101    0.000 _asyncio.py:862(_spawn)
+   10000    0.021    0.000    0.329    0.000 base.py:101(__call__)
+    6000    0.019    0.000    0.135    0.000 base.py:119(wrap)
 ```
 
 Sorted by cumulative time, the extra frames that don't exist in the baseline at all show up right where the request enters the middleware:
 
 ```
-   16000    0.006    0.000    0.805    0.000 base.py:139(coro)
-   20000    0.013    0.000    0.852    0.000 _tasks.py:322(_run_coro)
-   10000    0.017    0.000    0.267    0.000 base.py:101(__call__)
-    6000    0.008    0.000    0.236    0.000 requests.py:254(body)
-12000/10000 0.008    0.000    0.224    0.000 requests.py:234(stream)
-    4000    0.007    0.000    0.218    0.000 base.py:113(receive_or_disconnect)
+   20000    0.015    0.000    1.054    0.000 _tasks.py:322(_run_coro)
+   16000    0.007    0.000    1.002    0.000 base.py:139(coro)
+   10000    0.021    0.000    0.327    0.000 base.py:101(__call__)
+    6000    0.010    0.000    0.283    0.000 requests.py:254(body)
+12000/10000 0.010    0.000    0.268    0.000 requests.py:234(stream)
+    4000    0.008    0.000    0.261    0.000 base.py:113(receive_or_disconnect)
 ```
 
-2000 requests now cost **3.43M function calls** and **1.95s** — 2.4x the calls, 2.7x the time, for a middleware that does nothing but set one response header. The `select.kqueue` count went from 8000 to **30000**: 3.75x more event-loop wake-ups per request.
+2000 requests now cost **3.43M function calls** and **1.95s** — 2.4x the calls, 2.5x the time, for a middleware that does nothing but set one response header. The `select.epoll` poll count went from 8000 to **30000**: 3.75x more event-loop wake-ups per request.
 
 ### Why: `BaseHTTPMiddleware` runs your endpoint in a second task
 
@@ -118,35 +121,36 @@ Sorted by cumulative time, the extra frames that don't exist in the baseline at 
 2. Re-read the incoming request body through an async generator (`requests.py:234(stream)` / `254(body)`) so your `dispatch()` can see it as a `Request` object
 3. Shuttle the response back through a memory object stream (`receive_or_disconnect`) so it can be exposed to you as a `Response` you're allowed to mutate before it's actually sent
 
-Two coroutines now have to hand data back and forth instead of one coroutine calling straight through, and every hand-off is a suspension point the event loop has to schedule — hence the 3.75x jump in `select.kqueue` calls. This is a fixed per-request tax that exists purely because of *how* `BaseHTTPMiddleware` is built, independent of what your `dispatch()` actually does.
+Two coroutines now have to hand data back and forth instead of one coroutine calling straight through, and every hand-off is a suspension point the event loop has to schedule — hence the 3.75x jump in `select.epoll` polls. This is a fixed per-request tax that exists purely because of *how* `BaseHTTPMiddleware` is built, independent of what your `dispatch()` actually does.
 
 ## Starlette ASGI middleware: same header, no `BaseHTTPMiddleware`
 
 Same test, with [`STARLETTECustomHeaderMiddleware`](middleware#starlette-timing-middleware) — a plain ASGI class that wraps `send` directly, no `BaseHTTPMiddleware`:
 
 ```
-1432000 function calls (1398000 primitive calls) in 0.732 seconds
+1437980 function calls (1403981 primitive calls) in 0.779 seconds
 
 Ordered by: internal time
 
   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-    8000    0.101    0.000    0.101    0.000 {method 'control' of 'select.kqueue' objects}
-20000/2000 0.030    0.000    0.054    0.000 encoders.py:129(jsonable_encoder)
-8001/8000  0.029    0.000    0.676    0.000 base_events.py:1976(_run_once)
-    8000    0.028    0.000    0.359    0.000 routing.py:399(app)
-   13999    0.018    0.000    0.017    0.000 {method 'acquire' of '_thread.lock' objects}
-    8000    0.015    0.000    0.107    0.000 _asyncio.py:2649(run_sync_in_worker_thread)
+20000/2000 0.036    0.000    0.070    0.000 encoders.py:129(jsonable_encoder)
+    8000    0.035    0.000    0.441    0.000 routing.py:399(app)
+8001/8000  0.032    0.000    0.716    0.000 base_events.py:1977(_run_once)
+  142000    0.022    0.000    0.025    0.000 {built-in method builtins.isinstance}
+    8000    0.018    0.000    0.128    0.000 _asyncio.py:2649(run_sync_in_worker_thread)
+    8000    0.014    0.000    0.014    0.000 {method 'poll' of 'select.epoll' objects}
+    2000    0.017    0.000    0.073    0.000 utils.py:598(solve_dependencies)
 ```
 
-**1.43M function calls**, **0.73s**, and `select.kqueue` back down to **8000** — statistically identical to the no-middleware baseline. There is no `base.py`, no `_spawn`, no second `requests.py:234(stream)` read. The whole `starlette/middleware/base.py` call chain is simply absent from the profile because the middleware never leaves the ASGI protocol: it wraps `send`, appends a header when it sees `http.response.start`, and gets out of the way.
+**1.44M function calls**, **0.78s**, and `select.epoll` back down to **8000** — statistically identical to the no-middleware baseline. There is no `base.py`, no `_spawn`, no second `requests.py:234(stream)` read. The whole `starlette/middleware/base.py` call chain is simply absent from the profile because the middleware never leaves the ASGI protocol: it wraps `send`, appends a header when it sees `http.response.start`, and gets out of the way.
 
 ## Side by side
 
 | | Baseline | BaseHTTPMiddleware | Starlette ASGI |
 |---|---|---|---|
-| Function calls (2000 req) | 1,408,000 | 3,428,000 (+2.4x) | 1,432,000 (+1.7%) |
-| Wall time | 0.720s | 1.950s (+2.7x) | 0.732s (+1.7%) |
-| `select.kqueue` calls | 8,000 | 30,000 (+3.75x) | 8,000 (+0%) |
+| Function calls (2000 req) | 1,413,940 | 3,434,000 (+2.4x) | 1,437,980 (+1.7%) |
+| Wall time | 0.782s | 1.950s (+2.5x) | 0.779s (-0.4%) |
+| `select.epoll` polls | 8,000 | 30,000 (+3.75x) | 8,000 (+0%) |
 | Extra frames vs baseline | — | `base.py` dispatch/wrap/coro, `requests.py` stream/body, `_tasks.py`/`_spawn` | none |
 
 This is the same story the [middleware page](middleware) tells with `ab` (BaseHTTPMiddleware: -35 to -44% throughput; Starlette ASGI: 0-4%) — cProfile just names the culprit. The regression isn't the one line of code in `dispatch()`, it's the extra task and the two async-generator hops `BaseHTTPMiddleware` needs to expose a `Request`/`Response` API on top of raw ASGI.
@@ -164,7 +168,14 @@ cProfile.run('main()', 'profile.out')
 snakeviz profile.out
 ```
 
-In a notebook: `%load_ext snakeviz` then `%snakeviz main()`. For this repo, dump `pstats` from `test_files/profile_middleware.py` (swap the final `print_stats()` call for `stats.dump_stats('profile.out')`) and load it the same way — the BaseHTTPMiddleware run's icicle chart makes the doubled `base.py`/`_tasks.py` branch obvious at a glance next to the flat baseline.
+In a notebook: `%load_ext snakeviz` then `%snakeviz main()`. `test_files/profile_middleware.py` accepts a `PSTATS_OUT` env var to dump the raw `pstats` file alongside the text report (this is what the CI `profiling` job does for each of the three runs, uploaded in the `Profiling-<python-version>` artifact):
+
+```shell
+MODE=base_http PSTATS_OUT=base_http.pstats python3 test_files/profile_middleware.py
+snakeviz base_http.pstats
+```
+
+The BaseHTTPMiddleware run's icicle chart makes the doubled `base.py`/`_tasks.py` branch obvious at a glance next to the flat baseline.
 
 ## Conclusion
 
