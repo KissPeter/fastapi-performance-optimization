@@ -7,39 +7,50 @@
 
     {% seo %}
     <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
-    <!--[if lt IE 9]>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
     {% include head-custom.html %}
 </head>
 <body>
 <div class="wrapper">
-    <header>
-        <h1>
-            <a href="{{ absolute_url }}">FastAPI performance optimization</a>
-        </h1>
-        <img src="{{site.logo | relative_url}}" alt="Logo" />
-        <ul>
-        {% for page in site.pages %}
-            {% capture title_size %}{{ page.title | size }}{% endcapture %}
-            {% if title_size.size > 1 %}
-                <li><a class="small" href={{ page.filename | replace_first:".md",""  }}>{{ page.title }}</a></li>
-            {% endif %}
-        {% endfor %}
-        </ul>
+    <header class="site-header">
+        <a class="brand" href="{{ "index" | relative_url }}">
+            <img class="brand-logo" src="{{ site.logo | relative_url }}" alt="FastAPI logo" />
+            <span class="brand-title">FastAPI performance optimization</span>
+        </a>
 
+        <input type="checkbox" id="nav-toggle" class="nav-toggle-input" aria-hidden="true">
+        <label for="nav-toggle" class="nav-toggle-label">Menu</label>
 
-
+        <nav class="site-nav">
+            {% assign page_name = page.filename | default: "" | replace: ".md", "" %}
+            {% for group in site.data.navigation %}
+            <div class="nav-group">
+                <h2 class="nav-group-title">{{ group.label }}</h2>
+                <ul>
+                    {% for link in group.links %}
+                    {% assign is_current = "" %}
+                    {% if page_name == link.url %}
+                    {% assign is_current = " is-current" %}
+                    {% endif %}
+                    <li class="nav-link{{ is_current }}">
+                        <a href="{{ link.url | relative_url }}">{{ link.title }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </nav>
     </header>
-    <section>
-        <b>Table of contents</b><br>
-        {% include toc.html html=content %}
+
+    <section class="content">
+        <b class="section-label">Table of contents</b>
+        {% include toc.html html=content h_min=2 h_max=3 class="toc" %}
         {{ content }}
     </section>
-    <footer>
+
+    <footer class="site-footer">
         <p><small>Hosted on GitHub Page</small></p>
         {% if site.github.is_project_page %}
-            <p> <a class="small" href="{{ site.github.repository_url }}">View the Project on GitHub </a> </p>
+        <p><a class="small" href="{{ site.github.repository_url }}">View the Project on GitHub</a></p>
         {% endif %}
     </footer>
 </div>

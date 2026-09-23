@@ -10,7 +10,7 @@ filename: index.md
 This document is intended to provide some tips and ideas to get the most out of it
 
 
-# Use these techniques to achieve 100-300% performance increase from your FastAPI application
+## Use these techniques to achieve 100-300% performance increase from your FastAPI application
 
 > All tested on the same sized Docker containers (2 CPU cores). The performance numbers below represent real CI-verified measurements.
 
@@ -88,28 +88,39 @@ When you combine ALL optimizations:
 
 > The difference between a default FastAPI setup and a properly optimized one is **4x throughput** on big JSON responses and **3x on small payloads**. These are not theoretical numbers — they are measured in CI on identical Docker infrastructure (2 CPU cores per container).
 
-## All optimization topics
+## Topics by category
 
-## [Fastapi Middleware performance tuning](https://kisspeter.github.io/fastapi-performance-optimization/middleware)
-## [Fastapi JSON response classes comparison](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class)
-## [Gunicorn workers and threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)
-## [Nginx in front of FastAPI](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket)
-## [Connection keepalive](https://kisspeter.github.io/fastapi-performance-optimization/keepalive)
-## [Server Runners: Gunicorn vs Uvicorn vs FastAPI CLI](https://kisspeter.github.io/fastapi-performance-optimization/server_runners)
-## [Sync / Async API Endpoints](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async)
-## [Connection Pool Size of External Resources](https://kisspeter.github.io/fastapi-performance-optimization/connection_pool)
-## [Thread Pool Sizing (anyio tokens)](https://kisspeter.github.io/fastapi-performance-optimization/thread_pool_sizing)
-## [Per-Worker Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/per_worker_connection_pool)
-## [Pool Sizing Calculator](https://kisspeter.github.io/fastapi-performance-optimization/pool_sizing_calculator)
-## [Profiling: why BaseHTTPMiddleware is slow](https://kisspeter.github.io/fastapi-performance-optimization/profiling)
+### Concurrency & workers
 
-# Robustness & Reliability (Generic, not FastAPI-specific)
+- **[Server Runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners)** — Gunicorn vs Uvicorn vs FastAPI CLI as a production runner; the single biggest lever (+50-65%).
+- **[Workers & Threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)** — how many Gunicorn workers/threads to run on a 2-core container.
+- **[Sync vs Async Endpoints](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async)** — when async endpoints are worth it (+20-33%).
+- **[Thread Pool Sizing](https://kisspeter.github.io/fastapi-performance-optimization/thread_pool_sizing)** — tuning anyio token semaphores for sync endpoints.
+- **[Per-Worker Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/per_worker_connection_pool)** — pool isolation and the thread ceiling.
+
+### Transport & networking
+
+- **[Nginx in Front of FastAPI](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket)** — TCP port vs Unix socket transport.
+- **[Keepalive](https://kisspeter.github.io/fastapi-performance-optimization/keepalive)** — HTTP connection reuse.
+- **[Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/connection_pool)** — pool sizing for external resources.
+
+### Response & middleware
+
+- **[Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware)** — BaseHTTPMiddleware vs native Starlette ASGI (+35-44%).
+- **[Response Class](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class)** — JSONResponse vs ORJSONResponse (+4-13%).
+
+### Tools & debugging
+
+- **[Pool Sizing Calculator](https://kisspeter.github.io/fastapi-performance-optimization/pool_sizing_calculator)** — an interactive calculator for the numbers above.
+- **[Profiling](https://kisspeter.github.io/fastapi-performance-optimization/profiling)** — step-by-step cProfile investigation of a slow endpoint.
+
+## Robustness & Reliability (Generic, not FastAPI-specific)
 
 These patterns apply to any Python web application. They contribute to a robust and reliable application but are not FastAPI performance optimizations.
 
-## [Retry Patterns and Circuit Breaker](https://kisspeter.github.io/fastapi-performance-optimization/retry_circuit_breaker)
+- **[Retry and Circuit Breaker](https://kisspeter.github.io/fastapi-performance-optimization/retry_circuit_breaker)** — generic resilience patterns for any Python web app.
 
-# Test environment
+## Test environment
 
 * All the tests were run on  [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml)
 * Application is built into a container, you can build it like this:

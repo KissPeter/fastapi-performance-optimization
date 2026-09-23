@@ -1,0 +1,42 @@
+- label: Start here
+  links:
+    - title: Overview
+      url: index
+- label: Concurrency & workers
+  links:
+    - title: Server Runners
+      url: server_runners
+    - title: Workers & Threads
+      url: workers_and_threads
+    - title: Sync vs Async Endpoints
+      url: sync_vs_async
+    - title: Thread Pool Sizing
+      url: thread_pool_sizing
+    - title: Per-Worker Connection Pool
+      url: per_worker_connection_pool
+- label: Transport & networking
+  links:
+    - title: Nginx in Front of FastAPI
+      url: nginx_port_socket
+    - title: Keepalive
+      url: keepalive
+    - title: Connection Pool
+      url: connection_pool
+- label: Response & middleware
+  links:
+    - title: Middleware
+      url: middleware
+    - title: Response Class
+      url: json_response_class
+- label: Tools
+  links:
+    - title: Pool Sizing Calculator
+      url: pool_sizing_calculator
+- label: Debugging
+  links:
+    - title: Profiling
+      url: profiling
+- label: Robustness
+  links:
+    - title: Retry & Circuit Breaker
+      url: retry_circuit_breaker

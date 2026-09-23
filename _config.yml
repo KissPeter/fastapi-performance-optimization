@@ -5,6 +5,8 @@ repository: KissPeter/fastapi-performance-optimization
 baseurl: "fastapi-performance-optimization/"
 plugins:
   - jekyll-sitemap
+exclude:
+  - docs-site-review.md
 defaults:
   -
     scope:
