@@ -1,8 +1,9 @@
 ---
 title: Response class
+description: "JSONResponse vs ORJSONResponse vs UJSONResponse in FastAPI: ORJSON gives a consistent +4-13% throughput win across all server runners."
 layout: template
 filename: json_response_class.md
---- 
+---
 
 # FastAPI JSON response classes
 
@@ -11,7 +12,32 @@ Both have their [benchmark](https://github.com/ultrajson/ultrajson#benchmarks) /
 
 > Note: FastAPI supports different response classes, but request parsing is done by Starlette where you [don't have control](https://github.com/encode/starlette/blob/master/starlette/requests.py#L242) over which JSON implementation to be used
 
-# JSON response classes test
+> **TL;DR** Switch from the default `JSONResponse` to **`ORJSONResponse`** for a consistent **+4-13% throughput** across every server runner with a one-line change. `UJSONResponse` is not worth it (+1-4%). Run your own test before deploy — the difference is small.
+
+## Verdict
+
+> **Individual impact: +4-13% throughput** by switching from JSONResponse to ORJSONResponse.
+
+* **ORJSONResponse is the recommended choice** — it provides consistent +5-13% improvement across all runners with minimal code change
+* **UJSONResponse shows marginal improvement** (+1-4%), less impactful than ORJSON
+* The response class benefit is **runner-independent** — ORJSON wins everywhere, but the margin varies
+* You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
+
+Please note that you can have different JSON response class for each API endpoint as shown in the FastAPI [docs](https://fastapi.tiangolo.com/advanced/custom-response/#ujsonresponse):
+
+```python
+from fastapi import FastAPI
+from fastapi.responses import UJSONResponse
+
+app = FastAPI()
+
+
+@app.get("/items/", response_class=UJSONResponse)
+async def read_items():
+    return [{"item_id": "Foo"}]
+```
+
+## JSON response classes test
 
 > CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
 
@@ -29,23 +55,23 @@ By default, FastAPI uses the base JSON implementation, let's see the results:
 | Time per request [ms] |          5125.68 |          5091.15 |          5096.26 |    5104.36   |
 
 
-## Orjson 
+## Orjson
 >Note: There are some [specialities](https://github.com/ijl/orjson#str) requre attention
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
 | Requests per second   |             21.29 |             20.2 |             21.62 |      21.0367 | +7.38 %                  |
 | Time per request [ms] |          4696.16 |          4951.17 |          4624.58 |     4757.3   | 347.06 ms                |
- 
-## UltraJSON 
+
+## UltraJSON
 >Note: Just like orjson this has its own [speciality](https://github.com/ultrajson/ultrajson#using-an-external-or-system-copy-of-the-double-conversion-library)
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
 | Requests per second   |             19.52 |             19.57 |             19.43 |      19.5067 | -0.43 %                  |
 | Time per request [ms] |          5122.47 |          5108.58 |          5145.63 |     5125.56  | -21.2 ms                 |
- 
-# Cross-runner JSON response class comparison
+
+## Cross-runner JSON response class comparison
 
 > CI run [29858316413](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29858316413) — Python 3.14, Ubuntu latest.
 
@@ -72,27 +98,3 @@ The same JSON response class comparison was repeated across 3 key server runners
 * **UJSONResponse shows marginal improvement** (+1% to +4%), less impactful than ORJSON
 * The **relative gain of ORJSON is larger on Uvicorn and FastAPI CLI** (~13%) compared to Gunicorn (~5%), suggesting ORJSON's serialization advantage is more visible when the server framework has less overhead
 * Gunicorn with 2 workers achieves higher absolute throughput (~17-18 RPS) than Uvicorn/FastAPI CLI single-process (~9-10 RPS) for large JSON serialization, as it can parallelize across workers
-
-# Verdict
-
-> **Individual impact: +4-13% throughput** by switching from JSONResponse to ORJSONResponse.
-
-* You might want to run an extensive test before / after changing to the other response class to make sure the tiny differences won't cause issues for your client
-* Having some gain by simply changing to other response class seems promissing isn't it?
-* **ORJSONResponse is the recommended choice** — it provides consistent +5-13% improvement across all runners with minimal code change
-* The response class benefit is **runner-independent** — ORJSON wins everywhere, but the margin varies
-
-
-Please note that you can have different JSON response class for each API endpoint as shown in the FastAPI [docs](https://fastapi.tiangolo.com/advanced/custom-response/#ujsonresponse):
-    
-```python
-from fastapi import FastAPI
-from fastapi.responses import UJSONResponse
-
-app = FastAPI()
-
-
-@app.get("/items/", response_class=UJSONResponse)
-async def read_items():
-    return [{"item_id": "Foo"}]
-```

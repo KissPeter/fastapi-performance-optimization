@@ -1,15 +1,28 @@
 ---
 title: Workers and threads
+description: "How many Gunicorn workers and threads to run for FastAPI on a 2-core container: 2-3 workers with 1-2 threads; threads barely matter, 1 worker is a 6-7x bottleneck on big responses."
 layout: template
 filename: workers_and_threads.md
 ---
-
 
 # Gunicorn Workers and Threads
 
 Not strictly FastAPI performance tuning, but performance improvement on runner environment naturally helps for the system. [Gunicorn](https://gunicorn.org/) is one straightforward option to run FastAPI in [production](https://www.uvicorn.org/deployment/#gunicorn) environment
 For high performance low latency, cheap, robust and reliable services it is important to get the maximum out of a single computing unit. In this example we will focus on a container with only 2 CPU cores allocated.
-This is typically used and GitHub Action container has two CPU cores allocated where [these](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) measurements were executed. 
+This is typically used and GitHub Action container has two CPU cores allocated where [these](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) measurements were executed.
+
+> **TL;DR** On a 2-core container run **2-3 workers with 0-2 threads**. Threads barely matter (<3%). Going 1 → 2-3 workers adds +50-60% on small responses and **6-7x on 1MB responses**. Beyond 3 workers, context switching eats the gains.
+
+## Verdict
+
+No clear winner, but suggestion of Gunicorn documentation was right, `there is such a thing as too many workers`.
+For a 2-core system:
+- **2-3 workers** provides the best throughput for both sync and async endpoints
+- **Threads have minimal impact** - adding threads doesn't meaningfully improve performance
+- **Beyond 3 workers** performance degrades due to context switching overhead
+- For **1MB responses**, the gains from multiple workers are dramatic (6-7x), as single-worker serialization becomes the bottleneck
+
+It is highly recommended making a measurement like this and select the best combination for the given usecase. Feel free to reuse the [test code](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/test_workers_and_threads.py)
 
 ## Gunicorn
 
@@ -198,15 +211,3 @@ Baseline: **w1_t1** (1 worker, 1 thread)
 #### Observation
 
 Similar to sync big response - single worker with 1MB response is severely bottlenecked. 2-3 workers provide massive throughput gains (6-7x). Some baseline measurements show instability (1t2: 1839 vs 2336, 1t3: 1110 vs 2321) which affects diff calculations. Best sustained throughput at 3 workers.
-
-## Verdict
-
-No clear winner, but suggestion of Gunicorn documentation was right, `there is such a thing as too many workers`.
-For a 2-core system:
-- **2-3 workers** provides the best throughput for both sync and async endpoints
-- **Threads have minimal impact** - adding threads doesn't meaningfully improve performance
-- **Beyond 3 workers** performance degrades due to context switching overhead
-- For **1MB responses**, the gains from multiple workers are dramatic (6-7x), as single-worker serialization becomes the bottleneck
-
-It is highly recommended making a measurement like this and select the best combination for the given usecase. Feel free to reuse the [test code](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/test_files/test_workers_and_threads.py)
-

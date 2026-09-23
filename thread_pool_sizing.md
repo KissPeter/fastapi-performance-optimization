@@ -1,5 +1,6 @@
 ---
 title: Thread Pool Sizing
+description: "anyio/Starlette thread pool sizing for FastAPI sync endpoints: 40 tokens per worker is the real concurrency ceiling; match tokens to connection pool size, raise only when threads are the confirmed bottleneck."
 layout: template
 filename: thread_pool_sizing.md
 ---
@@ -7,6 +8,15 @@ filename: thread_pool_sizing.md
 # Thread Pool Sizing (anyio / Starlette)
 
 When a FastAPI sync endpoint is called, Starlette dispatches it to a thread pool via `anyio.to_thread.run_sync`. This thread pool has a **global per-worker capacity limit** that directly impacts how many sync requests can execute concurrently.
+
+> **TL;DR** The anyio thread pool, not the connection pool, is the **true concurrency ceiling** for sync endpoints: 40 tokens per worker (CI-verified). Keep the default 40 unless you have confirmed threads are the bottleneck — then raise tokens so they **match your connection pool size**.
+
+## Verdict
+
+- **40 tokens per worker is the real sync concurrency limit** — with pool=100 and tokens=40, only ~40 sync handlers run concurrently per worker; the remaining pool connections sit idle
+- **Tokens should match your connection pool size** for sync endpoints that make external calls — if you have 50 connections, you need at least 50 tokens to use them all
+- **Only increase tokens when you've confirmed threads are the bottleneck** (many slow sync endpoints, high concurrency) — not when the limiting factor is connections, CPU, or memory
+- The default 40 is a safe starting point; most setups never need to raise it
 
 ## How it works
 

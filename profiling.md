@@ -1,5 +1,6 @@
 ---
 title: Profiling
+description: "cProfile investigation of why BaseHTTPMiddleware is slow: it runs the app as a second task via memory streams (2.4x calls, 2.5x time); native Starlette ASGI middleware is just an extra inline frame (0.4% cost)."
 layout: template
 filename: profiling.md
 ---
@@ -7,6 +8,8 @@ filename: profiling.md
 # Profiling your FastAPI application
 
 Every other page in this project answers "how much faster" with `ab` load-test numbers. This page answers "why", and shows the actual investigation — not just the conclusion — using [cProfile](https://docs.python.org/3/library/profile.html#module-cProfile), Python's built-in deterministic profiler. Credit for the cProfile basics goes to this [cProfile walkthrough](https://machinelearningplus.com/python/cprofile-how-to-profile-your-python-code/); this page applies the same tool, step by step, to explain the [BaseHTTPMiddleware vs Starlette ASGI middleware](middleware) result measured elsewhere on this site.
+
+> **TL;DR** The answer up front: `BaseHTTPMiddleware` runs the rest of your app as a **second task** and shuttles the request body / response through memory streams so it can offer a `Request`/`Response` API. That per-request detour costs **2.4x the function calls and 2.5x the wall time** (1.41M→3.43M calls, 0.78s→1.95s for 2000 requests). A native Starlette ASGI middleware is just **one extra inline frame** (1.44M calls, 0.78s) — this is the mechanism behind the -35-44% vs 0-4% measurements.
 
 ## Why profile instead of just load-testing
 

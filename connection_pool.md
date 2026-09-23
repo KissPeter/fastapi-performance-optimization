@@ -1,5 +1,6 @@
 ---
 title: Connection Pool Size
+description: "Connection pool sizing for FastAPI external API calls: pool=40 eliminates the bottleneck (matching anyio tokens), pool=100 squeezes +0.6% more sync throughput."
 layout: template
 filename: connection_pool.md
 ---
@@ -8,7 +9,17 @@ filename: connection_pool.md
 
 When a FastAPI application calls external APIs or databases, the connection pool size significantly impacts performance. A pool that is too small causes request queuing and increased latency. A pool that is too large wastes resources and may overwhelm the external service.
 
-This benchmark measures the impact of `httpx` connection pool configuration on both synchronous and asynchronous endpoints.
+> **TL;DR** A too-small pool is a brick wall (-35% sync throughput). **pool=40** (matching anyio's default thread tokens) removes the bottleneck; **pool=100** squeezes only +0.6% more sync RPS at ~6.5 MB extra memory. For async, pool=40 is already the best.
+
+## Verdict
+
+Connection pool sizing is critical for applications making external API calls:
+- A **small pool** (2 connections per worker) creates a bottleneck when handling concurrent sync requests, as worker threads block waiting for available connections — this costs ~35% throughput
+- **pool=40 eliminates the connection bottleneck** for sync endpoints, matching the anyio thread pool default
+- **pool=100 achieves the highest throughput** (+0.6% over pool=40, +1.4% over pool=80) at the cost of ~6.5 MB additional memory per 2 workers
+- The choice between 40 and 100 depends on your deployment: memory-constrained → 40, throughput-critical → 100
+- For **asynchronous** endpoints, pool=40 performs best — the event loop multiplexes connections efficiently, and larger pools don't help
+- **Remember**: pool_size is per-worker. Total connections = pool_size × workers. Size accordingly to stay within external service limits.
 
 ## Test environment
 * The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
@@ -179,16 +190,6 @@ Assumptions: ~6 KB/client connection (httpx keep-alive), ~50 KB/server connectio
 | Unknown / starting out | 40 | Safe default, matches anyio thread pool |
 
 The data shows pool=100 is technically superior in every metric. The question is whether the ~6.5 MB extra memory per 2 workers justifies the +0.6% throughput gain in your specific deployment.
-
-## Verdict
-
-Connection pool sizing is critical for applications making external API calls:
-- A **small pool** (2 connections per worker) creates a bottleneck when handling concurrent sync requests, as worker threads block waiting for available connections — this costs ~35% throughput
-- **pool=40 eliminates the connection bottleneck** for sync endpoints, matching the anyio thread pool default
-- **pool=100 achieves the highest throughput** (+0.6% over pool=40, +1.4% over pool=80) at the cost of ~6.5 MB additional memory per 2 workers
-- The choice between 40 and 100 depends on your deployment: memory-constrained → 40, throughput-critical → 100
-- For **asynchronous** endpoints, pool=40 performs best — the event loop multiplexes connections efficiently, and larger pools don't help
-- **Remember**: pool_size is per-worker. Total connections = pool_size × workers. Size accordingly to stay within external service limits.
 
 ## Further reading
 

@@ -1,5 +1,6 @@
 ---
 title: Retry and Circuit Breaker
+description: "Retry patterns and circuit breakers to protect FastAPI from cascading failures: retry transient errors with backoff+jitter (budget <20%), add a circuit breaker at medium/high traffic — it trades one endpoint for whole-app availability."
 layout: template
 filename: retry_circuit_breaker.md
 ---
@@ -9,6 +10,17 @@ filename: retry_circuit_breaker.md
 > **Note**: This is a **generic robustness pattern**, not a FastAPI-specific optimization. It applies to any Python web application that calls external services. It contributes to a robust and reliable application but does not directly improve FastAPI performance.
 
 When your application calls external services, failures are inevitable. Retry logic and circuit breakers protect your application from cascading failures and resource exhaustion.
+
+> **TL;DR** Always retry **transient** errors (timeouts, 429, 502/503/504) with **exponential backoff + jitter**, capped so retries stay under **20% of original traffic**. Add a **circuit breaker** at medium traffic (100+ RPS) and *require* it above 1000 RPS — it trades the availability of one endpoint for the availability of your whole app.
+
+## Verdict
+
+- **Retry transient errors only** — timeouts, 500, 502/503/504, and 429 (honor `Retry-After`). Never retry 400/401/403/404 — they won't fix themselves
+- **Use exponential backoff + jitter** and cap retries (max 3, backoff 0.5s→5s) so amplification stays under ~20% of original traffic
+- **Circuit breaker is optional below ~100 RPS, recommended at 100-1000 RPS, required above 1000 RPS** — without it one slow/down external API exhausts the connection pool and stalls every worker
+- **The breaker trades one endpoint's availability for the whole app's**: OPEN state rejects instantly (no connection, no retry), draining the pool back to healthy services
+- **Per-worker circuit state is fine** (like pools, breakers are per-process); shared Redis-backed state only if you need stronger coordination
+- **CI-verified**: retry (5/5) and circuit breaker (3/3) tests pass against mock APIs with 30%/50% failure rates
 
 ## The problem
 

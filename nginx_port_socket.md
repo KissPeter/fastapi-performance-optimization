@@ -1,5 +1,6 @@
 ---
 title: Nginx in front of FastAPI
+description: "Nginx in front of FastAPI: Unix socket beats TCP port by ~2.5-3.8x throughput (~7k rps flat) and ~60-73% lower latency. Switch by default."
 layout: template
 filename: nginx_port_socket.md
 ---
@@ -11,6 +12,25 @@ By using in front of the FastAPI application some functions can be decoupled fro
 Typical reverse proxy [configuration](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#passing-a-request-to-a-proxied-server) uses TCP ports between the app and the web server / reverse proxy but it has negative impact on the concurrency as web server - app communication requires a pair of ports allocated for each connection.
 There are 65535 port all together, but some [ranges](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports) are not for this purpose so the concurrency is limited, furthermore a port doesn't become free immediately after a connection is closed
 The alternative solution which is mentioned in [Uvicorn](https://www.uvicorn.org/deployment/#running-behind-nginx) documentation suggests using sockets which indeed a better solution with some challenges.
+
+> **TL;DR** Talk to your app over a **Unix socket**, not a TCP port. Sockets deliver a flat **~7k rps** across every endpoint type — **2.5-3.8x the throughput** and **~60-73% lower latency** of TCP ports. The gap is biggest for sync + small responses (+277%).
+
+## Verdict
+
+> **Individual impact: ~174% more throughput and ~64% lower latency** by switching nginx ↔ Gunicorn from TCP port to Unix socket.
+
+**Switch to Unix socket communication between nginx and Gunicorn by default.** The throughput and latency gains are significant and consistent across all endpoint types:
+
+| Scenario | Port (rps) | Socket (rps) | Throughput gain | Latency gain |
+|---|---|---|---|---|
+| Sync, small response | 1,907 | 7,185 | +276.8% | 73.3% lower |
+| Async, small response | 2,774 | 6,941 | +150.2% | 59.8% lower |
+| Sync, 1MB response | 2,671 | 6,731 | +152.0% | 60.5% lower |
+| Async, 1MB response | 2,765 | 6,908 | +149.9% | 59.9% lower |
+
+**Socket throughput is consistent everywhere** (~6,700-7,200 rps), meaning the communication layer was the bottleneck, not the application. **Port throughput caps at ~2-2.8k rps** because every connection costs a TCP port pair.
+
+**Only use TCP ports when you need cross-network communication** between the reverse proxy and the application. Trade-offs to accept with sockets: socket file permissions, no `ss`/`tcpdump` observability, and per-instance socket files for load balancing.
 
 ## FastAPI as non-root user
 If you run your application as non-root user you need to be sure nginx user can read and write the socket.
@@ -187,11 +207,8 @@ Assuming a single Gunicorn instance behind nginx:
 - **Load balancing** — TCP port-based load balancing (HAProxy, etc.) is straightforward across multiple app instances; socket-based setups require each instance to have its own socket file and matching nginx upstream
 - **Portability** — sockets are filesystem-dependent; they do not work across network boundaries, which matters in split-service architectures
 
-### Recommendation
+## Pro tip
 
-Switch to Unix socket communication between nginx and Gunicorn **by default**. The throughput and latency gains are significant and consistent across all endpoint types. Only use TCP ports when you need cross-network communication between the reverse proxy and the application.
-
-# Pro tip:
 * If you use [nginx-light](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/Dockerfile#L3) instead of nginx in your Docker build you can save ~100MB container image size.
 * This is a full **Nginx config for FastAPI**:
 

@@ -1,5 +1,6 @@
 ---
 title: Keepalive support
+description: "HTTP connection keepalive for FastAPI behind Nginx: small sync gain (+1.79%), cheap to enable, and matters more when connections are expensive (HTTPS)."
 layout: template
 filename: keepalive.md
 ---
@@ -21,8 +22,14 @@ http_client = urllib3.PoolManager(
             num_pools=10,
         )
 ```
-Let's see how to support HTTP connection keep-alive from FastAPI
 
+> **TL;DR** Enable HTTP keepalive between Nginx and your Python app — it is a cheap, safe default. Measured +1.79% on sync endpoints (async showed a -2.3% regression in this test). The win grows when connection setup is expensive, e.g. **HTTPS**.
+
+## Verdict
+
+* Keepalive is a **small but near-free** win: +1.79% on the sync endpoint by reusing existing connections
+* The async endpoint showed a **-2.3% regression** in this specific measurement — needs further investigation, but keepalive is still recommended as a default
+* If you use **HTTPS**, connection creation has even higher overhead due to the additional SSL layer, so keepalive matters more
 
 ## What is HTTP keepalive?
 
@@ -31,6 +38,7 @@ https://en.wikipedia.org/wiki/HTTP_persistent_connection)
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/HTTP_persistent_connection.svg/600px-HTTP_persistent_connection.svg.png" alt="HTTP Keepalive">
 
+Let's see how to support HTTP connection keep-alive from FastAPI as well.
 
 ## Measurements
 
@@ -45,14 +53,12 @@ https://en.wikipedia.org/wiki/HTTP_persistent_connection)
 | Requests per second   |       6957.84 |
 | Time per request [ms] |       — |
 
-
 #### Nginx - APP connection with keepalive
 
 | **Test attribute**    |   **Average** | Difference to baseline   |
 |-----------------------|---------------|--------------------------|
 | Requests per second   |       7082.61 | +1.79%                   |
 | Time per request [ms] |       —       | —                        |
-
 
 ### Observations
 * +1.79% improvement only because we reuse our existing connections
@@ -66,7 +72,6 @@ https://en.wikipedia.org/wiki/HTTP_persistent_connection)
 | Requests per second   |       7204.52 |
 | Time per request [ms] |       — |
 
-
 #### Nginx - APP connection with keepalive
 
 | **Test attribute**    |   **Average** | Difference to baseline   |
@@ -77,12 +82,7 @@ https://en.wikipedia.org/wiki/HTTP_persistent_connection)
 ### Observations
 * -2.3% regression for the async endpoint with keepalive — needs further investigation
 
-## Verdict
-
-* Regardless of the use case sync / async endpoint we can improve our overall performance with this tiny change. 
-* If you use HTTPS connection creation has even higher overhead due the the additional SSL layer
-
-# Pro tip:
+## Pro tip
 
 * This is a full **Nginx config for FastAPI** with keepalive support:
 

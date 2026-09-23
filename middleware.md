@@ -1,5 +1,6 @@
 ---
 title: Middleware
+description: "BaseHTTPMiddleware vs native Starlette ASGI middleware for FastAPI: measured 35-44% throughput drop for BaseHTTPMiddleware vs 0-4% for Starlette ASGI."
 layout: template
 filename: middleware.md
 ---
@@ -8,7 +9,22 @@ filename: middleware.md
 
 FastAPI is based on [Starlette](https://www.starlette.io/) which supports [Middleware](https://fastapi.tiangolo.com/tutorial/middleware/?h=middlew#middleware), a codebase which wraps your application and runs before / after the request processing.
 With this you can resolve various functions ( authentication, session, logging, metric collection, etc) without taking care of these functions in your application.
-Unfortunately the most straightforward implementation has a drawback, it has major impact on the application latency and throughput. 
+Unfortunately the most straightforward implementation has a drawback, it has major impact on the application latency and throughput.
+
+> **TL;DR** Never use `BaseHTTPMiddleware` for request/response heavy middleware. Write a native Starlette ASGI middleware class instead — it costs **0-4%** throughput where `BaseHTTPMiddleware` costs **35-44%**, on every server runner.
+
+## Verdict
+
+> **Individual impact: +35-44% throughput** by using Starlette ASGI middleware instead of BaseHTTPMiddleware.
+
+**Use Starlette ASGI middleware instead of BaseHTTPMiddleware.** The performance difference is dramatic:
+
+| Middleware Type | Avg Throughput Drop | Consistency |
+|----------------|---------------------|-------------|
+| BaseHTTPMiddleware | **35-44%** | Consistent across all runners |
+| Starlette ASGI | **0-4%** | Mostly negligible (one outlier) |
+
+BaseHTTPMiddleware's overhead is a per-request cost that cannot be mitigated by adding workers or threads. Starlette ASGI middleware adds virtually no overhead because it operates at the ASGI protocol level without the request/response copying that BaseHTTPMiddleware performs.
 
 ## Test environment
 * The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
@@ -46,7 +62,7 @@ Sample application without any middleware.
 | Time per request [ms] |           61.794 |           59.786 |           58.467 |       60.0157 | -20.76 ms                |
 
 ### Observations
-* Significant drop in the througtput of the container while the average latency raised by ~19ms 
+* Significant drop in the throughput of the container while the average latency raised by ~19ms
 
 ## With two middlewares
 
@@ -58,7 +74,7 @@ Middleware can be defined as child class of [BaseHTTPMiddleware](https://www.sta
             response.headers["Custom"] = "Example"
             return response
 ```
-Alternative way of adding the middleware to the aplication is:
+Alternative way of adding the middleware to the application is:
 ```python
 app.add_middleware(CustomHeaderMiddleware)
 ```
@@ -122,9 +138,9 @@ In order to see the performance difference if multiple middlewares are added, an
 | Time per request [ms] |           40.283 |           41.553 |           39.485 |       40.4403 | -1.18 ms                 |
 
 ### Observations
-* Still no significant difference, much better than BaseHTTPMiddleware 
+* Still no significant difference, much better than BaseHTTPMiddleware
 
-# Cross-runner middleware overhead
+## Cross-runner middleware overhead
 
 > CI run [30024860601](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/30024860601) — Python 3.14, Ubuntu latest.
 
@@ -206,16 +222,3 @@ The same test repeated with Starlette ASGI middleware instead of BaseHTTPMiddlew
 * **No consistent pattern across runners**: Unlike BaseHTTPMiddleware, the overhead doesn't scale with worker count
 * **FastAPI CLI (1 worker)/w2 sync actually improved slightly** — within measurement noise
 * **Starlette ASGI is 10-40x cheaper than BaseHTTPMiddleware** across all configurations
-
-# Verdict
-
-> **Individual impact: +35-44% throughput** by using Starlette ASGI middleware instead of BaseHTTPMiddleware.
-
-**Use Starlette ASGI middleware instead of BaseHTTPMiddleware.** The performance difference is dramatic:
-
-| Middleware Type | Avg Throughput Drop | Consistency |
-|----------------|---------------------|-------------|
-| BaseHTTPMiddleware | **35-44%** | Consistent across all runners |
-| Starlette ASGI | **0-4%** | Mostly negligible (one outlier) |
-
-BaseHTTPMiddleware's overhead is a per-request cost that cannot be mitigated by adding workers or threads. Starlette ASGI middleware adds virtually no overhead because it operates at the ASGI protocol level without the request/response copying that BaseHTTPMiddleware performs.

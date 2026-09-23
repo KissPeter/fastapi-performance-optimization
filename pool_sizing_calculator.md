@@ -1,5 +1,6 @@
 ---
 title: Pool Sizing Calculator
+description: "Formulas to size FastAPI connection pools: sync = min(40, concurrent, db_max/workers), async = concurrent/2, total = pool × workers ≤ limit."
 layout: template
 filename: pool_sizing_calculator.md
 ---
@@ -7,6 +8,20 @@ filename: pool_sizing_calculator.md
 # Connection Pool Sizing Calculator
 
 A practical guide to calculating the right connection pool size for your FastAPI deployment.
+
+> **TL;DR** `sync_pool = min(40, concurrent_requests, db_max/workers)` (40 alone already eliminates the bottleneck), `async_pool = concurrent_requests / 2`, and `total = pool × workers` must stay under the external service limit. When in doubt, start small and scale up.
+
+## The formula cheat sheet
+
+```
+sync_pool  = min(40, concurrent_requests, db_max/workers) + headroom
+async_pool = concurrent_requests / 2
+total      = pool × workers ≤ db_max_connections
+
+headroom = 2-5 (for connection state transitions)
+```
+
+> CI-verified: pool=40 eliminates the connection bottleneck (+35% vs pool=2). pool=100 adds only +0.6% at ~6.5 MB more per 2 workers.
 
 ## Inputs you need
 
@@ -192,16 +207,6 @@ client = httpx.Client()
 # After load test:
 print(f"Pool connections: {client._pool._connections}")
 print(f"Pool available: {client._pool._available}")
-```
-
-## The formula cheat sheet
-
-```
-sync_pool  = min(40, concurrent_requests, db_max/workers) + headroom
-async_pool = concurrent_requests / 2
-total      = pool × workers ≤ db_max_connections
-
-headroom = 2-5 (for connection state transitions)
 ```
 
 When in doubt, start small and scale up based on measured performance.

@@ -1,5 +1,6 @@
 ---
 title: Per-Worker Connection Pool
+description: "Connection pools in FastAPI are per-process: total = pool_size × workers. Size pools for connections (bounded by anyio tokens), not handlers."
 layout: template
 filename: per_worker_connection_pool.md
 ---
@@ -7,6 +8,16 @@ filename: per_worker_connection_pool.md
 # Per-Worker Connection Pool
 
 Connection pools in WSGI/ASGI applications are **per-process, not per-application**. This is a critical detail that affects sizing, total resource consumption, and production behavior.
+
+> **TL;DR** Every worker process owns its own pool, so **total connections = pool_size × workers** — stay under your DB/API limit. Size the pool for *connections*, not handlers: handler concurrency is capped by anyio tokens. Async can use half the pool (connections are multiplexed).
+
+## Verdict
+
+- **Pools are per-process**: `total_connections = pool_size × workers`. Never forget the multiplier — 4 workers × pool=100 already blows past a typical 100-connection DB limit
+- **The pool throttles connections, not handlers**: handlers queueing for a pool slot stay "active" and hold a thread token. Handler concurrency is really capped by the anyio thread pool (default 40 per worker) — **CI-verified**
+- **Size for expected concurrent connections + 2-5 headroom**, bounded by `server_max_connections / workers`
+- **Async pools can be ~half the size** (`concurrent_requests / 2`) because the event loop multiplexes connections across coroutines
+- **Pool exhaustion behavior is a timeout, not an error** — longer timeouts let requests queue through (verified: 4/4 OK with 60s), short timeouts surface as `httpx.PoolTimeout`
 
 ## The architecture
 

@@ -1,5 +1,6 @@
 ---
 title: Server Runners Comparison
+description: "Gunicorn vs Uvicorn vs FastAPI CLI as a production runner for FastAPI: Gunicorn wins, FastAPI CLI is close, and going from 1 to 2 workers adds +50-65% throughput."
 layout: template
 filename: server_runners.md
 ---
@@ -14,6 +15,29 @@ This benchmark compares five ways to run a FastAPI application in production:
 - **FastAPI CLI** (`fastapi run --workers`) — official CLI wrapping Uvicorn with `--workers`
 
 All runners use the same underlying ASGI server (Uvicorn). The difference is in how they manage processes and handle startup.
+
+> **TL;DR** Gunicorn with the UvicornWorker wins at every worker count. FastAPI CLI is the closest competitor. Going from 1 to 2 workers (+50-65% throughput) is the single biggest performance lever on this site — bigger than middleware or response class.
+
+## Verdict
+
+> **Individual impact: +50-65% throughput** by switching from Gunicorn (1 worker, 0 threads) to FastAPI CLI (2 workers) or Gunicorn (2 workers, 0 threads).
+
+| Config | Best Runner | Sync RPS | Async RPS |
+|--------|-------------|----------|-----------|
+| 1 worker, 0 threads | Gunicorn | 1819 | 2228 |
+| 2 workers, 0 threads | Gunicorn | 2654 | 3415 |
+
+**Gunicorn wins at both 1 and 2 workers.** Its process management overhead is negligible and it consistently outperforms all alternatives.
+
+**FastAPI CLI** is the closest competitor — within 12% of Gunicorn at 1 worker and 6% at 2 workers.
+
+**Uvicorn single-process** is the slowest — roughly half the throughput of multi-worker setups.
+
+**Uvicorn `--workers`** lags Gunicorn by 17-20% despite being pure ASGI.
+
+**Thread count is irrelevant** — adding threads to Gunicorn changes RPS by less than 3%. Use 0 threads unless you have a specific reason.
+
+**Recommendation**: Use `gunicorn -c gconf.py -k uvicorn.workers.UvicornWorker` for production. FastAPI CLI is a good alternative if you prefer simpler configuration.
 
 ## Server Runners
 
@@ -66,26 +90,7 @@ Doubling workers from 1→2 gives ~46% more sync RPS and ~54% more async RPS.
 | 1 | 1267 | 1864 |
 | 2 | 1850 | 2803 |
 
-## Verdict
-
-> **Individual impact: +50-65% throughput** by switching from Gunicorn (1 worker, 0 threads) to FastAPI CLI (2 workers) or Gunicorn (2 workers, 0 threads).
-
-| Config | Best Runner | Sync RPS | Async RPS |
-|--------|-------------|----------|-----------|
-| 1 worker, 0 threads | Gunicorn | 1819 | 2228 |
-| 2 workers, 0 threads | Gunicorn | 2654 | 3415 |
-
-**Gunicorn wins at both 1 and 2 workers.** Its process management overhead is negligible and it consistently outperforms all alternatives.
-
-**FastAPI CLI** is the closest competitor — within 12% of Gunicorn at 1 worker and 6% at 2 workers.
-
-**Uvicorn single-process** is the slowest — roughly half the throughput of multi-worker setups.
-
-**Uvicorn `--workers`** lags Gunicorn by 17-20% despite being pure ASGI.
-
-**Thread count is irrelevant** — adding threads to Gunicorn changes RPS by less than 3%. Use 0 threads unless you have a specific reason.
-
-**Recommendation**: Use `gunicorn -c gconf.py -k uvicorn.workers.UvicornWorker` for production. FastAPI CLI is a good alternative if you prefer simpler configuration.
+## Reproduce
 
 Re-run the measurements yourself:
 ```shell
