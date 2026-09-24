@@ -20,6 +20,7 @@ class TestFields:
     failed_requests: str = "failed_requests"
     rps: str = "rps"
     time_mean: str = "time_mean"
+    non_2xx: str = "non-2xx-responses"
 
 
 def get_field_from_container_name(name, pos:int = 1):
@@ -169,6 +170,12 @@ class TestContainer:
         self.ab_raw_results = _ab_runner.ab_results
 
     def get_results(self):
+        non_2xx = self.ab_raw_results.get(TestFields.non_2xx) or 0
+        assert not non_2xx, (
+            f"{non_2xx} non-2xx responses from {self.uri} on port {self.port}. "
+            f"The measurement is not hitting the endpoint: FastAPI answers 307 "
+            f"when the trailing slash of the route is missing from the URL."
+        )
         _return = {}
         for key in [TestFields.time_mean, TestFields.rps, TestFields.failed_requests]:
             _return[key] = self.ab_raw_results.get(key)
