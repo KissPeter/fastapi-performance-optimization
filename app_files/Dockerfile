@@ -10,6 +10,6 @@ COPY app.py .
 COPY gconf.py .
 COPY test_json_1MB.json .
 COPY start_services.sh .
-ENV GUNICORN_CMD_ARGS="-c gconf.py --reuse-port"
+ENV GUNICORN_CMD_ARGS="-c gconf.py"
 EXPOSE 8000 8080-8082
 ENTRYPOINT /src/start_services.sh

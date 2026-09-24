@@ -9,6 +9,8 @@ if os.getenv('SOCKET'):
 else:
     bind = '0.0.0.0:8000'
 
+reuse_port = not os.getenv('SOCKET')
+
 workers = os.getenv('WORKERS', 2)
 threads = os.getenv('THREADS', 1)
 # backlog - The number of pending connections.
