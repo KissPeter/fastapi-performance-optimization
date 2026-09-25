@@ -62,7 +62,7 @@ class ABRunner(Runner):
         cmd = ["ab"]
         options = self.config[config_name]
         cmd.append("-q ")
-        cmd.append("-s 60 ")
+        cmd.append("-s 600 ")
         cmd.append("-c " + str(options["clients"]))
         cmd.append("-n " + str(options["count"]))
         cmd.append("-T " + str(options["content_type"]))
@@ -79,7 +79,7 @@ class ABRunner(Runner):
             stderr=subprocess.PIPE,
             encoding="ascii",
             shell=False,
-            timeout=100,
+            timeout=1200,
             env=os.environ.copy(),
             check=False,
             universal_newlines=True,
@@ -272,6 +272,11 @@ class CompareContainers:
     def get_diff_percent_to_baseline(
         res: float, baseline: float, round_tens: int = 2, add_percent: bool = False
     ):
+        if baseline == 0:
+            raise AssertionError(
+                f"Baseline RPS is 0 - the baseline endpoint returned no "
+                f"successful requests (all ab runs timed out or failed)."
+            )
         _return = round(res / baseline * 100 - 100, round_tens)
         if add_percent:
             return f"{_return} %"
