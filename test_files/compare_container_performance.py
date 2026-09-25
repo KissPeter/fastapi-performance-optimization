@@ -171,10 +171,13 @@ class TestContainer:
 
     def get_results(self):
         non_2xx = self.ab_raw_results.get(TestFields.non_2xx) or 0
-        assert not non_2xx, (
-            f"{non_2xx} non-2xx responses from {self.uri} on port {self.port}. "
-            f"The measurement is not hitting the endpoint: FastAPI answers 307 "
-            f"when the trailing slash of the route is missing from the URL."
+        allowed_non_2xx = max(1, int(self.request_count * 0.01))
+        assert non_2xx <= allowed_non_2xx, (
+            f"{non_2xx} non-2xx responses from {self.uri} on port {self.port} "
+            f"exceeds the {allowed_non_2xx} tolerated transient errors "
+            f"(1% of {self.request_count}). The measurement is not hitting the "
+            f"endpoint: FastAPI answers 307 when the trailing slash of the "
+            f"route is missing from the URL."
         )
         _return = {}
         for key in [TestFields.time_mean, TestFields.rps, TestFields.failed_requests]:

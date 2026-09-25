@@ -14,9 +14,9 @@ reuse_port = not os.getenv('SOCKET')
 workers = os.getenv('WORKERS', 2)
 threads = os.getenv('THREADS', 1)
 # backlog - The number of pending connections.
-backlog = 64
+backlog = 1024
 # Workers silent for more than this many seconds are killed and restarted.
-timeout = 60
+timeout = 300
 # Timeout for graceful workers restart.
 graceful_timeout = 30
 # The number of seconds to wait for requests on a Keep-Alive connection.
@@ -29,7 +29,7 @@ worker_tmp_dir = '/dev/shm'
 
 if os.getenv('KEEPALIVE'):
     # Workers silent for more than this many seconds are killed and restarted.
-    timeout = 60
+    timeout = 300
     # Timeout for graceful workers restart.
     graceful_timeout = 30
     # The number of seconds to wait for requests on a Keep-Alive connection.
