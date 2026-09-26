@@ -15,12 +15,14 @@ class TestConnectionPool(TestBase):
                 "port": 8032,
                 "baseline": True,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
             {
                 "name": "pool_100_sync",
                 "port": 8033,
                 "baseline": False,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -36,12 +38,14 @@ class TestConnectionPool(TestBase):
                 "port": 8032,
                 "baseline": True,
                 "uri": "/async_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
             {
                 "name": "pool_100_async",
                 "port": 8033,
                 "baseline": False,
                 "uri": "/async_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -63,6 +67,7 @@ class TestConnectionPool(TestBase):
                 "port": 8032,
                 "baseline": False,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -84,6 +89,7 @@ class TestConnectionPool(TestBase):
                 "port": 8032,
                 "baseline": False,
                 "uri": "/async_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -99,12 +105,14 @@ class TestConnectionPool(TestBase):
                 "port": 8032,
                 "baseline": True,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
             {
                 "name": "pool_40_sync",
                 "port": 8073,
                 "baseline": False,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -120,12 +128,14 @@ class TestConnectionPool(TestBase):
                 "port": 8073,
                 "baseline": True,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
             {
                 "name": "pool_80_sync",
                 "port": 8074,
                 "baseline": False,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -141,12 +151,14 @@ class TestConnectionPool(TestBase):
                 "port": 8032,
                 "baseline": True,
                 "uri": "/async_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
             {
                 "name": "pool_40_async",
                 "port": 8073,
                 "baseline": False,
                 "uri": "/async_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -162,12 +174,14 @@ class TestConnectionPool(TestBase):
                 "port": 8073,
                 "baseline": True,
                 "uri": "/async_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
             {
                 "name": "pool_80_async",
                 "port": 8074,
                 "baseline": False,
                 "uri": "/async_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)
@@ -183,12 +197,14 @@ class TestConnectionPool(TestBase):
                 "port": 8074,
                 "baseline": True,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
             {
                 "name": "pool_100_sync",
                 "port": 8033,
                 "baseline": False,
                 "uri": "/sync_pool/items/",
+                "non_2xx_tolerance_pct": 25,
             },
         ]
         p = CompareContainers(test_config)

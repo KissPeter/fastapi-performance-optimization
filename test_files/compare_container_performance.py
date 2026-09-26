@@ -118,6 +118,7 @@ class TestContainer:
         keep_alive: bool = False,
         socket_timeout: int = None,
         wall_timeout: int = None,
+        non_2xx_tolerance_pct: float = None,
     ):
         self.ab_parser = Parser()
         self.ab_collector = Collector()
@@ -126,6 +127,7 @@ class TestContainer:
         self.keep_alive = keep_alive
         self.socket_timeout = socket_timeout
         self.wall_timeout = wall_timeout
+        self.non_2xx_tolerance_pct = non_2xx_tolerance_pct
         self.uri = self._identify_uri(uri=uri)
         self.ab_raw_results = {}
 
@@ -180,13 +182,18 @@ class TestContainer:
 
     def get_results(self):
         non_2xx = self.ab_raw_results.get(TestFields.non_2xx) or 0
-        allowed_non_2xx = max(1, int(self.request_count * 0.01))
+        tolerance_pct = (
+            self.non_2xx_tolerance_pct
+            if self.non_2xx_tolerance_pct is not None
+            else 1
+        )
+        allowed_non_2xx = max(1, int(self.request_count * tolerance_pct / 100))
         assert non_2xx <= allowed_non_2xx, (
             f"{non_2xx} non-2xx responses from {self.uri} on port {self.port} "
             f"exceeds the {allowed_non_2xx} tolerated transient errors "
-            f"(1% of {self.request_count}). The measurement is not hitting the "
-            f"endpoint: FastAPI answers 307 when the trailing slash of the "
-            f"route is missing from the URL."
+            f"({tolerance_pct}% of {self.request_count}). The measurement is not "
+            f"hitting the endpoint: FastAPI answers 307 when the trailing slash "
+            f"of the route is missing from the URL."
         )
         _return = {}
         for key in [TestFields.time_mean, TestFields.rps, TestFields.failed_requests]:
@@ -218,6 +225,7 @@ class CompareContainers:
                 keep_alive=keep_alive,
                 socket_timeout=container.get("socket_timeout"),
                 wall_timeout=container.get("wall_timeout"),
+                non_2xx_tolerance_pct=container.get("non_2xx_tolerance_pct"),
             )
             self.test_results.append(container)
 
@@ -345,7 +353,14 @@ class CompareContainers:
 
     @staticmethod
     def test_container(
-        port, uri, request_count, name, keep_alive, socket_timeout=None, wall_timeout=None
+        port,
+        uri,
+        request_count,
+        name,
+        keep_alive,
+        socket_timeout=None,
+        wall_timeout=None,
+        non_2xx_tolerance_pct=None,
     ):
         _results = []
         for i in range(TEST_RUN_PER_CONTAINER):
@@ -357,6 +372,7 @@ class CompareContainers:
                 keep_alive=keep_alive,
                 socket_timeout=socket_timeout,
                 wall_timeout=wall_timeout,
+                non_2xx_tolerance_pct=non_2xx_tolerance_pct,
             )
             if i == 0:
                 t.pre_warm()
