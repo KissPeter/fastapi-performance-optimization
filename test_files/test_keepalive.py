@@ -4,8 +4,8 @@ from compare_container_performance import CompareContainers
 from test_base import TestBase
 
 test_config = [
-    {"name": "app_nginx_socket", "port": 8009, "baseline": True, "keep_alive": False},
-    {"name": "app_nginx_socket_keepalive", "port": 8017, "baseline": False, "keep_alive": True},
+    {"name": "app_nginx_socket", "port": 8009, "baseline": True, "keep_alive": False, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "app_nginx_socket_keepalive", "port": 8017, "baseline": False, "keep_alive": True, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 
