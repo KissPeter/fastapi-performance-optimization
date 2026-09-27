@@ -1,5 +1,6 @@
 ---
 title: Nginx in front of FastAPI
+description: "Nginx in front of FastAPI: Unix socket beats TCP port by ~9-19% on small payloads (~3-5ms lower latency) and is a wash on 1MB responses. Cheap to enable, switch by default."
 layout: template
 filename: nginx_port_socket.md
 ---
@@ -12,6 +13,27 @@ Typical reverse proxy [configuration](https://docs.nginx.com/nginx/admin-guide/w
 There are 65535 port all together, but some [ranges](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports) are not for this purpose so the concurrency is limited, furthermore a port doesn't become free immediately after a connection is closed
 The alternative solution which is mentioned in [Uvicorn](https://www.uvicorn.org/deployment/#running-behind-nginx) documentation suggests using sockets which indeed a better solution with some challenges.
 
+> **TL;DR** Talk to your app over a **Unix socket**, not a TCP port. For **small payloads** sockets are consistently ~5-19% faster than a TCP port for both sync and async endpoints. For **1MB responses** the difference collapses to noise (~1-3%). Cheap to enable, so use sockets by default — but don't expect order-of-magnitude gains.
+
+## Verdict
+
+> **Individual impact: ~+12-15% throughput and ~3-5ms lower latency** on small payloads by switching nginx ↔ Gunicorn from TCP port to Unix socket. On 1MB responses the two are equivalent.
+
+**Switch to Unix socket communication between nginx and Gunicorn by default.** The gain is small but consistent on small payloads (default app config, w3t1):
+
+| Scenario | Port (rps) | Socket (rps) | Throughput gain | Latency gain |
+|---|---|---|---|---|
+| Sync, small response | 2,465.63 | 2,820.24 | +14.38% | 5.09 ms lower |
+| Async, small response | 2,910.96 | 3,439.80 | +18.17% | 5.30 ms lower |
+| Sync, 1MB response | 17.24 | 17.56 | +1.84% | 107 ms lower |
+| Async, 1MB response | 17.19 | 17.71 | +3.01% | 170 ms lower |
+
+Small requests spend proportionally little time in the application, so the per-connection overhead of TCP (socket pair allocation and teardown for every connection) is a measurable share of the total. A Unix socket has no such per-connection cost. When the response body is 1MB, moving bytes dominates the request (≈5.7s each), so the transport choice is a rounding error.
+
+> **Why did the numbers change?** An earlier revision of this page reported a flat ~7k rps on sockets and concluded TCP ports cap at ~2-2.8k rps. That data came from unreliable CI runs (nginx `502` responses and `ab` timeouts under the load test, with no guard flagging them). The harness was fixed — nginx backlog raised, Gunicorn/nginx timeouts aligned, and a non-2xx response guard added per test — and everything was re-measured in a single fully-green CI run. Once the errors were filtered out, the real socket advantage is what you see above.
+
+**Only use TCP ports when you need cross-network communication** between the reverse proxy and the application. Trade-offs to accept with sockets: socket file permissions, no `ss`/`tcpdump` observability, and per-instance socket files for load balancing.
+
 ## FastAPI as non-root user
 If you run your application as non-root user you need to be sure nginx user can read and write the socket.
 Fortunately Gunicorn supports [umask](https://docs.gunicorn.org/en/stable/settings.html#umask). 
@@ -21,7 +43,7 @@ The most secure option is dedicating a group to this communication, making nginx
 
 * The [usual](https://kisspeter.github.io/fastapi-performance-optimization/#test-environment) test set was used
 * Application runs as **Gunicorn** with [UvicornWorker](https://www.uvicorn.org/deployment/#gunicorn) behind **Nginx** reverse proxy
-* Load tested with [Apache Bench](https://httpd.apache.org/docs/2.4/programs/ab.html): `ab -q -c 100 -n 1000` (100 concurrent connections, 1000 requests)
+* Load tested with [Apache Bench](https://httpd.apache.org/docs/2.4/programs/ab.html): `ab -q -c 100 -n 1000` (100 concurrent connections, 1000 requests; 500 for the 1MB tests)
 * Each test runs **3 times**, results are averaged
 * The two communication methods tested:
   - **Port**: Nginx connects to Gunicorn via TCP port (`proxy_pass http://127.0.0.1:PORT`)
@@ -29,17 +51,17 @@ The most secure option is dedicating a group to this communication, making nginx
 
 ## Measurements
 
-> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest.
+> CI run [36235373898](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/36235373898) — Python 3.14, Ubuntu latest. All jobs green, no non-2xx responses.
 
 ### Runner configurations tested
 
-The naming convention is `Gunicorn w{workers}t{threads}` where workers are pre-forked OS processes and threads are per-worker Python threads:
+The default app runs **w3t1** (3 workers, 1 thread). The other runner configurations were measured to verify the transport effect is consistent:
 
 | **Gunicorn config** | **Workers** | **Threads** | **What it means** |
 |---|---|---|---|
-| w3t1 | 3 | 1 | 3 processes, 1 thread each — highest parallelism tested |
+| w3t1 | 3 | 1 | 3 processes, 1 thread each — default app config |
 | w1t0 | 1 | 0 | 1 process, no threads — single-process baseline |
-| w2t0 | 2 | 0 | 2 processes, no threads — default production config |
+| w2t0 | 2 | 0 | 2 processes, no threads — gunicorn default production config |
 | w1t1 | 1 | 1 | 1 process, 1 thread — minimal threading |
 | w2t1 | 2 | 1 | 2 processes, 1 thread each — balanced config |
 | w1t2 | 1 | 2 | 1 process, 2 threads — thread-heavy single process |
@@ -63,20 +85,20 @@ Each configuration was tested with both TCP port and Unix socket communication, 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         1936.66  |         1868.64  |         1915.02  |      1906.77  |
-| Time per request [ms] |           51.635 |           53.515 |           52.219 |        52.4563 |
+| Requests per second   |         2495.28  |         2478.33  |         2423.27  |      2465.63  |
+| Time per request [ms] |           40.076 |            40.35 |           41.267 |        40.5643 |
 
 
 #### Nginx - APP via socket
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         7476.71  |          6645.0  |         7434.42  |      7185.38  | +276.83%                  |
-| Time per request [ms] |           13.375 |           15.049 |           13.451 |        13.9583 | 38.5 ms                  |
+| Requests per second   |         2822.6   |         2756.06  |         2882.07  |      2820.24  | +14.38%                  |
+| Time per request [ms] |           35.428 |           36.284 |           34.697 |        35.4697 | 5.09 ms                  |
 
 ### Observations
-* Socket delivers **3.8x throughput** (7,185 vs 1,907 rps) and **73% lower latency** (14.0 vs 52.5 ms)
-* This is the largest gain across all scenarios because sync+small is the most connection-intensive — each request opens and closes a full TCP port pair
+* Socket delivers **+14.38% throughput** (2,820 vs 2,465 rps) and **5.09 ms lower latency** (35.5 vs 40.6 ms)
+* Sync + small is the most connection-intensive scenario — each request opens and closes a full TCP socket pair, so transport overhead is the largest share of the total time
 
 ### Asynchronous API endpoint with small request / response
 
@@ -84,20 +106,20 @@ Each configuration was tested with both TCP port and Unix socket communication, 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         2780.52  |         2764.32  |         2777.57  |      2774.14  |
-| Time per request [ms] |           35.964 |           36.175 |           36.003 |        36.0473 |
+| Requests per second   |         2970.45  |         2814.26  |         2948.16  |      2910.96  |
+| Time per request [ms] |           33.665 |           35.533 |           33.919 |        34.3723 |
 
 #### Nginx - APP via socket
 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         7315.44  |         6159.01  |         7347.77  |      6940.74  | +150.19%                  |
-| Time per request [ms] |            13.67 |           16.236 |            13.61 |        14.5053 | 21.54 ms                 |
+| Requests per second   |         3445.51  |         3483.48  |         3390.42  |       3439.8  | +18.17%                  |
+| Time per request [ms] |           29.023 |           28.707 |           29.495 |         29.075 | 5.3 ms                   |
 
 ### Observations
-* Socket delivers **2.5x throughput** (6,941 vs 2,774 rps) and **60% lower latency** (14.5 vs 36.1 ms)
-* Async endpoints reuse connections, so the port baseline is higher (2,774 vs 1,907 rps for sync) — yet socket performance stays flat at ~7k rps, confirming the bottleneck was TCP overhead, not the application
+* Socket delivers **+18.17% throughput** (3,440 vs 2,911 rps) and **5.3 ms lower latency** (29.1 vs 34.4 ms)
+* Async endpoints already reuse connections, yet the socket edge is if anything larger than for sync
 
 ### Synchronous API endpoint with 1MB response
 
@@ -105,20 +127,20 @@ Each configuration was tested with both TCP port and Unix socket communication, 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         2885.82  |         2758.47  |         2368.75  |      2671.01  |
-| Time per request [ms] |           34.652 |           36.252 |           42.216 |        37.7067 |
+| Requests per second   |           17.35  |            17.6  |           16.77  |        17.24  |
+| Time per request [ms] |         5762.78  |         5682.46  |         5962.79  |      5802.68  |
 
 #### Nginx - APP via socket
 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         6454.11  |         6795.05  |         6942.52  |      6730.56  | +151.99%                  |
-| Time per request [ms] |           15.494 |           14.717 |           14.404 |        14.8717 | 22.83 ms                 |
+| Requests per second   |           17.57  |           17.45  |           17.65  |      17.5567  | +1.84%                   |
+| Time per request [ms] |        5692.3    |         5731.41  |         5664.51  |      5696.07  | 106.6 ms                 |
 
 ### Observations
-* Socket delivers **2.5x throughput** (6,731 vs 2,671 rps) and **60% lower latency** (14.9 vs 37.7 ms)
-* The 1MB payload reduces the port vs socket gap slightly compared to small responses — the app-side processing time starts to dominate over the connection overhead
+* Socket delivers **+1.84% throughput** (17.56 vs 17.24 rps) — within run-to-run noise
+* With a 1MB body, ~5.7s of every request is spent copying the payload, dwarfing the transport choice
 
 ### Asynchronous API endpoint with 1MB response
 
@@ -126,38 +148,59 @@ Each configuration was tested with both TCP port and Unix socket communication, 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
 |-----------------------|------------------|------------------|------------------|---------------|
-| Requests per second   |         2713.03  |         2819.41  |         2761.47  |      2764.64  |
-| Time per request [ms] |           36.859 |           35.468 |           36.213 |         36.18 |
+| Requests per second   |           17.48  |           16.96  |           17.14  |      17.1933  |
+| Time per request [ms] |          5719.7   |         5897.27  |         5834.24  |      5817.07  |
 
 #### Nginx - APP via socket
 
 
 | **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
 |-----------------------|------------------|------------------|------------------|---------------|--------------------------|
-| Requests per second   |         6855.33  |         6831.25  |         7037.45  |      6908.01  | +149.87%                  |
-| Time per request [ms] |           14.587 |           14.639 |            14.21 |        14.4787 | 21.7 ms                  |
+| Requests per second   |           17.81  |            17.8  |           17.52  |         17.71  | +3.01%                   |
+| Time per request [ms] |        5614.69    |         5617.02  |         5709.14  |      5646.95  | 170.12 ms                |
 
 ### Observations
-* Socket delivers **2.5x throughput** (6,908 vs 2,765 rps) and **60% lower latency** (14.5 vs 36.2 ms)
-* Results are nearly identical to sync 1MB, confirming that at 1MB payload size, async/sync distinction has minimal impact — the socket optimization applies equally
+* Socket delivers **+3.01% throughput** (17.71 vs 17.19 rps) — within run-to-run noise
+* Same as sync: at 1MB the payload transfer dominates, transport does not matter
+
+## All runner configurations
+
+The socket effect is consistent across every runner configuration on small payloads, and consistent in being negligible on 1MB responses:
+
+### Small request / response
+
+| **Config** | **Sync @ port (rps)** | **Sync @ socket (rps)** | **Sync Δ** | **Async @ port (rps)** | **Async @ socket (rps)** | **Async Δ** |
+|---|---|---|---|---|---|---|
+| w3t1 | 2,465.63 | 2,820.24 | +14.38% | 2,910.96 | 3,439.80 | +18.17% |
+| w1t0 | 2,138.20 | 2,319.94 | +8.50% | 2,463.98 | 2,730.93 | +10.83% |
+| w2t0 | 2,661.41 | 3,030.04 | +13.85% | 3,150.07 | 3,746.71 | +18.94% |
+| w1t1 | 2,005.78 | 2,219.59 | +10.66% | 2,436.33 | 2,697.49 | +10.72% |
+| w2t1 | 2,703.77 | 3,060.75 | +13.20% | 3,150.18 | 3,721.35 | +18.13% |
+| w1t2 | 2,111.44 | 2,210.28 | +4.68% | 2,409.85 | 2,681.91 | +11.29% |
+| w2t2 | 2,519.80 | 2,911.70 | +15.55% | 3,050.35 | 3,484.52 | +14.23% |
+
+### 1MB request / response
+
+| **Config** | **Sync @ port (rps)** | **Sync @ socket (rps)** | **Sync Δ** | **Async @ port (rps)** | **Async @ socket (rps)** | **Async Δ** |
+|---|---|---|---|---|---|---|
+| w3t1 | 17.24 | 17.56 | +1.84% | 17.19 | 17.71 | +3.01% |
+| w1t0 | 12.77 | 13.22 | +3.50% | 12.76 | 12.88 | +0.91% |
+| w2t0 | 22.66 | 23.52 | +3.81% | 23.28 | 22.58 | -2.98% |
+| w1t1 | 12.75 | 13.07 | +2.51% | 12.88 | 12.75 | -1.03% |
+| w2t1 | 23.40 | 23.69 | +1.24% | 23.46 | 22.75 | -3.01% |
+| w1t2 | 12.98 | 13.19 | +1.64% | 12.76 | 12.95 | +1.49% |
+| w2t2 | 23.48 | 24.17 | +2.95% | 22.63 | 23.94 | +5.76% |
+
+The negative async 1MB deltas (w2t0, w1t1, w2t1) are noise — magnitude below the run-to-run variance of the port baseline itself.
 
 ## Conclusion
 
-### Apples to apples comparison
-
-| Scenario | Port (rps) | Socket (rps) | Throughput gain | Port latency (ms) | Socket latency (ms) | Latency gain |
-|---|---|---|---|---|---|---|
-| Sync, small response | 1,907 | 7,185 | +276.8% | 52.5 | 14.0 | 73.3% lower |
-| Async, small response | 2,774 | 6,941 | +150.2% | 36.1 | 14.5 | 59.8% lower |
-| Sync, 1MB response | 2,671 | 6,731 | +152.0% | 37.7 | 14.9 | 60.5% lower |
-| Async, 1MB response | 2,765 | 6,908 | +149.9% | 36.2 | 14.5 | 59.9% lower |
-
 Two clear patterns emerge:
 
-1. **Socket throughput is consistent across all scenarios:** ~6,700-7,200 rps regardless of sync/async or payload size. The communication layer is not the bottleneck — the application is. Switching to sockets removes the networking overhead that was masking this.
-2. **Port throughput is constrained by the TCP port pairing overhead:** ranging from 1,907 to 2,774 rps. The sync+small case is hit hardest (+276%) because it is the most connection-intensive — each request opens and closes a TCP pair, while async reuse reduces the impact.
+1. **Small payloads: sockets are consistently faster.** Every one of the 14 small-payload measurements (7 configs × sync/async) improved with a socket, by **+4.7% to +18.9%** (median ~+13.5%). Latency drops by roughly 2-5 ms.
+2. **1MB responses: sockets and ports are equivalent.** Differences stay in the ±3% band, i.e. within noise. The bottleneck is copying megabytes, not the transport.
 
-In short: **Unix sockets deliver a flat ~7k rps regardless of endpoint type, while TCP ports cap at ~2-2.8k rps.** The optimization is not scenario-dependent — it is a baseline improvement that applies universally.
+In short: **Unix sockets are a small but real, free win for typical small-payload APIs; they bring nothing measurable once responses get large.** Use them by default — they are strictly simpler operationally than managing port inventories too.
 
 Sample socket config is [here](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/nginx.conf#L31)
 
@@ -169,16 +212,15 @@ Assuming a single Gunicorn instance behind nginx:
 
 | Metric | Before (port) | After (socket) | Improvement |
 |---|---|---|---|
-| Throughput (avg across scenarios) | ~2,529 rps | ~6,941 rps | **~174% more requests/sec** |
-| Latency (avg across scenarios) | ~40.6 ms | ~14.5 ms | **~64% lower latency** |
-| Effective concurrent users supported (p95 ~200ms budget) | ~380 | ~900 | **~2.4x more headroom** |
+| Throughput, small payload (default w3t1, sync+async avg) | ~2,688 rps | ~3,130 rps | **~+16% more requests/sec** |
+| Latency, small payload (default w3t1, sync+async avg) | ~37.5 ms | ~32.3 ms | **~5 ms lower latency** |
+| 1MB responses | ~17.2-17.2 rps | ~17.6-17.7 rps | ±3% (noise) |
 
 ### When this matters most
 
-- **High-concurrency APIs** — each TCP port pair costs ~3-5KB kernel memory; sockets eliminate this entirely
-- **Containerized deployments** — container orchestration (K8s, ECS) typically shares a network namespace per pod, so port exhaustion is real under load
-- **Low-latency endpoints** — sync endpoints with small payloads benefit the most (+276%) because they are connection-bound
-- **Multi-worker setups** — the benefit compounds with worker count since each worker creates its own port pairs
+- **Small, chatty APIs** — many cheap requests per second, where per-connection TCP overhead is a visible share of the budget (+5-19% on small payloads)
+- **Very high concurrency** — each TCP connection costs a socket pair in kernel memory and port inventory; sockets eliminate this entirely (relevant at tens of thousands of concurrent connections)
+- The benefit matters **less** the larger the responses get; plan your nginx config around your actual payload size
 
 ### Trade-offs to consider
 
@@ -187,11 +229,8 @@ Assuming a single Gunicorn instance behind nginx:
 - **Load balancing** — TCP port-based load balancing (HAProxy, etc.) is straightforward across multiple app instances; socket-based setups require each instance to have its own socket file and matching nginx upstream
 - **Portability** — sockets are filesystem-dependent; they do not work across network boundaries, which matters in split-service architectures
 
-### Recommendation
+## Pro tip
 
-Switch to Unix socket communication between nginx and Gunicorn **by default**. The throughput and latency gains are significant and consistent across all endpoint types. Only use TCP ports when you need cross-network communication between the reverse proxy and the application.
-
-# Pro tip:
 * If you use [nginx-light](https://github.com/KissPeter/fastapi-performance-optimization/blob/main/app_files/Dockerfile#L3) instead of nginx in your Docker build you can save ~100MB container image size.
 * This is a full **Nginx config for FastAPI**:
 

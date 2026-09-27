@@ -10,7 +10,7 @@ filename: index.md
 This document is intended to provide some tips and ideas to get the most out of it
 
 
-# Use these techniques to achieve 100-300% performance increase from your FastAPI application
+## Use these techniques to achieve up to ~2.2x performance from your FastAPI application
 
 > All tested on the same sized Docker containers (2 CPU cores). The performance numbers below represent real CI-verified measurements.
 
@@ -25,7 +25,7 @@ Each optimization below has a measurable, compounding effect. When applied toget
 | **Gunicorn (1 worker) → FastAPI CLI (2 workers)** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
 | **JSON → ORJSON response class** | +4-13% throughput | [JSON response classes](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class) |
 | **BaseHTTPMiddleware → Starlette ASGI** | +35-44% throughput (avoiding BaseHTTPMiddleware cost) | [Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware) |
-| **Best vs Worst combo** | **+100% throughput** | [Measured below](#sync-endpoint-syncbig_json_response) |
+| **Best vs Worst combo** | **+116% throughput (2.2x)** | [Measured below](#sync-endpoint-syncbig_json_response) |
 
 ### Async endpoints
 
@@ -35,11 +35,11 @@ Each optimization below has a measurable, compounding effect. When applied toget
 | **Gunicorn (1 worker) → FastAPI CLI (2 workers)** | +50-65% throughput | [Server runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners) |
 | **JSON → ORJSON response class** | +4-13% throughput | [JSON response classes](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class) |
 | **BaseHTTPMiddleware → Starlette ASGI** | +35-44% throughput (avoiding BaseHTTPMiddleware cost) | [Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware) |
-| **Best vs Worst combo** | **+297% throughput** | [Measured below](#async-endpoint-asyncbig_json_response) |
+| **Best vs Worst combo** | **+118% throughput (2.2x)** | [Measured below](#async-endpoint-asyncbig_json_response) |
 
 ## Measured best vs worst configurations
 
-> CI run [30018301964](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/30018301964) — all 4 jobs passed.
+> CI run [36235373898](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/36235373898) — all 4 jobs passed, fully green, no non-2xx responses.
 
 Using the big JSON response endpoint (1MB payload) across all tested combinations:
 
@@ -53,24 +53,24 @@ Using the big JSON response endpoint (1MB payload) across all tested combination
 
 | Configuration | RPS | Latency |
 |--------------|-----|---------|
-| **Best**: FastAPI CLI (2 workers) + async + ORJSON + Starlette ASGI | 3405 | 29.4 ms |
-| **Worst**: Gunicorn (1 worker, 0 threads) + sync + JSON + BaseHTTPMiddleware | 1695 | 59.1 ms |
-| **Improvement** | **+100.85%** | **-29.7 ms** |
+| **Best**: FastAPI CLI (2 workers) + async + ORJSON + Starlette ASGI | 27.90 | 3583.59 ms |
+| **Worst**: Gunicorn (1 worker, 0 threads) + sync + JSON + BaseHTTPMiddleware | 12.94 | 7729.63 ms |
+| **Improvement** | **+115.69%** | **-4146 ms** |
 
 ### Async endpoint (`/async/big_json_response`)
 
 | Configuration | RPS | Latency |
 |--------------|-----|---------|
-| **Best**: FastAPI CLI (2 workers) + async + ORJSON + Starlette ASGI | 3433 | 29.4 ms |
-| **Worst**: Gunicorn (1 worker, 0 threads) + sync + JSON + BaseHTTPMiddleware | 864 | 180.1 ms |
-| **Improvement** | **+297%** | **-150.7 ms** |
+| **Best**: FastAPI CLI (2 workers) + async + ORJSON + Starlette ASGI | 27.86 | 3589.66 ms |
+| **Worst**: Gunicorn (1 worker, 0 threads) + sync + JSON + BaseHTTPMiddleware | 12.79 | 7820.47 ms |
+| **Improvement** | **+117.86%** | **-4231 ms** |
 
 ### Small payload endpoints
 
 | Endpoint | Best RPS | Worst RPS | Improvement |
 |----------|----------|-----------|-------------|
-| `/sync/items/` | 2081 | 974 | **+113.6%** |
-| `/async/items/` | 2656 | 867 | **+206.4%** |
+| `/sync/items/` | 3102.39 | 1391.80 | **+122.91%** |
+| `/async/items/` | 4304.53 | 1766.31 | **+143.70%** |
 
 ### The compounding effect
 
@@ -82,33 +82,44 @@ When you combine ALL optimizations:
 | Endpoint type | Sync | Async |
 | Response class | JSON | ORJSON |
 | Middleware | BaseHTTPMiddleware | Starlette ASGI (or none) |
-| Nginx transport | TCP port | Unix socket |
-| **Combined RPS (big JSON)** | **864** | **3433** |
-| **Combined improvement** | | **~4x throughput** |
+| **Combined RPS (big JSON)** | **12.79** | **27.86** |
+| **Combined improvement** | | **~2.2x throughput** |
 
-> The difference between a default FastAPI setup and a properly optimized one is **4x throughput** on big JSON responses and **3x on small payloads**. These are not theoretical numbers — they are measured in CI on identical Docker infrastructure (2 CPU cores per container).
+> The difference between a default FastAPI setup and a properly optimized one is **~2.2x throughput** on big JSON responses and **~2.2-2.4x on small payloads**. These are not theoretical numbers — they are measured in CI on identical Docker infrastructure (2 CPU cores per container).
 
-## All optimization topics
+## Topics by category
 
-## [Fastapi Middleware performance tuning](https://kisspeter.github.io/fastapi-performance-optimization/middleware)
-## [Fastapi JSON response classes comparison](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class)
-## [Gunicorn workers and threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)
-## [Nginx in front of FastAPI](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket)
-## [Connection keepalive](https://kisspeter.github.io/fastapi-performance-optimization/keepalive)
-## [Server Runners: Gunicorn vs Uvicorn vs FastAPI CLI](https://kisspeter.github.io/fastapi-performance-optimization/server_runners)
-## [Sync / Async API Endpoints](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async)
-## [Connection Pool Size of External Resources](https://kisspeter.github.io/fastapi-performance-optimization/connection_pool)
-## [Thread Pool Sizing (anyio tokens)](https://kisspeter.github.io/fastapi-performance-optimization/thread_pool_sizing)
-## [Per-Worker Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/per_worker_connection_pool)
-## [Pool Sizing Calculator](https://kisspeter.github.io/fastapi-performance-optimization/pool_sizing_calculator)
+### Concurrency & workers
 
-# Robustness & Reliability (Generic, not FastAPI-specific)
+- **[Server Runners](https://kisspeter.github.io/fastapi-performance-optimization/server_runners)** — Gunicorn vs Uvicorn vs FastAPI CLI as a production runner; the single biggest lever (+50-65%).
+- **[Workers & Threads](https://kisspeter.github.io/fastapi-performance-optimization/workers_and_threads)** — how many Gunicorn workers/threads to run on a 2-core container.
+- **[Sync vs Async Endpoints](https://kisspeter.github.io/fastapi-performance-optimization/sync_vs_async)** — when async endpoints are worth it (+20-33%).
+- **[Thread Pool Sizing](https://kisspeter.github.io/fastapi-performance-optimization/thread_pool_sizing)** — tuning anyio token semaphores for sync endpoints.
+- **[Per-Worker Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/per_worker_connection_pool)** — pool isolation and the thread ceiling.
+
+### Transport & networking
+
+- **[Nginx in Front of FastAPI](https://kisspeter.github.io/fastapi-performance-optimization/nginx_port_socket)** — TCP port vs Unix socket transport.
+- **[Keepalive](https://kisspeter.github.io/fastapi-performance-optimization/keepalive)** — HTTP connection reuse.
+- **[Connection Pool](https://kisspeter.github.io/fastapi-performance-optimization/connection_pool)** — pool sizing for external resources.
+
+### Response & middleware
+
+- **[Middleware](https://kisspeter.github.io/fastapi-performance-optimization/middleware)** — BaseHTTPMiddleware vs native Starlette ASGI (+35-44%).
+- **[Response Class](https://kisspeter.github.io/fastapi-performance-optimization/json_response_class)** — JSONResponse vs ORJSONResponse (+4-13%).
+
+### Tools & debugging
+
+- **[Pool Sizing Calculator](https://kisspeter.github.io/fastapi-performance-optimization/pool_sizing_calculator)** — an interactive calculator for the numbers above.
+- **[Profiling](https://kisspeter.github.io/fastapi-performance-optimization/profiling)** — step-by-step cProfile investigation of a slow endpoint.
+
+## Robustness & Reliability (Generic, not FastAPI-specific)
 
 These patterns apply to any Python web application. They contribute to a robust and reliable application but are not FastAPI performance optimizations.
 
-## [Retry Patterns and Circuit Breaker](https://kisspeter.github.io/fastapi-performance-optimization/retry_circuit_breaker)
+- **[Retry and Circuit Breaker](https://kisspeter.github.io/fastapi-performance-optimization/retry_circuit_breaker)** — generic resilience patterns for any Python web app.
 
-# Test environment
+## Test environment
 
 * All the tests were run on  [GitHub Actions](https://github.com/KissPeter/fastapi-performance-optimization/actions/workflows/performance_tuning_measurements.yml)
 * Application is built into a container, you can build it like this:
@@ -138,7 +149,3 @@ docker-compose build
   pytest -vv -rP test_files/
 ```
 
-# Stay tuned for new ideas:
-## FastAPI application profiling
-### Arbitrary place of code
-### Profiling middleware

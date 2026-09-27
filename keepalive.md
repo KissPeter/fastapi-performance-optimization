@@ -1,5 +1,6 @@
 ---
 title: Keepalive support
+description: "HTTP connection keepalive for FastAPI behind Nginx: +9-12% on small payloads, negligible on 1MB responses. Cheap, safe default — matters more when connections are expensive (HTTPS)."
 layout: template
 filename: keepalive.md
 ---
@@ -21,8 +22,14 @@ http_client = urllib3.PoolManager(
             num_pools=10,
         )
 ```
-Let's see how to support HTTP connection keep-alive from FastAPI
 
+> **TL;DR** Enable HTTP keepalive between Nginx and your Python app — it is a cheap, safe default. Measured **+8.98% on sync** and **+12.30% on async** small endpoints. On 1MB responses it makes no difference (within noise). The win grows when connection setup is expensive, e.g. **HTTPS**.
+
+## Verdict
+
+* Keepalive is a **small but near-free** win on small payloads: **+8.98%** sync, **+12.30%** async, simply by reusing upstream connections
+* On **1MB responses** keepalive is a wash (+0.13% sync, -1.98% async — noise)
+* If you use **HTTPS**, connection creation has even higher overhead due to the additional SSL layer, so keepalive matters more
 
 ## What is HTTP keepalive?
 
@@ -31,58 +38,89 @@ https://en.wikipedia.org/wiki/HTTP_persistent_connection)
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/HTTP_persistent_connection.svg/600px-HTTP_persistent_connection.svg.png" alt="HTTP Keepalive">
 
+Let's see how to support HTTP connection keep-alive from FastAPI as well.
 
 ## Measurements
 
-> CI run [29770319196](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/29770319196) — Python 3.14, Ubuntu latest. Individual run data available in CI logs.
+> CI run [36235373898](https://github.com/KissPeter/fastapi-performance-optimization/actions/runs/36235373898) — Python 3.14, Ubuntu latest. All jobs green, no non-2xx responses. Tested on the default app config (w3t1) over a Unix socket: **8009** = no upstream keepalive, **8017** = `keepalive 8` in the nginx upstream.
 
 ### Synchronous API endpoint with small request / response
 
 #### Nginx - APP connection, but no keepalive
 
-| **Test attribute**    |   **Average** |
-|-----------------------|---------------|
-| Requests per second   |       6957.84 |
-| Time per request [ms] |       — |
-
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
+|-----------------------|------------------|------------------|------------------|---------------|
+| Requests per second   |        2716.62   |         2910.12  |         2950.52  |      2859.09  |
+| Time per request [ms] |           36.81  |          34.363  |          33.892  |      35.0217  |
 
 #### Nginx - APP connection with keepalive
 
-| **Test attribute**    |   **Average** | Difference to baseline   |
-|-----------------------|---------------|--------------------------|
-| Requests per second   |       7082.61 | +1.79%                   |
-| Time per request [ms] |       —       | —                        |
-
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |        3147.31   |         3141.11  |         3059.43  |      3115.95  | +8.98%                   |
+| Time per request [ms] |          31.773  |          31.836  |          32.686  |     32.0983   | 2.92 ms                  |
 
 ### Observations
-* +1.79% improvement only because we reuse our existing connections
+* **+8.98%** throughput, **2.92 ms** lower latency — we simply reuse our existing connections instead of establishing a fresh upstream connection per request
 
 ### Asynchronous API endpoint with small request / response
 
 #### Nginx - APP connection, but no keepalive
 
-| **Test attribute**    |   **Average** |
-|-----------------------|---------------|
-| Requests per second   |       7204.52 |
-| Time per request [ms] |       — |
-
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
+|-----------------------|------------------|------------------|------------------|---------------|
+| Requests per second   |        3445.89   |         3437.83  |         3489.34  |      3457.69  |
+| Time per request [ms] |            29.02 |          29.088  |          28.659  |     28.9223   |
 
 #### Nginx - APP connection with keepalive
 
-| **Test attribute**    |   **Average** | Difference to baseline   |
-|-----------------------|---------------|--------------------------|
-| Requests per second   |       7039.15 | -2.3%                    |
-| Time per request [ms] |       —       | —                        |
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |        3865.38   |         3837.63  |         3945.8   |      3882.94  | +12.30%                  |
+| Time per request [ms] |          25.871  |          26.058  |          25.343  |     25.7573   | 3.16 ms                  |
 
 ### Observations
-* -2.3% regression for the async endpoint with keepalive — needs further investigation
+* **+12.30%** throughput, **3.16 ms** lower latency. Keepalive helps async endpoints at least as much as sync ones by avoiding connection churn on the busy nginx↔app channel
 
-## Verdict
+### Synchronous API endpoint with 1MB response
 
-* Regardless of the use case sync / async endpoint we can improve our overall performance with this tiny change. 
-* If you use HTTPS connection creation has even higher overhead due the the additional SSL layer
+#### Nginx - APP connection, but no keepalive
 
-# Pro tip:
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
+|-----------------------|------------------|------------------|------------------|---------------|
+| Requests per second   |           18.08  |           17.79  |           17.96  |      17.9433  |
+| Time per request [ms] |         5529.88   |         5619.71  |         5568.45  |      5572.68  |
+
+#### Nginx - APP connection with keepalive
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |           17.89  |           17.99  |           18.02  |      17.9667  | +0.13%                   |
+| Time per request [ms] |         5588.77   |         5557.51  |         5550.14  |      5565.47  | 7.2 ms                   |
+
+### Observations
+* **+0.13%** — connection setup is nothing compared to moving a megabyte per request, keepalive is irrelevant here
+
+### Asynchronous API endpoint with 1MB response
+
+#### Nginx - APP connection, but no keepalive
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** |
+|-----------------------|------------------|------------------|------------------|---------------|
+| Requests per second   |           18.14  |           18.11  |           18.24  |      18.1633  |
+| Time per request [ms] |        5512.51    |         5521.74  |         5481.62  |      5505.29  |
+
+#### Nginx - APP connection with keepalive
+
+| **Test attribute**    |   **Test run 1** |   **Test run 2** |   **Test run 3** |   **Average** | Difference to baseline   |
+|-----------------------|------------------|------------------|------------------|---------------|--------------------------|
+| Requests per second   |           17.94  |           17.78  |           17.69  |      17.8033  | -1.98%                   |
+| Time per request [ms] |         5574.23   |         5623.66  |         5653.73  |      5617.21  | -111.92 ms               |
+
+### Observations
+* **-1.98%** — same magnitude as the run-to-run noise on this scenario, not a real regression. Keepalive neither helps nor hurts large bodies
+
+## Pro tip
 
 * This is a full **Nginx config for FastAPI** with keepalive support:
 
