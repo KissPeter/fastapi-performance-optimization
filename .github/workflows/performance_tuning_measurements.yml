@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.14' ]
+        python-version: [ '3.14', '3.15.0-rc.2' ]
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.14' ]
+        python-version: [ '3.14', '3.15.0-rc.2' ]
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
@@ -149,7 +149,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.14' ]
+        python-version: [ '3.14', '3.15.0-rc.2' ]
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
@@ -166,7 +166,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.14' ]
+        python-version: [ '3.14', '3.15.0-rc.2' ]
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
