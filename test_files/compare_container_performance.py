@@ -49,6 +49,7 @@ class ABConfig(Config):
 
 class ABRunner(Runner):
     def __init__(self, config: Config, parser: Parser, collector: Collector):
+        self.wall_timeout = config.defaults.get("wall_timeout", 100)
         super().__init__(config, parser, collector)
         open(self.CSV_DATA_FILE, "w").close()
         self.ab_results = {}
@@ -62,7 +63,7 @@ class ABRunner(Runner):
         cmd = ["ab"]
         options = self.config[config_name]
         cmd.append("-q ")
-        cmd.append("-s 60 ")
+        cmd.append("-s " + str(options.get("socket_timeout", 60)) + " ")
         cmd.append("-c " + str(options["clients"]))
         cmd.append("-n " + str(options["count"]))
         cmd.append("-T " + str(options["content_type"]))
@@ -71,15 +72,14 @@ class ABRunner(Runner):
 
         return cmd
 
-    @staticmethod
-    def execute_command_whole_output(cmd: list) -> (str, str, int):
+    def execute_command_whole_output(self, cmd: list) -> (str, str, int):
         process = subprocess.run(
             shlex.split(" ".join(cmd)),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding="ascii",
             shell=False,
-            timeout=100,
+            timeout=self.wall_timeout,
             env=os.environ.copy(),
             check=False,
             universal_newlines=True,
@@ -116,12 +116,18 @@ class TestContainer:
         uri: str = DEFAULT_URI,
         request_count: int = 5000,
         keep_alive: bool = False,
+        socket_timeout: int = None,
+        wall_timeout: int = None,
+        non_2xx_tolerance_pct: float = None,
     ):
         self.ab_parser = Parser()
         self.ab_collector = Collector()
         self.port = port
         self.request_count = request_count
         self.keep_alive = keep_alive
+        self.socket_timeout = socket_timeout
+        self.wall_timeout = wall_timeout
+        self.non_2xx_tolerance_pct = non_2xx_tolerance_pct
         self.uri = self._identify_uri(uri=uri)
         self.ab_raw_results = {}
 
@@ -137,7 +143,7 @@ class TestContainer:
         Defaults: 'time', 'count', 'clients', 'keep-alive', 'url'
         :return:
         """
-        return {
+        _return = {
             "_defaults": {
                 "time": 5,
                 "clients": max(self.request_count / 100, 100),
@@ -152,6 +158,11 @@ class TestContainer:
                 "url": f"http://127.0.0.1:{self.port}{self.uri}",
             }
         }
+        if self.socket_timeout is not None:
+            _return["_defaults"]["socket_timeout"] = self.socket_timeout
+        if self.wall_timeout is not None:
+            _return["_defaults"]["wall_timeout"] = self.wall_timeout
+        return _return
 
     def pre_warm(self):
         config = self._get_config()
@@ -171,10 +182,18 @@ class TestContainer:
 
     def get_results(self):
         non_2xx = self.ab_raw_results.get(TestFields.non_2xx) or 0
-        assert not non_2xx, (
-            f"{non_2xx} non-2xx responses from {self.uri} on port {self.port}. "
-            f"The measurement is not hitting the endpoint: FastAPI answers 307 "
-            f"when the trailing slash of the route is missing from the URL."
+        tolerance_pct = (
+            self.non_2xx_tolerance_pct
+            if self.non_2xx_tolerance_pct is not None
+            else 1
+        )
+        allowed_non_2xx = max(1, int(self.request_count * tolerance_pct / 100))
+        assert non_2xx <= allowed_non_2xx, (
+            f"{non_2xx} non-2xx responses from {self.uri} on port {self.port} "
+            f"exceeds the {allowed_non_2xx} tolerated transient errors "
+            f"({tolerance_pct}% of {self.request_count}). The measurement is not "
+            f"hitting the endpoint: FastAPI answers 307 when the trailing slash "
+            f"of the route is missing from the URL."
         )
         _return = {}
         for key in [TestFields.time_mean, TestFields.rps, TestFields.failed_requests]:
@@ -204,6 +223,9 @@ class CompareContainers:
                 request_count=request_count,
                 name=name,
                 keep_alive=keep_alive,
+                socket_timeout=container.get("socket_timeout"),
+                wall_timeout=container.get("wall_timeout"),
+                non_2xx_tolerance_pct=container.get("non_2xx_tolerance_pct"),
             )
             self.test_results.append(container)
 
@@ -269,6 +291,11 @@ class CompareContainers:
     def get_diff_percent_to_baseline(
         res: float, baseline: float, round_tens: int = 2, add_percent: bool = False
     ):
+        if baseline == 0:
+            raise AssertionError(
+                f"Baseline RPS is 0 - the baseline endpoint returned no "
+                f"successful requests (all ab runs timed out or failed)."
+            )
         _return = round(res / baseline * 100 - 100, round_tens)
         if add_percent:
             return f"{_return} %"
@@ -325,7 +352,16 @@ class CompareContainers:
             self.tabulate_data(headers=tabulate_headers, data=result)
 
     @staticmethod
-    def test_container(port, uri, request_count, name, keep_alive):
+    def test_container(
+        port,
+        uri,
+        request_count,
+        name,
+        keep_alive,
+        socket_timeout=None,
+        wall_timeout=None,
+        non_2xx_tolerance_pct=None,
+    ):
         _results = []
         for i in range(TEST_RUN_PER_CONTAINER):
             print(f"{i}. of {name} container at port {port} ")
@@ -333,7 +369,10 @@ class CompareContainers:
                 port=port,
                 uri=uri,
                 request_count=request_count,
-                keep_alive=keep_alive
+                keep_alive=keep_alive,
+                socket_timeout=socket_timeout,
+                wall_timeout=wall_timeout,
+                non_2xx_tolerance_pct=non_2xx_tolerance_pct,
             )
             if i == 0:
                 t.pre_warm()

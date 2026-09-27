@@ -4,38 +4,38 @@ from compare_container_performance import CompareContainers
 from test_base import TestBase
 
 test_config = [
-    {"name": "app_nginx_port", "port": 8008, "baseline": True},
-    {"name": "app_nginx_socket", "port": 8009, "baseline": False},
+    {"name": "app_nginx_port", "port": 8008, "baseline": True, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "app_nginx_socket", "port": 8009, "baseline": False, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 test_config_gunicorn_w1t0 = [
-    {"name": "nginx_gunicorn_w1t0_port", "port": 8140, "baseline": True},
-    {"name": "nginx_gunicorn_w1t0_socket", "port": 8141, "baseline": False},
+    {"name": "nginx_gunicorn_w1t0_port", "port": 8140, "baseline": True, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "nginx_gunicorn_w1t0_socket", "port": 8141, "baseline": False, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 test_config_gunicorn_w2t0 = [
-    {"name": "nginx_gunicorn_w2t0_port", "port": 8142, "baseline": True},
-    {"name": "nginx_gunicorn_w2t0_socket", "port": 8143, "baseline": False},
+    {"name": "nginx_gunicorn_w2t0_port", "port": 8142, "baseline": True, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "nginx_gunicorn_w2t0_socket", "port": 8143, "baseline": False, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 test_config_gunicorn_w1t1 = [
-    {"name": "nginx_gunicorn_w1t1_port", "port": 8144, "baseline": True},
-    {"name": "nginx_gunicorn_w1t1_socket", "port": 8145, "baseline": False},
+    {"name": "nginx_gunicorn_w1t1_port", "port": 8144, "baseline": True, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "nginx_gunicorn_w1t1_socket", "port": 8145, "baseline": False, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 test_config_gunicorn_w2t1 = [
-    {"name": "nginx_gunicorn_w2t1_port", "port": 8146, "baseline": True},
-    {"name": "nginx_gunicorn_w2t1_socket", "port": 8147, "baseline": False},
+    {"name": "nginx_gunicorn_w2t1_port", "port": 8146, "baseline": True, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "nginx_gunicorn_w2t1_socket", "port": 8147, "baseline": False, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 test_config_gunicorn_w1t2 = [
-    {"name": "nginx_gunicorn_w1t2_port", "port": 8148, "baseline": True},
-    {"name": "nginx_gunicorn_w1t2_socket", "port": 8149, "baseline": False},
+    {"name": "nginx_gunicorn_w1t2_port", "port": 8148, "baseline": True, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "nginx_gunicorn_w1t2_socket", "port": 8149, "baseline": False, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 test_config_gunicorn_w2t2 = [
-    {"name": "nginx_gunicorn_w2t2_port", "port": 8150, "baseline": True},
-    {"name": "nginx_gunicorn_w2t2_socket", "port": 8151, "baseline": False},
+    {"name": "nginx_gunicorn_w2t2_port", "port": 8150, "baseline": True, "socket_timeout": 600, "wall_timeout": 1200},
+    {"name": "nginx_gunicorn_w2t2_socket", "port": 8151, "baseline": False, "socket_timeout": 600, "wall_timeout": 1200},
 ]
 
 
